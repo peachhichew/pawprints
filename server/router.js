@@ -9,6 +9,7 @@ const router = app => {
     controllers.Account.loginPage
   );
   app.get("/getDomos", mid.requiresLogin, controllers.Domo.getDomos);
+  app.get("/getPawposts", mid.requiresLogin, controllers.Pawpost.getPawposts);
   app.post(
     "/login",
     mid.requiresSecure,

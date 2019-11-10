@@ -84,7 +84,7 @@ var PawpostForm = function PawpostForm(props) {
   return React.createElement(
     "div",
     { className: "formLayout" },
-    React.createElement("img", { id: "profilePic", src: "./assets/img/cookie.jpg" }),
+    React.createElement("img", { className: "profilePic", src: "./assets/img/cookie.jpg" }),
     React.createElement(
       "form",
       {
@@ -105,6 +105,54 @@ var PawpostForm = function PawpostForm(props) {
       React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
       React.createElement("input", { className: "makePawpostSubmit", type: "submit", value: "Post" })
     )
+  );
+};
+
+var PawpostList = function PawpostList(props) {
+  console.log("props.pawposts", props.pawposts);
+  if (props.pawposts.length === 0) {
+    return React.createElement(
+      "div",
+      { className: "pawpostList" },
+      React.createElement(
+        "h3",
+        { className: "emptyPawpost" },
+        "No pawposts yet"
+      )
+    );
+  }
+
+  var pawpostNodes = props.pawposts.map(function (pawpost) {
+    return React.createElement(
+      "div",
+      { key: pawpost._id, className: "pawpost" },
+      React.createElement("img", {
+        src: "./assets/img/cookie.jpg",
+        alt: "profile pic",
+        className: "profilePic"
+      }),
+      React.createElement(
+        "p",
+        null,
+        "Cookie updated their status."
+      ),
+      React.createElement(
+        "h3",
+        { className: "pawpostContent" },
+        pawpost.content
+      ),
+      React.createElement(
+        "h3",
+        { className: "pawpostContentImg" },
+        pawpost.contentImg
+      )
+    );
+  });
+
+  return React.createElement(
+    "div",
+    { className: "pawpostList" },
+    pawpostNodes
   );
 };
 
@@ -129,10 +177,6 @@ var DomoList = function DomoList(props) {
         key: domo._id,
         className: "domo",
         onClick: function onClick(e) {
-          // console.log(
-          //   "document.querySelector('#renderModal')",
-          //   document.querySelector("#renderModal")
-          // );
           ReactDOM.render(React.createElement(EditDomo, { domos: domo, csrf: props.csrf }), e.target.querySelector("#renderModal"));
         }
       },
@@ -349,8 +393,11 @@ var loadDomosFromServer = function loadDomosFromServer(csrf) {
   });
 };
 
-var loadPawpostsFromServer = function loadPawpostsFromServer() {
-  return console.log("load");
+var loadPawpostsFromServer = function loadPawpostsFromServer(csrf) {
+  console.log("inside loadPawpostsFromServer");
+  sendAjax("GET", "/getPawposts", null, function (data) {
+    ReactDOM.render(React.createElement(PawpostList, { pawposts: data.pawposts, csrf: csrf }), document.querySelector("#pawposts"));
+  });
 };
 
 var setup = function setup(csrf) {
@@ -360,7 +407,10 @@ var setup = function setup(csrf) {
 
   ReactDOM.render(React.createElement(PawpostForm, { csrf: csrf }), document.querySelector("#makePawpost"));
 
+  ReactDOM.render(React.createElement(PawpostList, { pawposts: [], csrf: csrf }), document.querySelector("#pawposts"));
+
   loadDomosFromServer(csrf);
+  loadPawpostsFromServer(csrf);
 };
 
 var getToken = function getToken() {

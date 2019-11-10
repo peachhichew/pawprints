@@ -63,7 +63,7 @@ nav:nth-child(1) {
   display: flex;
 }
 
-#profilePic {
+.profilePic {
   /* width: 60px; */
   height: 60px;
   border-radius: 50%;

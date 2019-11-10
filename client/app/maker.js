@@ -75,7 +75,7 @@ const handlePawpost = e => {
 const PawpostForm = props => {
   return (
     <div className="formLayout">
-      <img id="profilePic" src="./assets/img/cookie.jpg"></img>
+      <img className="profilePic" src="./assets/img/cookie.jpg"></img>
       <form
         id="pawpostForm"
         onSubmit={handlePawpost}
@@ -98,6 +98,34 @@ const PawpostForm = props => {
   );
 };
 
+const PawpostList = function(props) {
+  console.log("props.pawposts", props.pawposts);
+  if (props.pawposts.length === 0) {
+    return (
+      <div className="pawpostList">
+        <h3 className="emptyPawpost">No pawposts yet</h3>
+      </div>
+    );
+  }
+
+  const pawpostNodes = props.pawposts.map(function(pawpost) {
+    return (
+      <div key={pawpost._id} className="pawpost">
+        <img
+          src="./assets/img/cookie.jpg"
+          alt="profile pic"
+          className="profilePic"
+        />
+        <p>Cookie updated their status.</p>
+        <h3 className="pawpostContent">{pawpost.content}</h3>
+        <h3 className="pawpostContentImg">{pawpost.contentImg}</h3>
+      </div>
+    );
+  });
+
+  return <div className="pawpostList">{pawpostNodes}</div>;
+};
+
 const DomoList = function(props) {
   if (props.domos.length === 0) {
     return (
@@ -114,10 +142,6 @@ const DomoList = function(props) {
         key={domo._id}
         className="domo"
         onClick={e => {
-          // console.log(
-          //   "document.querySelector('#renderModal')",
-          //   document.querySelector("#renderModal")
-          // );
           ReactDOM.render(
             <EditDomo domos={domo} csrf={props.csrf} />,
             e.target.querySelector("#renderModal")
@@ -279,7 +303,15 @@ const loadDomosFromServer = csrf => {
   });
 };
 
-const loadPawpostsFromServer = () => console.log("load");
+const loadPawpostsFromServer = csrf => {
+  console.log("inside loadPawpostsFromServer");
+  sendAjax("GET", "/getPawposts", null, data => {
+    ReactDOM.render(
+      <PawpostList pawposts={data.pawposts} csrf={csrf} />,
+      document.querySelector("#pawposts")
+    );
+  });
+};
 
 const setup = function(csrf) {
   ReactDOM.render(
@@ -297,7 +329,13 @@ const setup = function(csrf) {
     document.querySelector("#makePawpost")
   );
 
+  ReactDOM.render(
+    <PawpostList pawposts={[]} csrf={csrf} />,
+    document.querySelector("#pawposts")
+  );
+
   loadDomosFromServer(csrf);
+  loadPawpostsFromServer(csrf);
 };
 
 const getToken = () => {
