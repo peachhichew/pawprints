@@ -7,13 +7,14 @@ let PawpostModel = {};
 // mongoose.Types.ObjectID is a function that converts
 // string ID to real mongo ID
 const convertId = mongoose.Types.ObjectId;
-const setName = name => _.escape(name).trim();
+const setName = content => _.escape(content).trim();
 
 const PawpostSchema = new mongoose.Schema({
   content: {
     type: String,
     required: true,
     trim: true
+    // set: setName
   },
   contentImg: {
     type: String,
@@ -21,7 +22,7 @@ const PawpostSchema = new mongoose.Schema({
   },
   profilePic: {
     type: String,
-    required: true,
+    // required: true,
     trim: true
   },
   owner: {

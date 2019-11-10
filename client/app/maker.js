@@ -50,20 +50,53 @@ const DomoForm = props => {
   );
 };
 
-// can pass in e instead and query select the id of the event to get the domo info
-// const handleClick = domo => {
-//   // console.log("12345", e.target.querySelector("#renderModal"));
-//   console.log(
-//     "document.querySelector('#renderModal')",
-//     document.querySelector("#renderModal")
-//   );
-//   // console.log("e.target: ", e.target);
-//   ReactDOM.render(
-//     <EditDomo domos={domo} />,
-//     //e.target.querySelector("#renderModal")
-//     document.querySelector("#renderModal")
-//   );
-// };
+const handlePawpost = e => {
+  e.preventDefault();
+
+  $("#domoMessage").animate({ width: "hide" }, 350);
+  console.log($("#pawpostContent").val());
+  if ($("#pawpostContent").val() == "") {
+    handleError("Content is empty!");
+    return false;
+  }
+
+  sendAjax(
+    "POST",
+    $("#pawpostForm").attr("action"),
+    $("#pawpostForm").serialize(),
+    function() {
+      loadPawpostsFromServer();
+    }
+  );
+
+  return false;
+};
+
+const PawpostForm = props => {
+  return (
+    <div className="formLayout">
+      <img id="profilePic" src="./assets/img/cookie.jpg"></img>
+      <form
+        id="pawpostForm"
+        onSubmit={handlePawpost}
+        name="pawpostForm"
+        action="/feed"
+        method="POST"
+        className="pawpostForm"
+      >
+        <textarea
+          rows="5"
+          cols="60"
+          id="content"
+          placeholder="What's on your mind?"
+          name="content"
+        ></textarea>
+        <input type="hidden" name="_csrf" value={props.csrf} />
+        <input className="makePawpostSubmit" type="submit" value="Post" />
+      </form>
+    </div>
+  );
+};
 
 const DomoList = function(props) {
   if (props.domos.length === 0) {
@@ -147,78 +180,6 @@ class Modal extends React.Component {
     );
   }
 }
-
-// class DomoList extends React.Component {
-//   constructor(props) {
-//     super(props);
-//     this.state = { domos: props.domos, isOpen: false };
-//     this.toggleModal = this.toggleModal.bind(this);
-//     this.loadDomosFromServer = this.loadDomosFromServer.bind(this);
-//     this.loadDomosFromServer();
-//   }
-
-//   toggleModal() {
-//     this.setState({ isOpen: !this.state.isOpen });
-//   }
-
-//   loadDomosFromServer() {
-//     sendAjax("GET", "/getDomos", null, data => {
-//       ReactDOM.render(
-//         <DomoList domos={data.domos} />,
-//         document.querySelector("#domos")
-//       );
-
-//       this.setState({ domos: data.domos });
-//     });
-//   }
-
-//   render() {
-//     console.log("state", this.state);
-//     // original above
-//     if (this.state.domos.length === 0) {
-//       return (
-//         <div className="domosList">
-//           <h3 className="emptyDomo">No Domos yet</h3>
-//         </div>
-//       );
-//     }
-
-//     const test = () => {
-//       return this.toggleModal();
-//     };
-
-//     const getState = () => {
-//       return this.state;
-//     };
-
-//     const domoNodes = this.state.domos.map(function(domo) {
-//       return (
-//         <div key={domo._id} className="domo" onClick={test}>
-//           {getState.isOpen ? (
-//             <Modal show={getState.isOpen} onClose={test}>
-//               Here's some content for the modal
-//             </Modal>
-//           ) : (
-//             <div>
-//               <img
-//                 src="/assets/img/domoface.jpeg"
-//                 alt="domo face"
-//                 className="domoFace"
-//               />
-//               <h3 className="domoName">Name: {domo.name}</h3>
-//               <h3 className="domoAge">Age: {domo.age}</h3>
-//               <h3 className="domoFavoriteFood">
-//                 Favorite food: {domo.favoriteFood}
-//               </h3>
-//             </div>
-//           )}
-//         </div>
-//       );
-//     });
-
-//     return <div className="domoList">{domoNodes}</div>;
-//   }
-// }
 
 const handleEditDomo = e => {
   e.preventDefault();
@@ -318,6 +279,8 @@ const loadDomosFromServer = csrf => {
   });
 };
 
+const loadPawpostsFromServer = () => console.log("load");
+
 const setup = function(csrf) {
   ReactDOM.render(
     <DomoForm csrf={csrf} />,
@@ -328,7 +291,11 @@ const setup = function(csrf) {
     <DomoList domos={[]} csrf={csrf} />,
     document.querySelector("#domos")
   );
-  // ReactDOM.render(<EditDomo domos={[]} />, document.querySelector("#domos"));
+
+  ReactDOM.render(
+    <PawpostForm csrf={csrf} />,
+    document.querySelector("#makePawpost")
+  );
 
   loadDomosFromServer(csrf);
 };

@@ -3,9 +3,10 @@ const models = require("../models");
 const Pawpost = models.Pawpost;
 
 const makePawpost = (req, res) => {
-  if (!req.body.content || !req.body.contentImg || !req.body.profilePic) {
+  console.log("req.body", req.body);
+  if (!req.body.content) {
     return res.status(400).json({
-      error: "Pawpost content, content image, and profile pic required"
+      error: "Pawpost content required"
     });
   }
 
@@ -16,11 +17,11 @@ const makePawpost = (req, res) => {
     owner: req.session.account._id
   };
 
-  console.log("pawpostData: ", pawpostdata);
+  console.log("pawpostData: ", pawpostData);
 
   const newPawpost = new Pawpost.PawpostModel(pawpostData);
   const pawpostPromise = newPawpost.save();
-  pawpostPromise.then(() => res.json({ redirect: "/maker" }));
+  pawpostPromise.then(() => res.json({ redirect: "/feed" }));
   pawpostPromise.catch(err => {
     if (err.code === 11000) {
       return res.status(400).json({ error: "Pawpost already exists" });
@@ -106,5 +107,5 @@ const getPawposts = (request, response) => {
 
 module.exports.makePawpost = makePawpost;
 module.exports.getPawposts = getPawposts;
-module.exports.makePawpost = makePawpost;
+module.exports.feedPage = feedPage;
 module.exports.editPawpost = editPawpost;
