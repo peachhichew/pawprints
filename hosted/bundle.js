@@ -138,6 +138,11 @@ var PawpostList = function PawpostList(props) {
       ),
       React.createElement(
         "h3",
+        { className: "pawpostDate" },
+        pawpost.createdDate
+      ),
+      React.createElement(
+        "h3",
         { className: "pawpostContent" },
         pawpost.content
       ),

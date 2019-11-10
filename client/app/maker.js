@@ -117,6 +117,7 @@ const PawpostList = function(props) {
           className="profilePic"
         />
         <p>Cookie updated their status.</p>
+        <h3 className="pawpostDate">{pawpost.createdDate}</h3>
         <h3 className="pawpostContent">{pawpost.content}</h3>
         <h3 className="pawpostContentImg">{pawpost.contentImg}</h3>
       </div>

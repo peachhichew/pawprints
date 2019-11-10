@@ -39,7 +39,8 @@ const PawpostSchema = new mongoose.Schema({
 PawpostSchema.statics.toAPI = doc => ({
   content: doc.content,
   contentImg: doc.contentImg,
-  profilePic: doc.profilePic
+  profilePic: doc.profilePic,
+  createdDate: doc.createdDate
 });
 
 PawpostSchema.statics.findByOwner = (ownerId, callback) => {
@@ -48,7 +49,7 @@ PawpostSchema.statics.findByOwner = (ownerId, callback) => {
   };
 
   return PawpostModel.find(search)
-    .select("content contentImg profilePic _id")
+    .select("content contentImg profilePic createdDate _id")
     .exec(callback);
 };
 
