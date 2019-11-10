@@ -8,9 +8,6 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-// import Modal from "./Modal";
-// import useModal from "./useModal";
-
 var handleDomo = function handleDomo(e) {
   e.preventDefault();
 
@@ -374,7 +371,11 @@ var EditDomo = function (_React$Component2) {
             React.createElement("br", null),
             React.createElement("input", { type: "hidden", name: "_csrf", value: this.state.csrf }),
             React.createElement("input", { type: "hidden", name: "_id", value: this.state.domos._id }),
-            React.createElement("input", { className: "makeDomoSubmit", type: "submit", value: "Make Domo" })
+            React.createElement("input", {
+              className: "makeDomoSubmit",
+              type: "submit",
+              value: "Update Domo"
+            })
           )
         )
       );

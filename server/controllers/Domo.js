@@ -59,28 +59,33 @@ const editDomo = (request, response) => {
 
     console.log("doc:", doc);
     console.log("req.session.account._id", req.session.account._id);
-    console.log(
-      "doc.owner == req.session.account._id",
-      doc.owner == req.session.account._id
-    );
-    if (doc.owner == req.session.account._id) {
+    // console.log(
+    //   "doc.owner == req.session.account._id",
+    //   doc.owner == req.session.account._id
+    // );
+
+    let domoPromise;
+
+    if (doc.owner.equals(req.session.account._id)) {
       let domo = doc;
       domo.name = req.body.name;
       domo.age = req.body.age;
       domo.favoriteFood = req.body.favoriteFood;
-      const domoPromise = domo.save();
+      domoPromise = domo.save();
 
       domoPromise.then(() => {
         console.log("domo: ", domo);
         res.json({ domo });
       });
 
-      domoPromise.catch(err => {
+      domoPromise.catch(() => {
         return res.status(400).json({ error: "An error occurred" });
       });
 
       return domoPromise;
     }
+
+    return domoPromise;
   });
 };
 

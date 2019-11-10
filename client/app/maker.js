@@ -1,6 +1,3 @@
-// import Modal from "./Modal";
-// import useModal from "./useModal";
-
 const handleDomo = e => {
   e.preventDefault();
 
@@ -94,7 +91,7 @@ const DomoList = function(props) {
           );
         }}
       >
-        <div id="renderModal"></div>
+        <div id="renderModal" />
         <img
           src="/assets/img/domoface.jpeg"
           alt="domo face"
@@ -300,7 +297,11 @@ class EditDomo extends React.Component {
             <br />
             <input type="hidden" name="_csrf" value={this.state.csrf} />
             <input type="hidden" name="_id" value={this.state.domos._id} />
-            <input className="makeDomoSubmit" type="submit" value="Make Domo" />
+            <input
+              className="makeDomoSubmit"
+              type="submit"
+              value="Update Domo"
+            />
           </form>
         </Modal>
       </div>
