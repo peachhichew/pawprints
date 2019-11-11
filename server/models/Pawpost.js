@@ -13,7 +13,11 @@ const PawpostSchema = new mongoose.Schema({
   content: {
     type: String,
     required: true,
+<<<<<<< HEAD
     trim: true,
+=======
+    trim: true
+>>>>>>> 62b4af61a47cb3b747542a54cbe7e19c881393ca
     set: setName
   },
   contentImg: {
