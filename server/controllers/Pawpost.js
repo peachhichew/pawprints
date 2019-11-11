@@ -51,12 +51,13 @@ const editPawpost = (request, response) => {
     console.log("doc:", doc);
     console.log("req.session.account._id", req.session.account._id);
 
+    let pawpostPromise;
     if (doc.owner.equals(req.session.account._id)) {
       let pawpost = doc;
       pawpost.content = req.body.content;
       pawpost.contentImg = req.body.contentImg;
       pawpost.profilePic = req.body.profilePic;
-      const pawpostPromise = pawpost.save();
+      pawpostPromise = pawpost.save();
 
       pawpostPromise.then(() => {
         console.log("pawpost: ", pawpost);
