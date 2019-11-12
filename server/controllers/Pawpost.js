@@ -1,6 +1,7 @@
 const models = require("../models");
 
 const Pawpost = models.Pawpost;
+const Account = models.Account;
 
 const makePawpost = (req, res) => {
   console.log("req.body", req.body);
@@ -91,6 +92,9 @@ const feedPage = (req, res) => {
 const getPawposts = (request, response) => {
   const req = request;
   const res = response;
+
+  const username = `${Account.AccountModel.toAPI.username}`;
+  console.log("username: ", username);
 
   return Pawpost.PawpostModel.findByOwner(
     req.session.account._id,

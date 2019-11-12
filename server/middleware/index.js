@@ -11,7 +11,7 @@ const requiresLogin = (req, res, next) => {
 // and then redirect them to the app
 const requiresLogout = (req, res, next) => {
   if (req.session.account) {
-    return res.redirect("/maker");
+    return res.redirect("/feed");
   }
 
   return next();

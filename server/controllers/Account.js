@@ -22,7 +22,7 @@ const login = (request, response) => {
   console.log("pwd: ", password);
 
   if (!username || !password) {
-    return res.status(400).json({ error: "RAWR! All fields are required" });
+    return res.status(400).json({ error: "All fields are required" });
   }
 
   return Account.AccountModel.authenticate(
@@ -52,11 +52,11 @@ const signup = (request, response) => {
   console.log("password: ", req.body.pass);
 
   if (!req.body.username || !req.body.pass || !req.body.pass2) {
-    return res.status(400).json({ error: "RAWR! All fields are required" });
+    return res.status(400).json({ error: "All fields are required" });
   }
 
   if (req.body.pass !== req.body.pass2) {
-    return res.status(400).json({ error: "RAWR! Passwords do not match" });
+    return res.status(400).json({ error: "Passwords do not match" });
   }
 
   return Account.AccountModel.generateHash(req.body.pass, (salt, hash) => {
@@ -97,8 +97,13 @@ const getToken = (request, response) => {
   res.json(csrfJSON);
 };
 
+const settingsPage = (req, res) => {
+  res.render("settings", { csrfToken: req.csrfToken() });
+};
+
 module.exports.loginPage = loginPage;
 module.exports.login = login;
 module.exports.logout = logout;
 module.exports.signup = signup;
 module.exports.getToken = getToken;
+module.exports.settingsPage = settingsPage;

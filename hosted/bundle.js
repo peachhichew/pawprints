@@ -123,6 +123,17 @@ var PawpostList = function PawpostList(props) {
   }
 
   var pawpostNodes = props.pawposts.map(function (pawpost) {
+    var options = {
+      year: "numeric",
+      month: "long",
+      day: "numeric"
+    };
+    var date = new Date(pawpost.createdDate.substring(0, 9));
+    console.log("date: ", date.toLocaleDateString("en-US", options));
+
+    var time = new Date(pawpost.createdDate);
+    console.log("test", time.toLocaleTimeString("en-US"));
+    console.log("time: ", time.toLocaleTimeString("en-US").substring(0, time.toLocaleTimeString("en-US").length - 6) + time.toLocaleTimeString("en-US").substring(8, time.toLocaleTimeString("en-US").length));
     return React.createElement(
       "div",
       { key: pawpost._id, className: "pawpost" },
@@ -132,24 +143,35 @@ var PawpostList = function PawpostList(props) {
         className: "profilePic"
       }),
       React.createElement(
-        "p",
-        null,
-        "Cookie updated their status."
-      ),
-      React.createElement(
-        "h3",
-        { className: "pawpostDate" },
-        pawpost.createdDate
-      ),
-      React.createElement(
-        "h3",
-        { className: "pawpostContent" },
-        pawpost.content
-      ),
-      React.createElement(
-        "h3",
-        { className: "pawpostContentImg" },
-        pawpost.contentImg
+        "div",
+        { className: "contentInfo" },
+        React.createElement(
+          "p",
+          { className: "statusUpdated" },
+          React.createElement(
+            "span",
+            { className: "username" },
+            "Cookie"
+          ),
+          " updated their status."
+        ),
+        React.createElement(
+          "p",
+          { className: "pawpostDate" },
+          date.toLocaleDateString("en-US", options),
+          " \u2022",
+          " " + time.toLocaleTimeString("en-US").substring(0, time.toLocaleTimeString("en-US").length - 6) + " \n              " + time.toLocaleTimeString("en-US").substring(8, time.toLocaleTimeString("en-US").length)
+        ),
+        React.createElement(
+          "p",
+          { className: "pawpostContent" },
+          pawpost.content
+        ),
+        React.createElement(
+          "h3",
+          { className: "pawpostContentImg" },
+          pawpost.contentImg
+        )
       )
     );
   });
@@ -157,7 +179,7 @@ var PawpostList = function PawpostList(props) {
   return React.createElement(
     "div",
     { className: "pawpostList" },
-    pawpostNodes
+    pawpostNodes.reverse()
   );
 };
 
@@ -406,15 +428,21 @@ var loadPawpostsFromServer = function loadPawpostsFromServer(csrf) {
 };
 
 var setup = function setup(csrf) {
-  ReactDOM.render(React.createElement(DomoForm, { csrf: csrf }), document.querySelector("#makeDomo"));
+  // ReactDOM.render(
+  //   <DomoForm csrf={csrf} />,
+  //   document.querySelector("#makeDomo")
+  // );
 
-  ReactDOM.render(React.createElement(DomoList, { domos: [], csrf: csrf }), document.querySelector("#domos"));
+  // ReactDOM.render(
+  //   <DomoList domos={[]} csrf={csrf} />,
+  //   document.querySelector("#domos")
+  // );
 
   ReactDOM.render(React.createElement(PawpostForm, { csrf: csrf }), document.querySelector("#makePawpost"));
 
   ReactDOM.render(React.createElement(PawpostList, { pawposts: [], csrf: csrf }), document.querySelector("#pawposts"));
 
-  loadDomosFromServer(csrf);
+  // loadDomosFromServer(csrf);
   loadPawpostsFromServer(csrf);
 };
 

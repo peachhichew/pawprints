@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css?family=Karla|Open+Sans&display=swap");
+@import url("https://fonts.googleapis.com/css?family=Karla:400,700&display=swap");
 
 html,
 body {
@@ -9,6 +9,7 @@ body {
   overflow-x: hidden;
   /* font-family: 'Open Sans', sans-serif; */
   font-family: "Karla", sans-serif;
+  background-color: #f9f9f9;
 }
 
 #logo {
@@ -57,10 +58,12 @@ nav:nth-child(1) {
 }
 
 .formLayout {
-  border: 1px solid black;
+  border: 1px solid #777;
   width: 520px;
   margin: 0 auto;
   display: flex;
+  padding: 15px;
+  background-color: #fff;
 }
 
 .profilePic {
@@ -76,6 +79,7 @@ nav:nth-child(1) {
   margin-bottom: 15px;
   resize: none;
   font-size: 14px;
+  border-color: #dedede;
 }
 
 .makePawpostSubmit {
@@ -134,8 +138,9 @@ nav:nth-child(1) {
   background-color: #338acc;
 }
 
+/* NEW */
 .slogan {
-  border: 1px solid orange;
+  /* border: 1px solid orange; */
   text-align: center;
   width: 350px;
   margin: 0 auto;
@@ -148,7 +153,7 @@ nav:nth-child(1) {
   margin: 0 auto;
   /* padding-top: 50px; */
   font-size: 1.2em;
-  border: 1px solid black;
+  /* border: 1px solid black; */
 }
 
 .mainForm h3 {
@@ -194,6 +199,7 @@ nav:nth-child(1) {
   display: block;
   margin: 0 auto;
   margin-bottom: -1px;
+  font-family: "Karla", sans-serif;
 }
 
 #user:focus,
@@ -248,7 +254,7 @@ nav:nth-child(1) {
 #domos {
   width: 40%;
   min-width: 400px;
-  border: 2px solid #55acee;
+  /* border: 2px solid #55acee; */
   border-radius: 4px;
   margin: 0 auto;
   margin-top: 100px;
@@ -392,4 +398,43 @@ button {
 .button-default {
   background: #247ba0;
   color: #fff;
+}
+
+/* NEW */
+.pawpost {
+  /* padding-top: 10px; */
+  border: 1px solid #777;
+  width: 520px;
+  margin: 15 auto;
+  display: flex;
+  padding: 15px;
+  background-color: #fff;
+}
+
+.pawpostDate {
+  color: #616770;
+  font-size: 12px;
+  margin-top: -12px;
+}
+
+.contentInfo {
+  /* border: 1px solid black; */
+  width: 300px;
+  padding-left: 10px;
+}
+
+.statusUpdated {
+  margin-top: 0px;
+  color: #616770;
+  font-size: 14px;
+}
+
+.username {
+  color: #4199df;
+  font-weight: 800;
+}
+
+.pawpostContent {
+  font-size: 16px;
+  color: #212121;
 }

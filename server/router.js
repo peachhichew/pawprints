@@ -28,6 +28,7 @@ const router = app => {
   app.get("/feed", mid.requiresLogin, controllers.Pawpost.feedPage);
   // app.post("/maker", mid.requiresLogin, controllers.Domo.make);
   app.post("/feed", mid.requiresLogin, controllers.Pawpost.makePawpost);
+  app.get("/settings", mid.requiresLogin, controllers.Account.settingsPage);
   app.post("/updateDomo", mid.requiresLogin, controllers.Domo.edit);
   app.get(
     "/",

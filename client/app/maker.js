@@ -109,6 +109,25 @@ const PawpostList = function(props) {
   }
 
   const pawpostNodes = props.pawposts.map(function(pawpost) {
+    let options = {
+      year: "numeric",
+      month: "long",
+      day: "numeric"
+    };
+    let date = new Date(pawpost.createdDate.substring(0, 9));
+    console.log("date: ", date.toLocaleDateString("en-US", options));
+
+    let time = new Date(pawpost.createdDate);
+    console.log("test", time.toLocaleTimeString("en-US"));
+    console.log(
+      "time: ",
+      time
+        .toLocaleTimeString("en-US")
+        .substring(0, time.toLocaleTimeString("en-US").length - 6) +
+        time
+          .toLocaleTimeString("en-US")
+          .substring(8, time.toLocaleTimeString("en-US").length)
+    );
     return (
       <div key={pawpost._id} className="pawpost">
         <img
@@ -116,15 +135,28 @@ const PawpostList = function(props) {
           alt="profile pic"
           className="profilePic"
         />
-        <p>Cookie updated their status.</p>
-        <h3 className="pawpostDate">{pawpost.createdDate}</h3>
-        <h3 className="pawpostContent">{pawpost.content}</h3>
-        <h3 className="pawpostContentImg">{pawpost.contentImg}</h3>
+        <div className="contentInfo">
+          <p className="statusUpdated">
+            <span className="username">Cookie</span> updated their status.
+          </p>
+
+          <p className="pawpostDate">
+            {date.toLocaleDateString("en-US", options)} •
+            {` ${time
+              .toLocaleTimeString("en-US")
+              .substring(0, time.toLocaleTimeString("en-US").length - 6)} 
+              ${time
+                .toLocaleTimeString("en-US")
+                .substring(8, time.toLocaleTimeString("en-US").length)}`}
+          </p>
+          <p className="pawpostContent">{pawpost.content}</p>
+          <h3 className="pawpostContentImg">{pawpost.contentImg}</h3>
+        </div>
       </div>
     );
   });
 
-  return <div className="pawpostList">{pawpostNodes}</div>;
+  return <div className="pawpostList">{pawpostNodes.reverse()}</div>;
 };
 
 const DomoList = function(props) {
@@ -315,15 +347,15 @@ const loadPawpostsFromServer = csrf => {
 };
 
 const setup = function(csrf) {
-  ReactDOM.render(
-    <DomoForm csrf={csrf} />,
-    document.querySelector("#makeDomo")
-  );
+  // ReactDOM.render(
+  //   <DomoForm csrf={csrf} />,
+  //   document.querySelector("#makeDomo")
+  // );
 
-  ReactDOM.render(
-    <DomoList domos={[]} csrf={csrf} />,
-    document.querySelector("#domos")
-  );
+  // ReactDOM.render(
+  //   <DomoList domos={[]} csrf={csrf} />,
+  //   document.querySelector("#domos")
+  // );
 
   ReactDOM.render(
     <PawpostForm csrf={csrf} />,
@@ -335,7 +367,7 @@ const setup = function(csrf) {
     document.querySelector("#pawposts")
   );
 
-  loadDomosFromServer(csrf);
+  // loadDomosFromServer(csrf);
   loadPawpostsFromServer(csrf);
 };
 
