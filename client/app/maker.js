@@ -53,7 +53,8 @@ const DomoForm = props => {
 const handlePawpost = e => {
   e.preventDefault();
 
-  $("#domoMessage").animate({ width: "hide" }, 350);
+  $("#toastMessage").animate({ bottom: "hide" }, 250);
+
   console.log($("#pawpostContent").val());
   if ($("#pawpostContent").val() == "") {
     handleError("Content is empty!");
@@ -114,20 +115,9 @@ const PawpostList = function(props) {
       month: "long",
       day: "numeric"
     };
-    let date = new Date(pawpost.createdDate.substring(0, 9));
-    console.log("date: ", date.toLocaleDateString("en-US", options));
-
+    let date = new Date(pawpost.createdDate.substring(0, 10));
     let time = new Date(pawpost.createdDate);
-    console.log("test", time.toLocaleTimeString("en-US"));
-    console.log(
-      "time: ",
-      time
-        .toLocaleTimeString("en-US")
-        .substring(0, time.toLocaleTimeString("en-US").length - 6) +
-        time
-          .toLocaleTimeString("en-US")
-          .substring(8, time.toLocaleTimeString("en-US").length)
-    );
+
     return (
       <div key={pawpost._id} className="pawpost">
         <img

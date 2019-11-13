@@ -66,7 +66,8 @@ var DomoForm = function DomoForm(props) {
 var handlePawpost = function handlePawpost(e) {
   e.preventDefault();
 
-  $("#domoMessage").animate({ width: "hide" }, 350);
+  $("#toastMessage").animate({ bottom: "hide" }, 250);
+
   console.log($("#pawpostContent").val());
   if ($("#pawpostContent").val() == "") {
     handleError("Content is empty!");
@@ -128,12 +129,9 @@ var PawpostList = function PawpostList(props) {
       month: "long",
       day: "numeric"
     };
-    var date = new Date(pawpost.createdDate.substring(0, 9));
-    console.log("date: ", date.toLocaleDateString("en-US", options));
-
+    var date = new Date(pawpost.createdDate.substring(0, 10));
     var time = new Date(pawpost.createdDate);
-    console.log("test", time.toLocaleTimeString("en-US"));
-    console.log("time: ", time.toLocaleTimeString("en-US").substring(0, time.toLocaleTimeString("en-US").length - 6) + time.toLocaleTimeString("en-US").substring(8, time.toLocaleTimeString("en-US").length));
+
     return React.createElement(
       "div",
       { key: pawpost._id, className: "pawpost" },
@@ -457,13 +455,92 @@ $(document).ready(function () {
 });
 "use strict";
 
+var handleChangePassword = function handleChangePassword(e) {
+  console.log("change password");
+  e.preventDefault();
+
+  console.log("current pwd", $("#currentPassword").val());
+  console.log("new pwd", $("#newPassword1").val());
+  console.log("new pwd 2", $("#newPassword1").val());
+  if ($("#currentPassword").val() == "" || $("#newPassword1").val() == "" || $("#newPassword2").val() == "") {
+    handleError("Content is empty!");
+    return false;
+  }
+
+  sendAjax("POST", $("#changePasswordForm").attr("action"), $("#changePasswordForm").serialize(), function () {
+    loadPawpostsFromServer();
+  });
+
+  return false;
+};
+
+var ChangePassword = function ChangePassword(props) {
+  return React.createElement(
+    "div",
+    { className: "changePassword" },
+    React.createElement(
+      "h3",
+      null,
+      "Change password"
+    ),
+    React.createElement(
+      "form",
+      {
+        id: "changePasswordForm",
+        onSubmit: handleChangePassword,
+        name: "changePasswordForm",
+        action: "/settings",
+        method: "POST",
+        className: "changePasswordForm"
+      },
+      React.createElement("input", {
+        id: "currentPassword",
+        type: "password",
+        name: "currentPassword",
+        placeholder: "current password"
+      }),
+      React.createElement("input", {
+        id: "newPassword1",
+        type: "password",
+        name: "newPassword1",
+        placeholder: "new password"
+      }),
+      React.createElement("input", {
+        id: "newPassword2",
+        type: "password",
+        name: "newPassword2",
+        placeholder: "retype new password"
+      }),
+      React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
+      React.createElement("input", { className: "changePasswordSubmit", type: "submit", value: "Change" })
+    )
+  );
+};
+
+var setup = function setup(csrf) {
+  ReactDOM.render(React.createElement(ChangePassword, { csrf: csrf }), document.querySelector("#settings"));
+};
+
+var getToken = function getToken() {
+  sendAjax("GET", "/getToken", null, function (result) {
+    setup(result.csrfToken);
+  });
+};
+
+$(document).ready(function () {
+  getToken();
+});
+"use strict";
+
 var handleError = function handleError(message) {
   $("#errorMessage").text(message);
-  $("#domoMessage").animate({ width: "toggle" }, 350);
+  // $("#toastMessage").animate({ width: "toggle" }, 350);
+  $("#toastMessage").animate({ bottom: "toggle" }, 250);
 };
 
 var redirect = function redirect(response) {
-  $("#domoMessage").animate({ width: "hide" }, 350);
+  // $("#toastMessage").animate({ width: "hide" }, 350);
+  $("#toastMessage").animate({ bottom: "hide" }, 250);
   window.location = response.redirect;
 };
 

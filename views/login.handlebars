@@ -1,6 +1,7 @@
 <html lang="en">
+
 <head>
-  <meta charset="utf-8"/>
+  <meta charset="utf-8" />
   <title>Pawprints</title>
   <script crossorigin src="https://unpkg.com/react@15/dist/react.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@15/dist/react-dom.min.js"></script>
@@ -8,19 +9,24 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/remarkable/1.6.2/remarkable.min.js"></script>
-  <link rel="shortcut icon" href="/assets/img/favicon.png"/>
-  <link rel="stylesheet" type="text/css" href="/assets/style.css"/>
+  <link rel="shortcut icon" href="/assets/img/favicon.png" />
+  <link rel="stylesheet" type="text/css" href="/assets/style.css" />
 </head>
-<body> 
+
+<body>
   <nav>
-    {{!-- <a href="/login"><img id="logo" src="/assets/img/face.png" alt="face logo"/></a> --}}
+    {{!-- <a href="/login"><img id="logo" src="/assets/img/face.png" alt="face logo" /></a> --}}
     <div class="navlink"><a id="loginButton" href="/login">login</a></div>
     <div class="navlink"><a id="signupButton" href="/signup">sign up</a></div>
   </nav>
   <section id="content"></section>
-  <div id="domoMessage"><img id="speech" src="/assets/img/speech.png" alt="speech box"/>
-    <h3><span id="errorMessage">Wrong username or password</span></h3><img id="domo" src="assets/img/domo.png" alt="domo"/>
+  {{!-- <div id="domoMessage"><img id="speech" src="/assets/img/speech.png" alt="speech box" />
+    <h3><span id="errorMessage">Wrong username or password</span></h3><img id="domo" src="assets/img/domo.png" alt="domo" />
+  </div> --}}
+  <div id="toastMessage">
+    <h3><span id="errorMessage">Wrong username or password</span></h3>
   </div>
   <script src="/assets/loginBundle.js"></script>
 </body>
+
 </html>

@@ -233,11 +233,34 @@ nav:nth-child(1) {
   z-index: 300;
 }
 
+#toastMessage {
+  display: none;
+  border: 1px solid #616770;
+  border-top: 5px solid #d5300d;
+  /* bottom: 15px; */
+  bottom: 20px;
+  width: 300px;
+  height: 90px;
+  position: absolute;
+  z-index: 200;
+  right: 15px;
+  overflow: hidden;
+  background-color: #fff;
+}
+
+#toastMessage h3 {
+  width: 240px;
+  position: absolute;
+  top: 0px;
+  left: 20px;
+}
+
 #errorMessage {
-  font-size: 1.2em;
-  font-weight: bold;
-  color: red;
-  font-style: italic;
+  font-size: 16px;
+  font-weight: normal;
+  /* font-weight: bold; */
+  color: #d5300d;
+  /* font-style: italic; */
 }
 
 #domo {
@@ -437,4 +460,40 @@ button {
 .pawpostContent {
   font-size: 16px;
   color: #212121;
+}
+
+.pageTitle {
+  width: 550px;
+  margin: 0 auto;
+  padding-bottom: 20px;
+}
+
+.changePassword {
+  border: 1px solid black;
+  width: 550px;
+  margin: 0 auto;
+}
+
+#currentPassword,
+#newPassword1,
+#newPassword2 {
+  font-size: 18px;
+  width: 250px;
+  padding: 5px 0px 5px 15px;
+  display: block;
+  /* margin: 0 auto; */
+  margin-bottom: -1px;
+  font-family: "Karla", sans-serif;
+}
+
+.changePasswordSubmit {
+  /* float: right; */
+  width: 80px; /* 90 */
+  padding: 5px;
+  background-color: #55acee;
+  border-radius: 3px;
+  color: #fff;
+  margin-top: 20px;
+  /* font-size: 16px; */
+  /* font-family: "Karla", sans-serif; */
 }
