@@ -25,6 +25,11 @@ const PawpostSchema = new mongoose.Schema({
     // required: true,
     trim: true
   },
+  username: {
+    type: String,
+    required: true,
+    trim: true
+  },
   owner: {
     type: mongoose.Schema.ObjectId,
     required: true,
@@ -40,7 +45,8 @@ PawpostSchema.statics.toAPI = doc => ({
   content: doc.content,
   contentImg: doc.contentImg,
   profilePic: doc.profilePic,
-  createdDate: doc.createdDate
+  createdDate: doc.createdDate,
+  username: doc.username
 });
 
 PawpostSchema.statics.findByOwner = (ownerId, callback) => {
@@ -49,13 +55,21 @@ PawpostSchema.statics.findByOwner = (ownerId, callback) => {
   };
 
   return PawpostModel.find(search)
-    .select("content contentImg profilePic createdDate _id")
+    .select("content contentImg profilePic createdDate _id username")
     .exec(callback);
 };
 
 PawpostSchema.statics.findById = (id, callback) => {
   const search = {
     _id: convertId(id)
+  };
+
+  return PawpostModel.findOne(search, callback);
+};
+
+PawpostSchema.static.findByUsername = (username, callback) => {
+  const search = {
+    username
   };
 
   return PawpostModel.findOne(search, callback);

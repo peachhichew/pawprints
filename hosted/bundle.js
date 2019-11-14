@@ -78,6 +78,8 @@ var handlePawpost = function handlePawpost(e) {
     loadPawpostsFromServer();
   });
 
+  $("#content").val("");
+
   return false;
 };
 
@@ -149,7 +151,7 @@ var PawpostList = function PawpostList(props) {
           React.createElement(
             "span",
             { className: "username" },
-            "Cookie"
+            pawpost.username
           ),
           " updated their status."
         ),
@@ -459,16 +461,16 @@ var handleChangePassword = function handleChangePassword(e) {
   console.log("change password");
   e.preventDefault();
 
-  console.log("current pwd", $("#currentPassword").val());
-  console.log("new pwd", $("#newPassword1").val());
-  console.log("new pwd 2", $("#newPassword1").val());
+  console.log("current pwd:", $("#currentPassword").val());
+  console.log("new pwd:", $("#newPassword1").val());
+  console.log("new pwd 2:", $("#newPassword1").val());
   if ($("#currentPassword").val() == "" || $("#newPassword1").val() == "" || $("#newPassword2").val() == "") {
-    handleError("Content is empty!");
+    handleError("All fields are required");
     return false;
   }
 
   sendAjax("POST", $("#changePasswordForm").attr("action"), $("#changePasswordForm").serialize(), function () {
-    loadPawpostsFromServer();
+    console.log("meow");
   });
 
   return false;
@@ -489,7 +491,7 @@ var ChangePassword = function ChangePassword(props) {
         id: "changePasswordForm",
         onSubmit: handleChangePassword,
         name: "changePasswordForm",
-        action: "/settings",
+        action: "/changePassword",
         method: "POST",
         className: "changePasswordForm"
       },

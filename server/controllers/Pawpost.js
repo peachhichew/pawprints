@@ -4,7 +4,7 @@ const Pawpost = models.Pawpost;
 const Account = models.Account;
 
 const makePawpost = (req, res) => {
-  console.log("req.body", req.body);
+  // console.log("req.body", req.body);
   if (!req.body.content) {
     return res.status(400).json({
       error: "Pawpost content required"
@@ -15,10 +15,9 @@ const makePawpost = (req, res) => {
     content: req.body.content,
     contentImg: req.body.contentImg,
     profilePic: req.body.profilePic,
-    owner: req.session.account._id
+    owner: req.session.account._id,
+    username: req.session.account.username
   };
-
-  console.log("pawpostData: ", pawpostData);
 
   const newPawpost = new Pawpost.PawpostModel(pawpostData);
   const pawpostPromise = newPawpost.save();
@@ -30,6 +29,8 @@ const makePawpost = (req, res) => {
 
     return res.status(400).json({ error: "An error occurred" });
   });
+
+  console.log("pawpostData", pawpostData);
 
   return pawpostPromise;
 };
@@ -93,8 +94,9 @@ const getPawposts = (request, response) => {
   const req = request;
   const res = response;
 
-  const username = `${Account.AccountModel.toAPI.username}`;
-  console.log("username: ", username);
+  // const username = `${Account.AccountModel.toAPI.username}`;
+  // console.log("username: ", username);
+  // console.log("username: ", req.session.account.username);
 
   return Pawpost.PawpostModel.findByOwner(
     req.session.account._id,
@@ -103,6 +105,7 @@ const getPawposts = (request, response) => {
         console.log(err);
         return res.status(400).json({ error: "An error occurred" });
       }
+      console.log("get docs: ", docs);
 
       return res.json({ pawposts: docs });
     }

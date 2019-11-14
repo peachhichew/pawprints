@@ -70,6 +70,8 @@ const handlePawpost = e => {
     }
   );
 
+  $("#content").val("");
+
   return false;
 };
 
@@ -127,7 +129,8 @@ const PawpostList = function(props) {
         />
         <div className="contentInfo">
           <p className="statusUpdated">
-            <span className="username">Cookie</span> updated their status.
+            <span className="username">{pawpost.username}</span> updated their
+            status.
           </p>
 
           <p className="pawpostDate">
