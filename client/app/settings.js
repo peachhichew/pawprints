@@ -2,15 +2,15 @@ const handleChangePassword = e => {
   console.log("change password");
   e.preventDefault();
 
-  console.log("current pwd", $("#currentPassword").val());
-  console.log("new pwd", $("#newPassword1").val());
-  console.log("new pwd 2", $("#newPassword1").val());
+  console.log("current pwd:", $("#currentPassword").val());
+  console.log("new pwd:", $("#newPassword1").val());
+  console.log("new pwd 2:", $("#newPassword1").val());
   if (
     $("#currentPassword").val() == "" ||
     $("#newPassword1").val() == "" ||
     $("#newPassword2").val() == ""
   ) {
-    handleError("Content is empty!");
+    handleError("All fields are required");
     return false;
   }
 
@@ -19,7 +19,7 @@ const handleChangePassword = e => {
     $("#changePasswordForm").attr("action"),
     $("#changePasswordForm").serialize(),
     function() {
-      loadPawpostsFromServer();
+      console.log("meow");
     }
   );
 
@@ -34,7 +34,7 @@ const ChangePassword = props => {
         id="changePasswordForm"
         onSubmit={handleChangePassword}
         name="changePasswordForm"
-        action="/settings"
+        action="/changePassword"
         method="POST"
         className="changePasswordForm"
       >

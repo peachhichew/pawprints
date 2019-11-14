@@ -29,6 +29,11 @@ const router = app => {
   // app.post("/maker", mid.requiresLogin, controllers.Domo.make);
   app.post("/feed", mid.requiresLogin, controllers.Pawpost.makePawpost);
   app.get("/settings", mid.requiresLogin, controllers.Account.settingsPage);
+  app.post(
+    "/changePassword",
+    mid.requiresLogin,
+    controllers.Account.changePass
+  );
   app.post("/updateDomo", mid.requiresLogin, controllers.Domo.edit);
   app.get(
     "/",

@@ -59,10 +59,6 @@ const editDomo = (request, response) => {
 
     console.log("doc:", doc);
     console.log("req.session.account._id", req.session.account._id);
-    // console.log(
-    //   "doc.owner == req.session.account._id",
-    //   doc.owner == req.session.account._id
-    // );
 
     let domoPromise;
 
