@@ -44,30 +44,29 @@ const editPawpost = (request, response) => {
       console.log(err);
       return res.status(400).json({ error: "An error occurred" });
     }
-    console.log("req.body._id", req.body._id);
 
     if (!doc) {
       return res.status(400).json({ error: "Invalid pawpost" });
     }
 
-    console.log("doc:", doc);
-    console.log("req.session.account._id", req.session.account._id);
-
     let pawpostPromise;
     if (doc.owner.equals(req.session.account._id)) {
       let pawpost = doc;
-      pawpost.content = req.body.content;
-      pawpost.contentImg = req.body.contentImg;
-      pawpost.profilePic = req.body.profilePic;
+      console.log("req.body.contentEdit", req.body.contentEdit);
+      pawpost.content = req.body.contentEdit;
+      pawpost.contentImg = req.body.contentImgEdit;
+      pawpost.profilePic = req.body.profilePicEdit;
       pawpostPromise = pawpost.save();
 
+      console.log("pawpost in controller before then: ", pawpost);
+
       pawpostPromise.then(() => {
-        console.log("pawpost: ", pawpost);
+        console.log("pawpost in controller: ", pawpost);
         res.json({ pawpost });
       });
 
       pawpostPromise.catch(() => {
-        return res.status(400).json({ error: "An error occurred" });
+        return res.status(400).json({ error: "An error occurred21123" });
       });
 
       return pawpostPromise;

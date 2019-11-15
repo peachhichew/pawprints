@@ -68,8 +68,8 @@ var handlePawpost = function handlePawpost(e) {
 
   $("#toastMessage").animate({ bottom: "hide" }, 250);
 
-  console.log($("#pawpostContent").val());
-  if ($("#pawpostContent").val() == "") {
+  console.log($("#content").val());
+  if ($("#content").val() == "") {
     handleError("Content is empty!");
     return false;
   }
@@ -136,7 +136,14 @@ var PawpostList = function PawpostList(props) {
 
     return React.createElement(
       "div",
-      { key: pawpost._id, className: "pawpost" },
+      {
+        key: pawpost._id,
+        className: "pawpost",
+        onClick: function onClick(e) {
+          ReactDOM.render(React.createElement(EditPawpost, { pawposts: pawpost, csrf: props.csrf }), e.target.querySelector("#renderModal"));
+        }
+      },
+      React.createElement("div", { id: "renderModal" }),
       React.createElement("img", {
         src: "./assets/img/cookie.jpg",
         alt: "profile pic",
@@ -414,6 +421,86 @@ var EditDomo = function (_React$Component2) {
   return EditDomo;
 }(React.Component);
 
+var handleEditPawpost = function handleEditPawpost(e) {
+  e.preventDefault();
+
+  $("#toastMessage").animate({ bottom: "hide" }, 250);
+
+  console.log("inside contentEdit", $("#contentEdit").val());
+  if ($("#contentEdit").val() == "") {
+    handleError("All fields are required");
+    return false;
+  }
+
+  sendAjax("POST", $("#pawpostFormEdit").attr("action"), $("#pawpostFormEdit").serialize(), function () {
+    loadPawpostsFromServer();
+  });
+
+  return false;
+};
+
+var EditPawpost = function (_React$Component3) {
+  _inherits(EditPawpost, _React$Component3);
+
+  function EditPawpost(props) {
+    _classCallCheck(this, EditPawpost);
+
+    var _this3 = _possibleConstructorReturn(this, (EditPawpost.__proto__ || Object.getPrototypeOf(EditPawpost)).call(this, props));
+
+    _this3.state = { isOpen: false, pawposts: props.pawposts, csrf: props.csrf };
+    _this3.toggleModal = _this3.toggleModal.bind(_this3);
+    return _this3;
+  }
+
+  _createClass(EditPawpost, [{
+    key: "toggleModal",
+    value: function toggleModal() {
+      this.setState({ isOpen: !this.state.isOpen });
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      console.log(this.state);
+
+      return React.createElement(
+        "div",
+        null,
+        React.createElement(
+          "button",
+          { onClick: this.toggleModal },
+          "Edit Domo"
+        ),
+        React.createElement(
+          Modal,
+          { show: this.state.isOpen, onClose: this.toggleModal },
+          React.createElement(
+            "form",
+            {
+              id: "pawpostFormEdit",
+              onSubmit: handleEditPawpost,
+              name: "pawpostFormEdit",
+              action: "/updatePawpost",
+              method: "POST"
+            },
+            React.createElement("textarea", {
+              rows: "5",
+              cols: "60",
+              id: "contentEdit",
+              placeholder: this.state.pawposts.content,
+              name: "contentEdit"
+            }),
+            React.createElement("input", { type: "hidden", name: "_csrf", value: this.state.csrf }),
+            React.createElement("input", { type: "hidden", name: "_id", value: this.state.pawposts._id }),
+            React.createElement("input", { className: "makePawpostSubmit", type: "submit", value: "Update" })
+          )
+        )
+      );
+    }
+  }]);
+
+  return EditPawpost;
+}(React.Component);
+
 var loadDomosFromServer = function loadDomosFromServer(csrf) {
   sendAjax("GET", "/getDomos", null, function (data) {
     ReactDOM.render(React.createElement(DomoList, { domos: data.domos, csrf: csrf }), document.querySelector("#domos"));
@@ -427,23 +514,50 @@ var loadPawpostsFromServer = function loadPawpostsFromServer(csrf) {
   });
 };
 
+// const createFeedWindow = csrf => {
+//   ReactDOM.render(
+//     <PawpostForm csrf={csrf} />,
+//     document.querySelector("#makePawpost")
+//   );
+
+//   ReactDOM.render(
+//     <PawpostList pawposts={[]} csrf={csrf} />,
+//     document.querySelector("#pawposts")
+//   );
+
+//   loadPawpostsFromServer(csrf);
+// };
+
+// const createSettingsWindow = csrf => {
+//   ReactDOM.render(
+//     <ChangePassword csrf={csrf} />,
+//     document.querySelector("#makePawpost")
+//   );
+// };
+
 var setup = function setup(csrf) {
-  // ReactDOM.render(
-  //   <DomoForm csrf={csrf} />,
-  //   document.querySelector("#makeDomo")
-  // );
-
-  // ReactDOM.render(
-  //   <DomoList domos={[]} csrf={csrf} />,
-  //   document.querySelector("#domos")
-  // );
-
   ReactDOM.render(React.createElement(PawpostForm, { csrf: csrf }), document.querySelector("#makePawpost"));
 
   ReactDOM.render(React.createElement(PawpostList, { pawposts: [], csrf: csrf }), document.querySelector("#pawposts"));
 
-  // loadDomosFromServer(csrf);
   loadPawpostsFromServer(csrf);
+
+  // const feedButton = document.querySelector("#feedButton");
+  // const settingsButton = document.querySelector("#settingsButton");
+
+  // feedButton.addEventListener("click", e => {
+  //   e.preventDefault();
+  //   createFeedWindow(csrf);
+  //   return false;
+  // });
+
+  // settingsButton.addEventListener("click", e => {
+  //   e.preventDefault();
+  //   createSettingsWindow(csrf);
+  //   return false;
+  // });
+
+  // createFeedWindow(csrf); // default view
 };
 
 var getToken = function getToken() {
@@ -519,19 +633,22 @@ var ChangePassword = function ChangePassword(props) {
   );
 };
 
-var setup = function setup(csrf) {
-  ReactDOM.render(React.createElement(ChangePassword, { csrf: csrf }), document.querySelector("#settings"));
-};
+// const setup = function(csrf) {
+//   ReactDOM.render(
+//     <ChangePassword csrf={csrf} />,
+//     document.querySelector("#settings")
+//   );
+// };
 
-var getToken = function getToken() {
-  sendAjax("GET", "/getToken", null, function (result) {
-    setup(result.csrfToken);
-  });
-};
+// const getToken = () => {
+//   sendAjax("GET", "/getToken", null, result => {
+//     setup(result.csrfToken);
+//   });
+// };
 
-$(document).ready(function () {
-  getToken();
-});
+// $(document).ready(function() {
+//   getToken();
+// });
 "use strict";
 
 var handleError = function handleError(message) {

@@ -469,7 +469,7 @@ button {
 }
 
 .changePassword {
-  border: 1px solid black;
+  /* border: 1px solid black; */
   width: 550px;
   margin: 0 auto;
 }

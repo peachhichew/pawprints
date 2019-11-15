@@ -55,8 +55,8 @@ const handlePawpost = e => {
 
   $("#toastMessage").animate({ bottom: "hide" }, 250);
 
-  console.log($("#pawpostContent").val());
-  if ($("#pawpostContent").val() == "") {
+  console.log($("#content").val());
+  if ($("#content").val() == "") {
     handleError("Content is empty!");
     return false;
   }
@@ -121,7 +121,17 @@ const PawpostList = function(props) {
     let time = new Date(pawpost.createdDate);
 
     return (
-      <div key={pawpost._id} className="pawpost">
+      <div
+        key={pawpost._id}
+        className="pawpost"
+        onClick={e => {
+          ReactDOM.render(
+            <EditPawpost pawposts={pawpost} csrf={props.csrf} />,
+            e.target.querySelector("#renderModal")
+          );
+        }}
+      >
+        <div id="renderModal" />
         <img
           src="./assets/img/cookie.jpg"
           alt="profile pic"
@@ -320,6 +330,72 @@ class EditDomo extends React.Component {
   }
 }
 
+const handleEditPawpost = e => {
+  e.preventDefault();
+
+  $("#toastMessage").animate({ bottom: "hide" }, 250);
+
+  console.log("inside contentEdit", $("#contentEdit").val());
+  if ($("#contentEdit").val() == "") {
+    handleError("All fields are required");
+    return false;
+  }
+
+  sendAjax(
+    "POST",
+    $("#pawpostFormEdit").attr("action"),
+    $("#pawpostFormEdit").serialize(),
+    function() {
+      loadPawpostsFromServer();
+    }
+  );
+
+  return false;
+};
+
+class EditPawpost extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { isOpen: false, pawposts: props.pawposts, csrf: props.csrf };
+    this.toggleModal = this.toggleModal.bind(this);
+  }
+
+  toggleModal() {
+    this.setState({ isOpen: !this.state.isOpen });
+  }
+
+  render() {
+    console.log(this.state);
+
+    return (
+      <div>
+        <button onClick={this.toggleModal}>Edit Domo</button>
+
+        <Modal show={this.state.isOpen} onClose={this.toggleModal}>
+          <form
+            id="pawpostFormEdit"
+            onSubmit={handleEditPawpost}
+            name="pawpostFormEdit"
+            action="/updatePawpost"
+            method="POST"
+          >
+            <textarea
+              rows="5"
+              cols="60"
+              id="contentEdit"
+              placeholder={this.state.pawposts.content}
+              name="contentEdit"
+            ></textarea>
+            <input type="hidden" name="_csrf" value={this.state.csrf} />
+            <input type="hidden" name="_id" value={this.state.pawposts._id} />
+            <input className="makePawpostSubmit" type="submit" value="Update" />
+          </form>
+        </Modal>
+      </div>
+    );
+  }
+}
+
 const loadDomosFromServer = csrf => {
   sendAjax("GET", "/getDomos", null, data => {
     ReactDOM.render(
@@ -339,17 +415,28 @@ const loadPawpostsFromServer = csrf => {
   });
 };
 
+// const createFeedWindow = csrf => {
+//   ReactDOM.render(
+//     <PawpostForm csrf={csrf} />,
+//     document.querySelector("#makePawpost")
+//   );
+
+//   ReactDOM.render(
+//     <PawpostList pawposts={[]} csrf={csrf} />,
+//     document.querySelector("#pawposts")
+//   );
+
+//   loadPawpostsFromServer(csrf);
+// };
+
+// const createSettingsWindow = csrf => {
+//   ReactDOM.render(
+//     <ChangePassword csrf={csrf} />,
+//     document.querySelector("#makePawpost")
+//   );
+// };
+
 const setup = function(csrf) {
-  // ReactDOM.render(
-  //   <DomoForm csrf={csrf} />,
-  //   document.querySelector("#makeDomo")
-  // );
-
-  // ReactDOM.render(
-  //   <DomoList domos={[]} csrf={csrf} />,
-  //   document.querySelector("#domos")
-  // );
-
   ReactDOM.render(
     <PawpostForm csrf={csrf} />,
     document.querySelector("#makePawpost")
@@ -360,8 +447,24 @@ const setup = function(csrf) {
     document.querySelector("#pawposts")
   );
 
-  // loadDomosFromServer(csrf);
   loadPawpostsFromServer(csrf);
+
+  // const feedButton = document.querySelector("#feedButton");
+  // const settingsButton = document.querySelector("#settingsButton");
+
+  // feedButton.addEventListener("click", e => {
+  //   e.preventDefault();
+  //   createFeedWindow(csrf);
+  //   return false;
+  // });
+
+  // settingsButton.addEventListener("click", e => {
+  //   e.preventDefault();
+  //   createSettingsWindow(csrf);
+  //   return false;
+  // });
+
+  // createFeedWindow(csrf); // default view
 };
 
 const getToken = () => {

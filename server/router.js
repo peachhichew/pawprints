@@ -24,9 +24,7 @@ const router = app => {
     controllers.Account.signup
   );
   app.get("/logout", mid.requiresLogin, controllers.Account.logout);
-  // app.get("/maker", mid.requiresLogin, controllers.Domo.makerPage);
   app.get("/feed", mid.requiresLogin, controllers.Pawpost.feedPage);
-  // app.post("/maker", mid.requiresLogin, controllers.Domo.make);
   app.post("/feed", mid.requiresLogin, controllers.Pawpost.makePawpost);
   app.get("/settings", mid.requiresLogin, controllers.Account.settingsPage);
   app.post(
@@ -35,6 +33,11 @@ const router = app => {
     controllers.Account.changePass
   );
   app.post("/updateDomo", mid.requiresLogin, controllers.Domo.edit);
+  app.post(
+    "/updatePawpost",
+    mid.requiresLogin,
+    controllers.Pawpost.editPawpost
+  );
   app.get(
     "/",
     mid.requiresSecure,

@@ -38,21 +38,18 @@ const ChangePassword = props => {
         method="POST"
         className="changePasswordForm"
       >
-        {/* <label htmlFor="currentPassword">Current password: </label> */}
         <input
           id="currentPassword"
           type="password"
           name="currentPassword"
           placeholder="current password"
         />
-        {/* <label htmlFor="newPassword1">New Password: </label> */}
         <input
           id="newPassword1"
           type="password"
           name="newPassword1"
           placeholder="new password"
         />
-        {/* <label htmlFor="newPassword2">Retype new password: </label> */}
         <input
           id="newPassword2"
           type="password"
@@ -66,19 +63,19 @@ const ChangePassword = props => {
   );
 };
 
-const setup = function(csrf) {
-  ReactDOM.render(
-    <ChangePassword csrf={csrf} />,
-    document.querySelector("#settings")
-  );
-};
+// const setup = function(csrf) {
+//   ReactDOM.render(
+//     <ChangePassword csrf={csrf} />,
+//     document.querySelector("#settings")
+//   );
+// };
 
-const getToken = () => {
-  sendAjax("GET", "/getToken", null, result => {
-    setup(result.csrfToken);
-  });
-};
+// const getToken = () => {
+//   sendAjax("GET", "/getToken", null, result => {
+//     setup(result.csrfToken);
+//   });
+// };
 
-$(document).ready(function() {
-  getToken();
-});
+// $(document).ready(function() {
+//   getToken();
+// });

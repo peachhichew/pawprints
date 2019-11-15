@@ -11,6 +11,10 @@ const logout = (req, res) => {
   res.redirect("/");
 };
 
+const settingsPage = (req, res) => {
+  res.render("settings", { csrfToken: req.csrfToken() });
+};
+
 const login = (request, response) => {
   const req = request;
   const res = response;
@@ -97,9 +101,6 @@ const changePass = (request, response) => {
   req.body.currentPassword = `${req.body.currentPassword}`;
   req.body.newPassword1 = `${req.body.newPassword1}`;
   req.body.newPassword2 = `${req.body.newPassword2}`;
-  console.log("currentPassword:", req.body.currentPassword);
-  console.log("password 1:", req.body.newPassword1);
-  // console.log("password 2: ", req.body.newPassword2);
 
   if (
     !req.body.currentPassword ||
@@ -122,56 +123,24 @@ const changePass = (request, response) => {
       .json({ error: "Current and new passwords are the same" });
   }
 
-  Account.AccountModel.generateHash(req.body.currentPassword, (salt, hash) => {
-    // find currentPass
-    // find req.session.account.username in mongo
-    //// if doc.Password === hash, hash newPass
-    //// update doc.pass and doc.salt
-    //// save account
-    Account.AccountModel.findByUsername(
-      req.session.account.username,
-      (err, doc) => {
-        if (err) {
-          console.log(err);
-          return res.status(400).json({ error: "An error occurred" });
-        }
-
-        if (!doc) {
-          return res.status(400).json({ error: "Invalid username" });
-        }
-
-        console.log("hashed currentPassword:", hash);
-        console.log("doc.password", doc.password);
-
-        console.log("passwords match?", hash === doc.password);
-
-        if (hash === doc.password) {
-          Account.AccountModel.generateHash(
-            req.body.newPassword1,
-            (salt1, hash1) => {
-              let accountPromise;
-
-              let account = doc;
-              account.password = hash1;
-              account.salt = salt1;
-              accountPromise = account.save();
-
-              accountPromise.then(() => {
-                console.log("account: ", account);
-                res.json({ account });
-              });
-
-              accountPromise.catch(() => {
-                return res.status(400).json({ error: "An error occurred" });
-              });
-
-              return accountPromise;
+  Account.AccountModel.authenticate(
+    req.session.account.username,
+    req.body.currentPassword,
+    (err, doc) => {
+      Account.AccountModel.generateHash(req.body.newPassword1, (salt, hash) => {
+        return Account.AccountModel.updateOne(
+          { username: req.session.account.username },
+          { salt, password: hash },
+          err => {
+            if (err) {
+              return res.status(400).json({ err });
             }
-          );
-        }
-      }
-    );
-  });
+            return res.json({ message: "password successfully changed" });
+          }
+        );
+      });
+    }
+  );
 
   // see if current pwd matches the one in the db
   // take current pwd from the form, hash it, compare it to the one stored in the db
@@ -189,10 +158,6 @@ const getToken = (request, response) => {
   };
 
   res.json(csrfJSON);
-};
-
-const settingsPage = (req, res) => {
-  res.render("settings", { csrfToken: req.csrfToken() });
 };
 
 module.exports.loginPage = loginPage;
