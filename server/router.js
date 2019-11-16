@@ -26,7 +26,7 @@ const router = app => {
   app.get("/logout", mid.requiresLogin, controllers.Account.logout);
   app.get("/feed", mid.requiresLogin, controllers.Pawpost.feedPage);
   app.post("/feed", mid.requiresLogin, controllers.Pawpost.makePawpost);
-  app.get("/settings", mid.requiresLogin, controllers.Account.settingsPage);
+  // app.get("/settings", mid.requiresLogin, controllers.Account.settingsPage);
   app.post(
     "/changePassword",
     mid.requiresLogin,

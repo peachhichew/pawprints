@@ -16,11 +16,13 @@
 <body>
     <nav>
         <div class="navlink"><a href="/logout">log out</a></div>
-        <div class="navlink"><a href="/settings">settings</a></div>
-        <div class="navlink"><a href="/feed">feed</a></div>
+        <div class="navlink"><a id="settingsButton" href="/settings">settings</a></div>
+        <div class="navlink"><a id="feedButton" href="/feed">feed</a></div>
     </nav>
-    <h2 class="pageTitle">Settings</h2>
+    {{!-- <h2 class="pageTitle">Settings</h2>
     <section id="settings">
+    </section> --}}
+    <section id="content">
     </section>
     <div id="toastMessage">
         <h3><span id="errorMessage">Passwords do not match</span></h3>

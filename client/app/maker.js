@@ -1,3 +1,17 @@
+const CreatePawpostContainer = csrf => {
+  return (
+    <div>
+      <h2 className="pageTitle">Feed</h2>
+      <section id="makePawpost">
+        <PawpostForm csrf={csrf} />
+      </section>
+      <section id="pawposts">
+        <PawpostList pawposts={[]} csrf={csrf} />
+      </section>
+    </div>
+  );
+};
+
 const handleDomo = e => {
   e.preventDefault();
 
@@ -415,56 +429,36 @@ const loadPawpostsFromServer = csrf => {
   });
 };
 
-// const createFeedWindow = csrf => {
-//   ReactDOM.render(
-//     <PawpostForm csrf={csrf} />,
-//     document.querySelector("#makePawpost")
-//   );
-
-//   ReactDOM.render(
-//     <PawpostList pawposts={[]} csrf={csrf} />,
-//     document.querySelector("#pawposts")
-//   );
-
-//   loadPawpostsFromServer(csrf);
-// };
-
-// const createSettingsWindow = csrf => {
-//   ReactDOM.render(
-//     <ChangePassword csrf={csrf} />,
-//     document.querySelector("#makePawpost")
-//   );
-// };
-
-const setup = function(csrf) {
+const createFeedWindow = csrf => {
   ReactDOM.render(
-    <PawpostForm csrf={csrf} />,
-    document.querySelector("#makePawpost")
-  );
-
-  ReactDOM.render(
-    <PawpostList pawposts={[]} csrf={csrf} />,
-    document.querySelector("#pawposts")
+    <CreatePawpostContainer pawposts={[]} csrf={csrf} />,
+    document.querySelector("#content")
   );
 
   loadPawpostsFromServer(csrf);
+};
 
-  // const feedButton = document.querySelector("#feedButton");
-  // const settingsButton = document.querySelector("#settingsButton");
+const createSettingsWindow = csrf => {
+  ReactDOM.render(
+    <ChangePassword csrf={csrf} />,
+    document.querySelector("#content")
+  );
+};
 
-  // feedButton.addEventListener("click", e => {
-  //   e.preventDefault();
-  //   createFeedWindow(csrf);
-  //   return false;
-  // });
-
-  // settingsButton.addEventListener("click", e => {
-  //   e.preventDefault();
-  //   createSettingsWindow(csrf);
-  //   return false;
-  // });
-
-  // createFeedWindow(csrf); // default view
+const setup = function(csrf) {
+  const feedButton = document.querySelector("#feedButton");
+  const settingsButton = document.querySelector("#settingsButton");
+  feedButton.addEventListener("click", e => {
+    e.preventDefault();
+    createFeedWindow(csrf);
+    return false;
+  });
+  settingsButton.addEventListener("click", e => {
+    e.preventDefault();
+    createSettingsWindow(csrf);
+    return false;
+  });
+  createFeedWindow(csrf); // default view
 };
 
 const getToken = () => {

@@ -8,6 +8,28 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var CreatePawpostContainer = function CreatePawpostContainer(csrf) {
+  return React.createElement(
+    "div",
+    null,
+    React.createElement(
+      "h2",
+      { className: "pageTitle" },
+      "Feed"
+    ),
+    React.createElement(
+      "section",
+      { id: "makePawpost" },
+      React.createElement(PawpostForm, { csrf: csrf })
+    ),
+    React.createElement(
+      "section",
+      { id: "pawposts" },
+      React.createElement(PawpostList, { pawposts: [], csrf: csrf })
+    )
+  );
+};
+
 var handleDomo = function handleDomo(e) {
   e.preventDefault();
 
@@ -514,50 +536,30 @@ var loadPawpostsFromServer = function loadPawpostsFromServer(csrf) {
   });
 };
 
-// const createFeedWindow = csrf => {
-//   ReactDOM.render(
-//     <PawpostForm csrf={csrf} />,
-//     document.querySelector("#makePawpost")
-//   );
-
-//   ReactDOM.render(
-//     <PawpostList pawposts={[]} csrf={csrf} />,
-//     document.querySelector("#pawposts")
-//   );
-
-//   loadPawpostsFromServer(csrf);
-// };
-
-// const createSettingsWindow = csrf => {
-//   ReactDOM.render(
-//     <ChangePassword csrf={csrf} />,
-//     document.querySelector("#makePawpost")
-//   );
-// };
-
-var setup = function setup(csrf) {
-  ReactDOM.render(React.createElement(PawpostForm, { csrf: csrf }), document.querySelector("#makePawpost"));
-
-  ReactDOM.render(React.createElement(PawpostList, { pawposts: [], csrf: csrf }), document.querySelector("#pawposts"));
+var createFeedWindow = function createFeedWindow(csrf) {
+  ReactDOM.render(React.createElement(CreatePawpostContainer, { pawposts: [], csrf: csrf }), document.querySelector("#content"));
 
   loadPawpostsFromServer(csrf);
+};
 
-  // const feedButton = document.querySelector("#feedButton");
-  // const settingsButton = document.querySelector("#settingsButton");
+var createSettingsWindow = function createSettingsWindow(csrf) {
+  ReactDOM.render(React.createElement(ChangePassword, { csrf: csrf }), document.querySelector("#content"));
+};
 
-  // feedButton.addEventListener("click", e => {
-  //   e.preventDefault();
-  //   createFeedWindow(csrf);
-  //   return false;
-  // });
-
-  // settingsButton.addEventListener("click", e => {
-  //   e.preventDefault();
-  //   createSettingsWindow(csrf);
-  //   return false;
-  // });
-
-  // createFeedWindow(csrf); // default view
+var setup = function setup(csrf) {
+  var feedButton = document.querySelector("#feedButton");
+  var settingsButton = document.querySelector("#settingsButton");
+  feedButton.addEventListener("click", function (e) {
+    e.preventDefault();
+    createFeedWindow(csrf);
+    return false;
+  });
+  settingsButton.addEventListener("click", function (e) {
+    e.preventDefault();
+    createSettingsWindow(csrf);
+    return false;
+  });
+  createFeedWindow(csrf); // default view
 };
 
 var getToken = function getToken() {
@@ -593,62 +595,58 @@ var handleChangePassword = function handleChangePassword(e) {
 var ChangePassword = function ChangePassword(props) {
   return React.createElement(
     "div",
-    { className: "changePassword" },
+    null,
     React.createElement(
-      "h3",
-      null,
-      "Change password"
+      "h2",
+      { className: "pageTitle" },
+      "Settings"
     ),
     React.createElement(
-      "form",
-      {
-        id: "changePasswordForm",
-        onSubmit: handleChangePassword,
-        name: "changePasswordForm",
-        action: "/changePassword",
-        method: "POST",
-        className: "changePasswordForm"
-      },
-      React.createElement("input", {
-        id: "currentPassword",
-        type: "password",
-        name: "currentPassword",
-        placeholder: "current password"
-      }),
-      React.createElement("input", {
-        id: "newPassword1",
-        type: "password",
-        name: "newPassword1",
-        placeholder: "new password"
-      }),
-      React.createElement("input", {
-        id: "newPassword2",
-        type: "password",
-        name: "newPassword2",
-        placeholder: "retype new password"
-      }),
-      React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
-      React.createElement("input", { className: "changePasswordSubmit", type: "submit", value: "Change" })
+      "div",
+      { className: "changePassword" },
+      React.createElement(
+        "h3",
+        null,
+        "Change password"
+      ),
+      React.createElement(
+        "form",
+        {
+          id: "changePasswordForm",
+          onSubmit: handleChangePassword,
+          name: "changePasswordForm",
+          action: "/changePassword",
+          method: "POST",
+          className: "changePasswordForm"
+        },
+        React.createElement("input", {
+          id: "currentPassword",
+          type: "password",
+          name: "currentPassword",
+          placeholder: "current password"
+        }),
+        React.createElement("input", {
+          id: "newPassword1",
+          type: "password",
+          name: "newPassword1",
+          placeholder: "new password"
+        }),
+        React.createElement("input", {
+          id: "newPassword2",
+          type: "password",
+          name: "newPassword2",
+          placeholder: "retype new password"
+        }),
+        React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
+        React.createElement("input", {
+          className: "changePasswordSubmit",
+          type: "submit",
+          value: "Change"
+        })
+      )
     )
   );
 };
-
-// const setup = function(csrf) {
-//   ReactDOM.render(
-//     <ChangePassword csrf={csrf} />,
-//     document.querySelector("#settings")
-//   );
-// };
-
-// const getToken = () => {
-//   sendAjax("GET", "/getToken", null, result => {
-//     setup(result.csrfToken);
-//   });
-// };
-
-// $(document).ready(function() {
-//   getToken();
-// });
 "use strict";
 
 var handleError = function handleError(message) {
