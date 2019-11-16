@@ -442,8 +442,14 @@ button {
 
 .contentInfo {
   /* border: 1px solid black; */
-  width: 300px;
+  border: 1px solid peachpuff;
+  width: 500px;
   padding-left: 10px;
+}
+
+.fa,
+.fa-pencil {
+  color: #777;
 }
 
 .statusUpdated {

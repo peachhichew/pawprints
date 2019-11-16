@@ -30,61 +30,6 @@ var CreatePawpostContainer = function CreatePawpostContainer(csrf) {
   );
 };
 
-var handleDomo = function handleDomo(e) {
-  e.preventDefault();
-
-  $("#domoMessage").animate({ width: "hide" }, 350);
-  if ($("#domoName").val() == "" || $("#domoAge").val() == "" || $("#domoFavoriteFood").val() == "") {
-    handleError("RAWR! All fields are required");
-    return false;
-  }
-
-  sendAjax("POST", $("#domoForm").attr("action"), $("#domoForm").serialize(), function () {
-    loadDomosFromServer();
-  });
-
-  return false;
-};
-
-var DomoForm = function DomoForm(props) {
-  return React.createElement(
-    "form",
-    {
-      id: "domoForm",
-      onSubmit: handleDomo,
-      name: "domoForm",
-      action: "/maker",
-      method: "POST",
-      className: "domoForm"
-    },
-    React.createElement(
-      "label",
-      { htmlFor: "name" },
-      "Name: "
-    ),
-    React.createElement("input", { id: "domoName", type: "text", name: "name", placeholder: "Domo Name" }),
-    React.createElement(
-      "label",
-      { htmlFor: "age" },
-      "Age: "
-    ),
-    React.createElement("input", { id: "domoAge", type: "text", name: "age", placeholder: "Domo Age" }),
-    React.createElement(
-      "label",
-      { htmlFor: "favoriteFood" },
-      "Favorite food: "
-    ),
-    React.createElement("input", {
-      id: "domoFavoriteFood",
-      type: "text",
-      name: "favoriteFood",
-      placeholder: "Domo Favorite Food"
-    }),
-    React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
-    React.createElement("input", { className: "makeDomoSubmit", type: "submit", value: "Make Domo" })
-  );
-};
-
 var handlePawpost = function handlePawpost(e) {
   e.preventDefault();
 
@@ -201,7 +146,8 @@ var PawpostList = function PawpostList(props) {
           { className: "pawpostContentImg" },
           pawpost.contentImg
         )
-      )
+      ),
+      React.createElement("i", { className: "fa fa-pencil", "aria-hidden": "true" })
     );
   });
 
@@ -209,64 +155,6 @@ var PawpostList = function PawpostList(props) {
     "div",
     { className: "pawpostList" },
     pawpostNodes.reverse()
-  );
-};
-
-var DomoList = function DomoList(props) {
-  if (props.domos.length === 0) {
-    return React.createElement(
-      "div",
-      { className: "domosList" },
-      React.createElement(
-        "h3",
-        { className: "emptyDomo" },
-        "No Domos yet"
-      )
-    );
-  }
-
-  // make a GET request to get another csrf token back
-  var domoNodes = props.domos.map(function (domo) {
-    return React.createElement(
-      "div",
-      {
-        key: domo._id,
-        className: "domo",
-        onClick: function onClick(e) {
-          ReactDOM.render(React.createElement(EditDomo, { domos: domo, csrf: props.csrf }), e.target.querySelector("#renderModal"));
-        }
-      },
-      React.createElement("div", { id: "renderModal" }),
-      React.createElement("img", {
-        src: "/assets/img/domoface.jpeg",
-        alt: "domo face",
-        className: "domoFace"
-      }),
-      React.createElement(
-        "h3",
-        { className: "domoName" },
-        "Name: ",
-        domo.name
-      ),
-      React.createElement(
-        "h3",
-        { className: "domoAge" },
-        "Age: ",
-        domo.age
-      ),
-      React.createElement(
-        "h3",
-        { className: "domoFavoriteFood" },
-        "Favorite food: ",
-        domo.favoriteFood
-      )
-    );
-  });
-
-  return React.createElement(
-    "div",
-    { className: "domoList" },
-    domoNodes
   );
 };
 
@@ -332,117 +220,6 @@ var Modal = function (_React$Component) {
   return Modal;
 }(React.Component);
 
-var handleEditDomo = function handleEditDomo(e) {
-  e.preventDefault();
-
-  $("#domoMessage").animate({ width: "hide" }, 350);
-  if ($("#domoNameEdit").val() == "" || $("#domoAgeEdit").val() == "" || $("#domoFavoriteFoodEdit").val() == "") {
-    handleError("RAWR! All fields are required");
-    return false;
-  }
-
-  sendAjax("POST", $("#domoFormEdit").attr("action"), $("#domoFormEdit").serialize(), function () {
-    loadDomosFromServer();
-  });
-
-  return false;
-};
-
-var EditDomo = function (_React$Component2) {
-  _inherits(EditDomo, _React$Component2);
-
-  function EditDomo(props) {
-    _classCallCheck(this, EditDomo);
-
-    var _this2 = _possibleConstructorReturn(this, (EditDomo.__proto__ || Object.getPrototypeOf(EditDomo)).call(this, props));
-
-    _this2.state = { isOpen: false, domos: props.domos, csrf: props.csrf };
-    _this2.toggleModal = _this2.toggleModal.bind(_this2);
-    return _this2;
-  }
-
-  _createClass(EditDomo, [{
-    key: "toggleModal",
-    value: function toggleModal() {
-      this.setState({ isOpen: !this.state.isOpen });
-    }
-  }, {
-    key: "render",
-    value: function render() {
-      console.log(this.state);
-
-      return React.createElement(
-        "div",
-        null,
-        React.createElement(
-          "button",
-          { onClick: this.toggleModal },
-          "Edit Domo"
-        ),
-        React.createElement(
-          Modal,
-          { show: this.state.isOpen, onClose: this.toggleModal },
-          React.createElement(
-            "form",
-            {
-              id: "domoFormEdit",
-              onSubmit: handleEditDomo,
-              name: "domoForm",
-              action: "/updateDomo",
-              method: "POST"
-            },
-            React.createElement(
-              "label",
-              { htmlFor: "name" },
-              "Name: "
-            ),
-            React.createElement("input", {
-              id: "domoNameEdit",
-              type: "text",
-              name: "name",
-              placeholder: this.state.domos.name
-            }),
-            React.createElement("br", null),
-            React.createElement(
-              "label",
-              { htmlFor: "age" },
-              "Age: "
-            ),
-            React.createElement("input", {
-              id: "domoAgeEdit",
-              type: "text",
-              name: "age",
-              placeholder: this.state.domos.age
-            }),
-            React.createElement("br", null),
-            React.createElement(
-              "label",
-              { htmlFor: "favoriteFood" },
-              "Favorite food: "
-            ),
-            React.createElement("input", {
-              id: "domoFavoriteFoodEdit",
-              type: "text",
-              name: "favoriteFood",
-              placeholder: this.state.domos.favoriteFood
-            }),
-            React.createElement("br", null),
-            React.createElement("input", { type: "hidden", name: "_csrf", value: this.state.csrf }),
-            React.createElement("input", { type: "hidden", name: "_id", value: this.state.domos._id }),
-            React.createElement("input", {
-              className: "makeDomoSubmit",
-              type: "submit",
-              value: "Update Domo"
-            })
-          )
-        )
-      );
-    }
-  }]);
-
-  return EditDomo;
-}(React.Component);
-
 var handleEditPawpost = function handleEditPawpost(e) {
   e.preventDefault();
 
@@ -461,17 +238,17 @@ var handleEditPawpost = function handleEditPawpost(e) {
   return false;
 };
 
-var EditPawpost = function (_React$Component3) {
-  _inherits(EditPawpost, _React$Component3);
+var EditPawpost = function (_React$Component2) {
+  _inherits(EditPawpost, _React$Component2);
 
   function EditPawpost(props) {
     _classCallCheck(this, EditPawpost);
 
-    var _this3 = _possibleConstructorReturn(this, (EditPawpost.__proto__ || Object.getPrototypeOf(EditPawpost)).call(this, props));
+    var _this2 = _possibleConstructorReturn(this, (EditPawpost.__proto__ || Object.getPrototypeOf(EditPawpost)).call(this, props));
 
-    _this3.state = { isOpen: false, pawposts: props.pawposts, csrf: props.csrf };
-    _this3.toggleModal = _this3.toggleModal.bind(_this3);
-    return _this3;
+    _this2.state = { isOpen: false, pawposts: props.pawposts, csrf: props.csrf };
+    _this2.toggleModal = _this2.toggleModal.bind(_this2);
+    return _this2;
   }
 
   _createClass(EditPawpost, [{
@@ -522,12 +299,6 @@ var EditPawpost = function (_React$Component3) {
 
   return EditPawpost;
 }(React.Component);
-
-var loadDomosFromServer = function loadDomosFromServer(csrf) {
-  sendAjax("GET", "/getDomos", null, function (data) {
-    ReactDOM.render(React.createElement(DomoList, { domos: data.domos, csrf: csrf }), document.querySelector("#domos"));
-  });
-};
 
 var loadPawpostsFromServer = function loadPawpostsFromServer(csrf) {
   console.log("inside loadPawpostsFromServer");
