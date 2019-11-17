@@ -103,13 +103,7 @@ var PawpostList = function PawpostList(props) {
 
     return React.createElement(
       "div",
-      {
-        key: pawpost._id,
-        className: "pawpost",
-        onClick: function onClick(e) {
-          ReactDOM.render(React.createElement(EditPawpost, { pawposts: pawpost, csrf: props.csrf }), e.target.querySelector("#renderModal"));
-        }
-      },
+      { key: pawpost._id, className: "pawpost" },
       React.createElement("div", { id: "renderModal" }),
       React.createElement("img", {
         src: "./assets/img/cookie.jpg",
@@ -147,7 +141,7 @@ var PawpostList = function PawpostList(props) {
           pawpost.contentImg
         )
       ),
-      React.createElement("i", { className: "fa fa-pencil", "aria-hidden": "true" })
+      React.createElement(EditPawpost, { pawposts: pawpost, csrf: props.csrf })
     );
   });
 
@@ -175,43 +169,27 @@ var Modal = function (_React$Component) {
         return null;
       }
 
-      // The gray background
-      var backdropStyle = {
-        position: "fixed",
-        top: 0,
-        bottom: 0,
-        left: 0,
-        right: 0,
-        backgroundColor: "rgba(0,0,0,0.3)",
-        padding: 50
-      };
-
-      // The modal "window"
-      var modalStyle = {
-        backgroundColor: "#fff",
-        borderRadius: 5,
-        maxWidth: 500,
-        minHeight: 300,
-        margin: "0 auto",
-        padding: 30
-      };
-
       return React.createElement(
         "div",
-        { className: "backdrop", style: { backdropStyle: backdropStyle } },
+        { className: "backdrop" },
         React.createElement(
           "div",
-          { className: "modal", style: { modalStyle: modalStyle } },
-          this.props.children,
+          { className: "modal" },
           React.createElement(
             "div",
             { className: "footer" },
             React.createElement(
+              "h3",
+              null,
+              "Edit Pawpost"
+            ),
+            React.createElement(
               "button",
-              { onClick: this.props.onClose },
-              "Close"
+              { onClick: this.props.onClose, className: "closeButton" },
+              React.createElement("i", { className: "fa fa-times fa-lg", "aria-hidden": "true" })
             )
-          )
+          ),
+          this.props.children
         )
       );
     }
@@ -266,8 +244,8 @@ var EditPawpost = function (_React$Component2) {
         null,
         React.createElement(
           "button",
-          { onClick: this.toggleModal },
-          "Edit Domo"
+          { onClick: this.toggleModal, className: "editButton" },
+          React.createElement("i", { className: "fa fa-pencil", "aria-hidden": "true" })
         ),
         React.createElement(
           Modal,
@@ -283,7 +261,7 @@ var EditPawpost = function (_React$Component2) {
             },
             React.createElement("textarea", {
               rows: "5",
-              cols: "60",
+              cols: "68",
               id: "contentEdit",
               placeholder: this.state.pawposts.content,
               name: "contentEdit"
@@ -445,4 +423,22 @@ var sendAjax = function sendAjax(type, action, data, success) {
       handleError(messageObj.error);
     }
   });
+};
+
+var changeBackground = function changeBackground() {
+  var imgs = [];
+  imgs[0] = "alexandru-zdrobau-_STvosrG-pw-unsplash.jpg";
+  imgs[1] = "clement-falize-b9K_LTz079c-unsplash.jpg";
+  imgs[2] = "jf-brou-915UJQaxtrk-unsplash.jpg";
+  imgs[3] = "krista-mangulsone-9gz3wfHr65U-unsplash.jpg";
+  imgs[4] = "ludemeula-fernandes-9UUoGaaHtNE-unsplash.jpg";
+  imgs[5] = "mikhail-vasilyev-IFxjDdqK_0U-unsplash.jpg";
+  var rand = Math.floor(Math.random() * imgs.length);
+
+  console.log(rand);
+
+  console.log("./../hosted/img/" + imgs[rand]);
+  // /Users/sky/Documents/School/IGME-430/pawprints/hosted/img/alexandru-zdrobau-_STvosrG-pw-unsplash.jpg
+  // /Users/sky/Documents/School/IGME-430/pawprints/client/helper/helper.js
+  return "./../hosted/img/" + imgs[rand];
 };

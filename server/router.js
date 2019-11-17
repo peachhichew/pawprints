@@ -44,6 +44,12 @@ const router = app => {
     mid.requiresLogout,
     controllers.Account.loginPage
   );
+
+  app.get("*", function(req, res) {
+    // res.sendFile(path.join(__dirname + '/page404.html'));
+    // res.send("404: Page not Found", 404);
+    res.redirect("/");
+  });
 };
 
 module.exports = router;

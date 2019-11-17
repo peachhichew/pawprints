@@ -9,7 +9,31 @@ body {
   overflow-x: hidden;
   /* font-family: 'Open Sans', sans-serif; */
   font-family: "Karla", sans-serif;
-  background-color: #f9f9f9;
+}
+
+#bg::after {
+  content: " ";
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.3;
+  background-color: #000;
+}
+
+#bg {
+  background-image: url("./img/krista-mangulsone-9gz3wfHr65U-unsplash.jpg");
+  /* background-image: url("./img/clement-falize-b9K_LTz079c-unsplash.jpg"); */
+  background-size: cover;
+  z-index: 1;
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 50;
+  width: 100%;
+  height: 100%;
 }
 
 #logo {
@@ -23,7 +47,8 @@ body {
 nav {
   width: 100%;
   height: 50px;
-  /* background-color: #55acee; */
+  background-color: #fcfcfc;
+  box-shadow: 10px 0px 10px 3px rgba(0, 0, 0, 0.2);
 }
 
 nav:nth-child(1) {
@@ -80,6 +105,8 @@ nav:nth-child(1) {
   resize: none;
   font-size: 14px;
   border-color: #dedede;
+  position: relative;
+  z-index: 999;
 }
 
 .makePawpostSubmit {
@@ -145,6 +172,7 @@ nav:nth-child(1) {
   width: 350px;
   margin: 0 auto;
   padding-top: 200px;
+  color: #f8f8f8;
 }
 
 .mainForm {
@@ -441,15 +469,67 @@ button {
 }
 
 .contentInfo {
-  /* border: 1px solid black; */
-  border: 1px solid peachpuff;
   width: 500px;
   padding-left: 10px;
 }
 
-.fa,
-.fa-pencil {
+.editButton {
   color: #777;
+}
+
+.editButton:hover {
+  color: #212121;
+}
+
+.editButton,
+.closeButton {
+  padding: 0;
+  float: right;
+}
+
+.footer {
+  display: block;
+  /* padding: 10px 0; */
+}
+
+.closeButton {
+  position: absolute;
+  left: 520px;
+  top: 20px;
+}
+
+.closeButton:hover {
+  color: #d5300d;
+}
+
+#contentEdit {
+  /* margin: 20px 0; */
+  font-size: 14px;
+  padding-left: 10px;
+  padding-top: 10px;
+  /* margin-left: 10px; */
+  margin-bottom: 15px;
+  resize: none;
+  border-color: #dedede;
+}
+
+.backdrop {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+  padding: 50px;
+}
+
+.modal {
+  background-color: #fff;
+  /* border-radius: 5px; */
+  max-width: 500;
+  /* min-height: 300; */
+  margin: 0 auto;
+  padding: 30px;
 }
 
 .statusUpdated {
@@ -472,6 +552,7 @@ button {
   width: 550px;
   margin: 0 auto;
   padding-bottom: 20px;
+  padding-top: 20px;
 }
 
 .changePassword {

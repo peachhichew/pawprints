@@ -83,16 +83,7 @@ const PawpostList = function(props) {
     let time = new Date(pawpost.createdDate);
 
     return (
-      <div
-        key={pawpost._id}
-        className="pawpost"
-        onClick={e => {
-          ReactDOM.render(
-            <EditPawpost pawposts={pawpost} csrf={props.csrf} />,
-            e.target.querySelector("#renderModal")
-          );
-        }}
-      >
+      <div key={pawpost._id} className="pawpost">
         <div id="renderModal" />
         <img
           src="./assets/img/cookie.jpg"
@@ -117,7 +108,7 @@ const PawpostList = function(props) {
           <p className="pawpostContent">{pawpost.content}</p>
           <h3 className="pawpostContentImg">{pawpost.contentImg}</h3>
         </div>
-        <i className="fa fa-pencil" aria-hidden="true"></i>
+        <EditPawpost pawposts={pawpost} csrf={props.csrf} />
       </div>
     );
   });
@@ -132,34 +123,16 @@ class Modal extends React.Component {
       return null;
     }
 
-    // The gray background
-    const backdropStyle = {
-      position: "fixed",
-      top: 0,
-      bottom: 0,
-      left: 0,
-      right: 0,
-      backgroundColor: "rgba(0,0,0,0.3)",
-      padding: 50
-    };
-
-    // The modal "window"
-    const modalStyle = {
-      backgroundColor: "#fff",
-      borderRadius: 5,
-      maxWidth: 500,
-      minHeight: 300,
-      margin: "0 auto",
-      padding: 30
-    };
-
     return (
-      <div className="backdrop" style={{ backdropStyle }}>
-        <div className="modal" style={{ modalStyle }}>
-          {this.props.children}
+      <div className="backdrop">
+        <div className="modal">
           <div className="footer">
-            <button onClick={this.props.onClose}>Close</button>
+            <h3>Edit Pawpost</h3>
+            <button onClick={this.props.onClose} className="closeButton">
+              <i className="fa fa-times fa-lg" aria-hidden="true"></i>
+            </button>
           </div>
+          {this.props.children}
         </div>
       </div>
     );
@@ -205,7 +178,9 @@ class EditPawpost extends React.Component {
 
     return (
       <div>
-        <button onClick={this.toggleModal}>Edit Domo</button>
+        <button onClick={this.toggleModal} className="editButton">
+          <i className="fa fa-pencil" aria-hidden="true"></i>
+        </button>
 
         <Modal show={this.state.isOpen} onClose={this.toggleModal}>
           <form
@@ -217,7 +192,7 @@ class EditPawpost extends React.Component {
           >
             <textarea
               rows="5"
-              cols="60"
+              cols="68"
               id="contentEdit"
               placeholder={this.state.pawposts.content}
               name="contentEdit"

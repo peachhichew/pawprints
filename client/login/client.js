@@ -54,7 +54,9 @@ const LoginWindow = props => {
   return (
     <div>
       <div className="slogan">
-        <h1>Pawprints</h1>
+        <h1>
+          P<i className="fa fa-paw" aria-hidden="true"></i>wprints
+        </h1>
         <p>The social media platform for animals.</p>
       </div>
       <form
@@ -78,7 +80,9 @@ const SignupWindow = props => {
   return (
     <div>
       <div className="slogan">
-        <h1>Pawprints</h1>
+        <h1>
+          P<i className="fa fa-paw" aria-hidden="true"></i>wprints
+        </h1>
         <p>The social media platform for animals.</p>
       </div>
       <form
@@ -145,4 +149,5 @@ const getToken = () => {
 
 $(document).ready(function() {
   getToken();
+  // $("#bg").css("background-image", `url(${changeBackground()})`);
 });
