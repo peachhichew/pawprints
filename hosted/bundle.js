@@ -8,58 +8,26 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var handleDomo = function handleDomo(e) {
-  e.preventDefault();
-
-  $("#domoMessage").animate({ width: "hide" }, 350);
-  if ($("#domoName").val() == "" || $("#domoAge").val() == "" || $("#domoFavoriteFood").val() == "") {
-    handleError("RAWR! All fields are required");
-    return false;
-  }
-
-  sendAjax("POST", $("#domoForm").attr("action"), $("#domoForm").serialize(), function () {
-    loadDomosFromServer();
-  });
-
-  return false;
-};
-
-var DomoForm = function DomoForm(props) {
+var CreatePawpostContainer = function CreatePawpostContainer(props) {
+  console.log("csrf", props.csrf);
   return React.createElement(
-    "form",
-    {
-      id: "domoForm",
-      onSubmit: handleDomo,
-      name: "domoForm",
-      action: "/maker",
-      method: "POST",
-      className: "domoForm"
-    },
+    "div",
+    null,
     React.createElement(
-      "label",
-      { htmlFor: "name" },
-      "Name: "
+      "h2",
+      { className: "pageTitle" },
+      "Feed"
     ),
-    React.createElement("input", { id: "domoName", type: "text", name: "name", placeholder: "Domo Name" }),
     React.createElement(
-      "label",
-      { htmlFor: "age" },
-      "Age: "
+      "section",
+      { id: "makePawpost" },
+      React.createElement(PawpostForm, { csrf: props.csrf })
     ),
-    React.createElement("input", { id: "domoAge", type: "text", name: "age", placeholder: "Domo Age" }),
     React.createElement(
-      "label",
-      { htmlFor: "favoriteFood" },
-      "Favorite food: "
-    ),
-    React.createElement("input", {
-      id: "domoFavoriteFood",
-      type: "text",
-      name: "favoriteFood",
-      placeholder: "Domo Favorite Food"
-    }),
-    React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
-    React.createElement("input", { className: "makeDomoSubmit", type: "submit", value: "Make Domo" })
+      "section",
+      { id: "pawposts" },
+      React.createElement(PawpostList, { pawposts: [], csrf: props.csrf })
+    )
   );
 };
 
@@ -68,8 +36,10 @@ var handlePawpost = function handlePawpost(e) {
 
   $("#toastMessage").animate({ bottom: "hide" }, 250);
 
-  console.log($("#content").val());
-  if ($("#content").val() == "") {
+  console.log("postContent: ", $("#postContent").val());
+
+  console.log("content empty?", $("#postContent").val() == "");
+  if ($("#postContent").val() == "") {
     handleError("Content is empty!");
     return false;
   }
@@ -78,16 +48,17 @@ var handlePawpost = function handlePawpost(e) {
     loadPawpostsFromServer();
   });
 
-  $("#content").val("");
+  $("#postContent").val("");
 
   return false;
 };
 
 var PawpostForm = function PawpostForm(props) {
+  console.log("props.csrf", props.csrf);
   return React.createElement(
     "div",
     { className: "formLayout" },
-    React.createElement("img", { className: "profilePic", src: "./assets/img/cookie.jpg" }),
+    React.createElement("img", { className: "profilePic", src: "./assets/img/propic.jpg" }),
     React.createElement(
       "form",
       {
@@ -101,9 +72,9 @@ var PawpostForm = function PawpostForm(props) {
       React.createElement("textarea", {
         rows: "5",
         cols: "60",
-        id: "content",
+        id: "postContent",
         placeholder: "What's on your mind?",
-        name: "content"
+        name: "postContent"
       }),
       React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
       React.createElement("input", { className: "makePawpostSubmit", type: "submit", value: "Post" })
@@ -136,16 +107,10 @@ var PawpostList = function PawpostList(props) {
 
     return React.createElement(
       "div",
-      {
-        key: pawpost._id,
-        className: "pawpost",
-        onClick: function onClick(e) {
-          ReactDOM.render(React.createElement(EditPawpost, { pawposts: pawpost, csrf: props.csrf }), e.target.querySelector("#renderModal"));
-        }
-      },
+      { key: pawpost._id, className: "pawpost" },
       React.createElement("div", { id: "renderModal" }),
       React.createElement("img", {
-        src: "./assets/img/cookie.jpg",
+        src: "./assets/img/propic.jpg",
         alt: "profile pic",
         className: "profilePic"
       }),
@@ -179,7 +144,8 @@ var PawpostList = function PawpostList(props) {
           { className: "pawpostContentImg" },
           pawpost.contentImg
         )
-      )
+      ),
+      React.createElement(EditPawpost, { pawposts: pawpost, csrf: props.csrf })
     );
   });
 
@@ -187,64 +153,6 @@ var PawpostList = function PawpostList(props) {
     "div",
     { className: "pawpostList" },
     pawpostNodes.reverse()
-  );
-};
-
-var DomoList = function DomoList(props) {
-  if (props.domos.length === 0) {
-    return React.createElement(
-      "div",
-      { className: "domosList" },
-      React.createElement(
-        "h3",
-        { className: "emptyDomo" },
-        "No Domos yet"
-      )
-    );
-  }
-
-  // make a GET request to get another csrf token back
-  var domoNodes = props.domos.map(function (domo) {
-    return React.createElement(
-      "div",
-      {
-        key: domo._id,
-        className: "domo",
-        onClick: function onClick(e) {
-          ReactDOM.render(React.createElement(EditDomo, { domos: domo, csrf: props.csrf }), e.target.querySelector("#renderModal"));
-        }
-      },
-      React.createElement("div", { id: "renderModal" }),
-      React.createElement("img", {
-        src: "/assets/img/domoface.jpeg",
-        alt: "domo face",
-        className: "domoFace"
-      }),
-      React.createElement(
-        "h3",
-        { className: "domoName" },
-        "Name: ",
-        domo.name
-      ),
-      React.createElement(
-        "h3",
-        { className: "domoAge" },
-        "Age: ",
-        domo.age
-      ),
-      React.createElement(
-        "h3",
-        { className: "domoFavoriteFood" },
-        "Favorite food: ",
-        domo.favoriteFood
-      )
-    );
-  });
-
-  return React.createElement(
-    "div",
-    { className: "domoList" },
-    domoNodes
   );
 };
 
@@ -265,160 +173,33 @@ var Modal = function (_React$Component) {
         return null;
       }
 
-      // The gray background
-      var backdropStyle = {
-        position: "fixed",
-        top: 0,
-        bottom: 0,
-        left: 0,
-        right: 0,
-        backgroundColor: "rgba(0,0,0,0.3)",
-        padding: 50
-      };
-
-      // The modal "window"
-      var modalStyle = {
-        backgroundColor: "#fff",
-        borderRadius: 5,
-        maxWidth: 500,
-        minHeight: 300,
-        margin: "0 auto",
-        padding: 30
-      };
-
       return React.createElement(
         "div",
-        { className: "backdrop", style: { backdropStyle: backdropStyle } },
+        { className: "backdrop" },
         React.createElement(
           "div",
-          { className: "modal", style: { modalStyle: modalStyle } },
-          this.props.children,
+          { className: "modal" },
           React.createElement(
             "div",
             { className: "footer" },
             React.createElement(
+              "h3",
+              null,
+              "Edit Pawpost"
+            ),
+            React.createElement(
               "button",
-              { onClick: this.props.onClose },
-              "Close"
+              { onClick: this.props.onClose, className: "closeButton" },
+              React.createElement("i", { className: "fa fa-times fa-lg", "aria-hidden": "true" })
             )
-          )
+          ),
+          this.props.children
         )
       );
     }
   }]);
 
   return Modal;
-}(React.Component);
-
-var handleEditDomo = function handleEditDomo(e) {
-  e.preventDefault();
-
-  $("#domoMessage").animate({ width: "hide" }, 350);
-  if ($("#domoNameEdit").val() == "" || $("#domoAgeEdit").val() == "" || $("#domoFavoriteFoodEdit").val() == "") {
-    handleError("RAWR! All fields are required");
-    return false;
-  }
-
-  sendAjax("POST", $("#domoFormEdit").attr("action"), $("#domoFormEdit").serialize(), function () {
-    loadDomosFromServer();
-  });
-
-  return false;
-};
-
-var EditDomo = function (_React$Component2) {
-  _inherits(EditDomo, _React$Component2);
-
-  function EditDomo(props) {
-    _classCallCheck(this, EditDomo);
-
-    var _this2 = _possibleConstructorReturn(this, (EditDomo.__proto__ || Object.getPrototypeOf(EditDomo)).call(this, props));
-
-    _this2.state = { isOpen: false, domos: props.domos, csrf: props.csrf };
-    _this2.toggleModal = _this2.toggleModal.bind(_this2);
-    return _this2;
-  }
-
-  _createClass(EditDomo, [{
-    key: "toggleModal",
-    value: function toggleModal() {
-      this.setState({ isOpen: !this.state.isOpen });
-    }
-  }, {
-    key: "render",
-    value: function render() {
-      console.log(this.state);
-
-      return React.createElement(
-        "div",
-        null,
-        React.createElement(
-          "button",
-          { onClick: this.toggleModal },
-          "Edit Domo"
-        ),
-        React.createElement(
-          Modal,
-          { show: this.state.isOpen, onClose: this.toggleModal },
-          React.createElement(
-            "form",
-            {
-              id: "domoFormEdit",
-              onSubmit: handleEditDomo,
-              name: "domoForm",
-              action: "/updateDomo",
-              method: "POST"
-            },
-            React.createElement(
-              "label",
-              { htmlFor: "name" },
-              "Name: "
-            ),
-            React.createElement("input", {
-              id: "domoNameEdit",
-              type: "text",
-              name: "name",
-              placeholder: this.state.domos.name
-            }),
-            React.createElement("br", null),
-            React.createElement(
-              "label",
-              { htmlFor: "age" },
-              "Age: "
-            ),
-            React.createElement("input", {
-              id: "domoAgeEdit",
-              type: "text",
-              name: "age",
-              placeholder: this.state.domos.age
-            }),
-            React.createElement("br", null),
-            React.createElement(
-              "label",
-              { htmlFor: "favoriteFood" },
-              "Favorite food: "
-            ),
-            React.createElement("input", {
-              id: "domoFavoriteFoodEdit",
-              type: "text",
-              name: "favoriteFood",
-              placeholder: this.state.domos.favoriteFood
-            }),
-            React.createElement("br", null),
-            React.createElement("input", { type: "hidden", name: "_csrf", value: this.state.csrf }),
-            React.createElement("input", { type: "hidden", name: "_id", value: this.state.domos._id }),
-            React.createElement("input", {
-              className: "makeDomoSubmit",
-              type: "submit",
-              value: "Update Domo"
-            })
-          )
-        )
-      );
-    }
-  }]);
-
-  return EditDomo;
 }(React.Component);
 
 var handleEditPawpost = function handleEditPawpost(e) {
@@ -439,17 +220,17 @@ var handleEditPawpost = function handleEditPawpost(e) {
   return false;
 };
 
-var EditPawpost = function (_React$Component3) {
-  _inherits(EditPawpost, _React$Component3);
+var EditPawpost = function (_React$Component2) {
+  _inherits(EditPawpost, _React$Component2);
 
   function EditPawpost(props) {
     _classCallCheck(this, EditPawpost);
 
-    var _this3 = _possibleConstructorReturn(this, (EditPawpost.__proto__ || Object.getPrototypeOf(EditPawpost)).call(this, props));
+    var _this2 = _possibleConstructorReturn(this, (EditPawpost.__proto__ || Object.getPrototypeOf(EditPawpost)).call(this, props));
 
-    _this3.state = { isOpen: false, pawposts: props.pawposts, csrf: props.csrf };
-    _this3.toggleModal = _this3.toggleModal.bind(_this3);
-    return _this3;
+    _this2.state = { isOpen: false, pawposts: props.pawposts, csrf: props.csrf };
+    _this2.toggleModal = _this2.toggleModal.bind(_this2);
+    return _this2;
   }
 
   _createClass(EditPawpost, [{
@@ -467,8 +248,8 @@ var EditPawpost = function (_React$Component3) {
         null,
         React.createElement(
           "button",
-          { onClick: this.toggleModal },
-          "Edit Domo"
+          { onClick: this.toggleModal, className: "editButton" },
+          React.createElement("i", { className: "fa fa-pencil", "aria-hidden": "true" })
         ),
         React.createElement(
           Modal,
@@ -484,7 +265,7 @@ var EditPawpost = function (_React$Component3) {
             },
             React.createElement("textarea", {
               rows: "5",
-              cols: "60",
+              cols: "68",
               id: "contentEdit",
               placeholder: this.state.pawposts.content,
               name: "contentEdit"
@@ -501,63 +282,51 @@ var EditPawpost = function (_React$Component3) {
   return EditPawpost;
 }(React.Component);
 
-var loadDomosFromServer = function loadDomosFromServer(csrf) {
-  sendAjax("GET", "/getDomos", null, function (data) {
-    ReactDOM.render(React.createElement(DomoList, { domos: data.domos, csrf: csrf }), document.querySelector("#domos"));
-  });
-};
-
 var loadPawpostsFromServer = function loadPawpostsFromServer(csrf) {
   console.log("inside loadPawpostsFromServer");
+  console.log("csrf in load: ", csrf);
   sendAjax("GET", "/getPawposts", null, function (data) {
     ReactDOM.render(React.createElement(PawpostList, { pawposts: data.pawposts, csrf: csrf }), document.querySelector("#pawposts"));
   });
 };
 
-// const createFeedWindow = csrf => {
-//   ReactDOM.render(
-//     <PawpostForm csrf={csrf} />,
-//     document.querySelector("#makePawpost")
-//   );
+var createFeedWindow = function createFeedWindow(csrf) {
+  ReactDOM.render(React.createElement(CreatePawpostContainer, { pawposts: [], csrf: csrf }), document.querySelector("#content"));
 
-//   ReactDOM.render(
-//     <PawpostList pawposts={[]} csrf={csrf} />,
-//     document.querySelector("#pawposts")
-//   );
+  // ReactDOM.render(
+  //   <PawpostForm csrf={csrf} />,
+  //   document.querySelector("#makePawpost")
+  // );
 
-//   loadPawpostsFromServer(csrf);
-// };
-
-// const createSettingsWindow = csrf => {
-//   ReactDOM.render(
-//     <ChangePassword csrf={csrf} />,
-//     document.querySelector("#makePawpost")
-//   );
-// };
-
-var setup = function setup(csrf) {
-  ReactDOM.render(React.createElement(PawpostForm, { csrf: csrf }), document.querySelector("#makePawpost"));
-
-  ReactDOM.render(React.createElement(PawpostList, { pawposts: [], csrf: csrf }), document.querySelector("#pawposts"));
+  // ReactDOM.render(
+  //   <PawpostList pawposts={[]} csrf={csrf} />,
+  //   document.querySelector("#pawposts")
+  // );
 
   loadPawpostsFromServer(csrf);
 
+  console.log("feedWindow csrf", csrf);
+};
+
+var createSettingsWindow = function createSettingsWindow(csrf) {
+  ReactDOM.render(React.createElement(ChangePassword, { csrf: csrf }), document.querySelector("#content"));
+};
+
+var setup = function setup(csrf) {
+  console.log("setup csrf", csrf);
   // const feedButton = document.querySelector("#feedButton");
   // const settingsButton = document.querySelector("#settingsButton");
-
   // feedButton.addEventListener("click", e => {
   //   e.preventDefault();
   //   createFeedWindow(csrf);
   //   return false;
   // });
-
   // settingsButton.addEventListener("click", e => {
   //   e.preventDefault();
   //   createSettingsWindow(csrf);
   //   return false;
   // });
-
-  // createFeedWindow(csrf); // default view
+  createFeedWindow(csrf); // default view
 };
 
 var getToken = function getToken() {
@@ -593,62 +362,58 @@ var handleChangePassword = function handleChangePassword(e) {
 var ChangePassword = function ChangePassword(props) {
   return React.createElement(
     "div",
-    { className: "changePassword" },
+    null,
     React.createElement(
-      "h3",
-      null,
-      "Change password"
+      "h2",
+      { className: "pageTitle" },
+      "Settings"
     ),
     React.createElement(
-      "form",
-      {
-        id: "changePasswordForm",
-        onSubmit: handleChangePassword,
-        name: "changePasswordForm",
-        action: "/changePassword",
-        method: "POST",
-        className: "changePasswordForm"
-      },
-      React.createElement("input", {
-        id: "currentPassword",
-        type: "password",
-        name: "currentPassword",
-        placeholder: "current password"
-      }),
-      React.createElement("input", {
-        id: "newPassword1",
-        type: "password",
-        name: "newPassword1",
-        placeholder: "new password"
-      }),
-      React.createElement("input", {
-        id: "newPassword2",
-        type: "password",
-        name: "newPassword2",
-        placeholder: "retype new password"
-      }),
-      React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
-      React.createElement("input", { className: "changePasswordSubmit", type: "submit", value: "Change" })
+      "div",
+      { className: "changePassword" },
+      React.createElement(
+        "h3",
+        null,
+        "Change password"
+      ),
+      React.createElement(
+        "form",
+        {
+          id: "changePasswordForm",
+          onSubmit: handleChangePassword,
+          name: "changePasswordForm",
+          action: "/changePassword",
+          method: "POST",
+          className: "changePasswordForm"
+        },
+        React.createElement("input", {
+          id: "currentPassword",
+          type: "password",
+          name: "currentPassword",
+          placeholder: "current password"
+        }),
+        React.createElement("input", {
+          id: "newPassword1",
+          type: "password",
+          name: "newPassword1",
+          placeholder: "new password"
+        }),
+        React.createElement("input", {
+          id: "newPassword2",
+          type: "password",
+          name: "newPassword2",
+          placeholder: "retype new password"
+        }),
+        React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
+        React.createElement("input", {
+          className: "changePasswordSubmit",
+          type: "submit",
+          value: "Change"
+        })
+      )
     )
   );
 };
-
-// const setup = function(csrf) {
-//   ReactDOM.render(
-//     <ChangePassword csrf={csrf} />,
-//     document.querySelector("#settings")
-//   );
-// };
-
-// const getToken = () => {
-//   sendAjax("GET", "/getToken", null, result => {
-//     setup(result.csrfToken);
-//   });
-// };
-
-// $(document).ready(function() {
-//   getToken();
-// });
 "use strict";
 
 var handleError = function handleError(message) {

@@ -28,54 +28,44 @@ const handleChangePassword = e => {
 
 const ChangePassword = props => {
   return (
-    <div className="changePassword">
-      <h3>Change password</h3>
-      <form
-        id="changePasswordForm"
-        onSubmit={handleChangePassword}
-        name="changePasswordForm"
-        action="/changePassword"
-        method="POST"
-        className="changePasswordForm"
-      >
-        <input
-          id="currentPassword"
-          type="password"
-          name="currentPassword"
-          placeholder="current password"
-        />
-        <input
-          id="newPassword1"
-          type="password"
-          name="newPassword1"
-          placeholder="new password"
-        />
-        <input
-          id="newPassword2"
-          type="password"
-          name="newPassword2"
-          placeholder="retype new password"
-        />
-        <input type="hidden" name="_csrf" value={props.csrf} />
-        <input className="changePasswordSubmit" type="submit" value="Change" />
-      </form>
+    <div>
+      <h2 className="pageTitle">Settings</h2>
+      <div className="changePassword">
+        <h3>Change password</h3>
+        <form
+          id="changePasswordForm"
+          onSubmit={handleChangePassword}
+          name="changePasswordForm"
+          action="/changePassword"
+          method="POST"
+          className="changePasswordForm"
+        >
+          <input
+            id="currentPassword"
+            type="password"
+            name="currentPassword"
+            placeholder="current password"
+          />
+          <input
+            id="newPassword1"
+            type="password"
+            name="newPassword1"
+            placeholder="new password"
+          />
+          <input
+            id="newPassword2"
+            type="password"
+            name="newPassword2"
+            placeholder="retype new password"
+          />
+          <input type="hidden" name="_csrf" value={props.csrf} />
+          <input
+            className="changePasswordSubmit"
+            type="submit"
+            value="Change"
+          />
+        </form>
+      </div>
     </div>
   );
 };
-
-// const setup = function(csrf) {
-//   ReactDOM.render(
-//     <ChangePassword csrf={csrf} />,
-//     document.querySelector("#settings")
-//   );
-// };
-
-// const getToken = () => {
-//   sendAjax("GET", "/getToken", null, result => {
-//     setup(result.csrfToken);
-//   });
-// };
-
-// $(document).ready(function() {
-//   getToken();
-// });

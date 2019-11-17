@@ -1,52 +1,15 @@
-const handleDomo = e => {
-  e.preventDefault();
-
-  $("#domoMessage").animate({ width: "hide" }, 350);
-  if (
-    $("#domoName").val() == "" ||
-    $("#domoAge").val() == "" ||
-    $("#domoFavoriteFood").val() == ""
-  ) {
-    handleError("RAWR! All fields are required");
-    return false;
-  }
-
-  sendAjax(
-    "POST",
-    $("#domoForm").attr("action"),
-    $("#domoForm").serialize(),
-    function() {
-      loadDomosFromServer();
-    }
-  );
-
-  return false;
-};
-
-const DomoForm = props => {
+const CreatePawpostContainer = props => {
+  console.log("csrf", props.csrf);
   return (
-    <form
-      id="domoForm"
-      onSubmit={handleDomo}
-      name="domoForm"
-      action="/maker"
-      method="POST"
-      className="domoForm"
-    >
-      <label htmlFor="name">Name: </label>
-      <input id="domoName" type="text" name="name" placeholder="Domo Name" />
-      <label htmlFor="age">Age: </label>
-      <input id="domoAge" type="text" name="age" placeholder="Domo Age" />
-      <label htmlFor="favoriteFood">Favorite food: </label>
-      <input
-        id="domoFavoriteFood"
-        type="text"
-        name="favoriteFood"
-        placeholder="Domo Favorite Food"
-      />
-      <input type="hidden" name="_csrf" value={props.csrf} />
-      <input className="makeDomoSubmit" type="submit" value="Make Domo" />
-    </form>
+    <div>
+      <h2 className="pageTitle">Feed</h2>
+      <section id="makePawpost">
+        <PawpostForm csrf={props.csrf} />
+      </section>
+      <section id="pawposts">
+        <PawpostList pawposts={[]} csrf={props.csrf} />
+      </section>
+    </div>
   );
 };
 
@@ -55,8 +18,10 @@ const handlePawpost = e => {
 
   $("#toastMessage").animate({ bottom: "hide" }, 250);
 
-  console.log($("#content").val());
-  if ($("#content").val() == "") {
+  console.log("postContent: ", $("#postContent").val());
+
+  console.log("content empty?", $("#postContent").val() == "");
+  if ($("#postContent").val() == "") {
     handleError("Content is empty!");
     return false;
   }
@@ -70,15 +35,16 @@ const handlePawpost = e => {
     }
   );
 
-  $("#content").val("");
+  $("#postContent").val("");
 
   return false;
 };
 
 const PawpostForm = props => {
+  console.log("props.csrf", props.csrf);
   return (
     <div className="formLayout">
-      <img className="profilePic" src="./assets/img/cookie.jpg"></img>
+      <img className="profilePic" src="./assets/img/propic.jpg" />
       <form
         id="pawpostForm"
         onSubmit={handlePawpost}
@@ -90,10 +56,10 @@ const PawpostForm = props => {
         <textarea
           rows="5"
           cols="60"
-          id="content"
+          id="postContent"
           placeholder="What's on your mind?"
-          name="content"
-        ></textarea>
+          name="postContent"
+        />
         <input type="hidden" name="_csrf" value={props.csrf} />
         <input className="makePawpostSubmit" type="submit" value="Post" />
       </form>
@@ -121,19 +87,10 @@ const PawpostList = function(props) {
     let time = new Date(pawpost.createdDate);
 
     return (
-      <div
-        key={pawpost._id}
-        className="pawpost"
-        onClick={e => {
-          ReactDOM.render(
-            <EditPawpost pawposts={pawpost} csrf={props.csrf} />,
-            e.target.querySelector("#renderModal")
-          );
-        }}
-      >
+      <div key={pawpost._id} className="pawpost">
         <div id="renderModal" />
         <img
-          src="./assets/img/cookie.jpg"
+          src="./assets/img/propic.jpg"
           alt="profile pic"
           className="profilePic"
         />
@@ -155,49 +112,12 @@ const PawpostList = function(props) {
           <p className="pawpostContent">{pawpost.content}</p>
           <h3 className="pawpostContentImg">{pawpost.contentImg}</h3>
         </div>
+        <EditPawpost pawposts={pawpost} csrf={props.csrf} />
       </div>
     );
   });
 
   return <div className="pawpostList">{pawpostNodes.reverse()}</div>;
-};
-
-const DomoList = function(props) {
-  if (props.domos.length === 0) {
-    return (
-      <div className="domosList">
-        <h3 className="emptyDomo">No Domos yet</h3>
-      </div>
-    );
-  }
-
-  // make a GET request to get another csrf token back
-  const domoNodes = props.domos.map(function(domo) {
-    return (
-      <div
-        key={domo._id}
-        className="domo"
-        onClick={e => {
-          ReactDOM.render(
-            <EditDomo domos={domo} csrf={props.csrf} />,
-            e.target.querySelector("#renderModal")
-          );
-        }}
-      >
-        <div id="renderModal" />
-        <img
-          src="/assets/img/domoface.jpeg"
-          alt="domo face"
-          className="domoFace"
-        />
-        <h3 className="domoName">Name: {domo.name}</h3>
-        <h3 className="domoAge">Age: {domo.age}</h3>
-        <h3 className="domoFavoriteFood">Favorite food: {domo.favoriteFood}</h3>
-      </div>
-    );
-  });
-
-  return <div className="domoList">{domoNodes}</div>;
 };
 
 class Modal extends React.Component {
@@ -207,124 +127,17 @@ class Modal extends React.Component {
       return null;
     }
 
-    // The gray background
-    const backdropStyle = {
-      position: "fixed",
-      top: 0,
-      bottom: 0,
-      left: 0,
-      right: 0,
-      backgroundColor: "rgba(0,0,0,0.3)",
-      padding: 50
-    };
-
-    // The modal "window"
-    const modalStyle = {
-      backgroundColor: "#fff",
-      borderRadius: 5,
-      maxWidth: 500,
-      minHeight: 300,
-      margin: "0 auto",
-      padding: 30
-    };
-
     return (
-      <div className="backdrop" style={{ backdropStyle }}>
-        <div className="modal" style={{ modalStyle }}>
-          {this.props.children}
+      <div className="backdrop">
+        <div className="modal">
           <div className="footer">
-            <button onClick={this.props.onClose}>Close</button>
+            <h3>Edit Pawpost</h3>
+            <button onClick={this.props.onClose} className="closeButton">
+              <i className="fa fa-times fa-lg" aria-hidden="true" />
+            </button>
           </div>
+          {this.props.children}
         </div>
-      </div>
-    );
-  }
-}
-
-const handleEditDomo = e => {
-  e.preventDefault();
-
-  $("#domoMessage").animate({ width: "hide" }, 350);
-  if (
-    $("#domoNameEdit").val() == "" ||
-    $("#domoAgeEdit").val() == "" ||
-    $("#domoFavoriteFoodEdit").val() == ""
-  ) {
-    handleError("RAWR! All fields are required");
-    return false;
-  }
-
-  sendAjax(
-    "POST",
-    $("#domoFormEdit").attr("action"),
-    $("#domoFormEdit").serialize(),
-    function() {
-      loadDomosFromServer();
-    }
-  );
-
-  return false;
-};
-
-class EditDomo extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { isOpen: false, domos: props.domos, csrf: props.csrf };
-    this.toggleModal = this.toggleModal.bind(this);
-  }
-
-  toggleModal() {
-    this.setState({ isOpen: !this.state.isOpen });
-  }
-
-  render() {
-    console.log(this.state);
-
-    return (
-      <div>
-        <button onClick={this.toggleModal}>Edit Domo</button>
-
-        <Modal show={this.state.isOpen} onClose={this.toggleModal}>
-          <form
-            id="domoFormEdit"
-            onSubmit={handleEditDomo}
-            name="domoForm"
-            action="/updateDomo"
-            method="POST"
-          >
-            <label htmlFor="name">Name: </label>
-            <input
-              id="domoNameEdit"
-              type="text"
-              name="name"
-              placeholder={this.state.domos.name}
-            />
-            <br />
-            <label htmlFor="age">Age: </label>
-            <input
-              id="domoAgeEdit"
-              type="text"
-              name="age"
-              placeholder={this.state.domos.age}
-            />
-            <br />
-            <label htmlFor="favoriteFood">Favorite food: </label>
-            <input
-              id="domoFavoriteFoodEdit"
-              type="text"
-              name="favoriteFood"
-              placeholder={this.state.domos.favoriteFood}
-            />
-            <br />
-            <input type="hidden" name="_csrf" value={this.state.csrf} />
-            <input type="hidden" name="_id" value={this.state.domos._id} />
-            <input
-              className="makeDomoSubmit"
-              type="submit"
-              value="Update Domo"
-            />
-          </form>
-        </Modal>
       </div>
     );
   }
@@ -369,7 +182,9 @@ class EditPawpost extends React.Component {
 
     return (
       <div>
-        <button onClick={this.toggleModal}>Edit Domo</button>
+        <button onClick={this.toggleModal} className="editButton">
+          <i className="fa fa-pencil" aria-hidden="true" />
+        </button>
 
         <Modal show={this.state.isOpen} onClose={this.toggleModal}>
           <form
@@ -381,11 +196,11 @@ class EditPawpost extends React.Component {
           >
             <textarea
               rows="5"
-              cols="60"
+              cols="68"
               id="contentEdit"
               placeholder={this.state.pawposts.content}
               name="contentEdit"
-            ></textarea>
+            />
             <input type="hidden" name="_csrf" value={this.state.csrf} />
             <input type="hidden" name="_id" value={this.state.pawposts._id} />
             <input className="makePawpostSubmit" type="submit" value="Update" />
@@ -396,17 +211,9 @@ class EditPawpost extends React.Component {
   }
 }
 
-const loadDomosFromServer = csrf => {
-  sendAjax("GET", "/getDomos", null, data => {
-    ReactDOM.render(
-      <DomoList domos={data.domos} csrf={csrf} />,
-      document.querySelector("#domos")
-    );
-  });
-};
-
 const loadPawpostsFromServer = csrf => {
   console.log("inside loadPawpostsFromServer");
+  console.log("csrf in load: ", csrf);
   sendAjax("GET", "/getPawposts", null, data => {
     ReactDOM.render(
       <PawpostList pawposts={data.pawposts} csrf={csrf} />,
@@ -415,56 +222,49 @@ const loadPawpostsFromServer = csrf => {
   });
 };
 
-// const createFeedWindow = csrf => {
-//   ReactDOM.render(
-//     <PawpostForm csrf={csrf} />,
-//     document.querySelector("#makePawpost")
-//   );
-
-//   ReactDOM.render(
-//     <PawpostList pawposts={[]} csrf={csrf} />,
-//     document.querySelector("#pawposts")
-//   );
-
-//   loadPawpostsFromServer(csrf);
-// };
-
-// const createSettingsWindow = csrf => {
-//   ReactDOM.render(
-//     <ChangePassword csrf={csrf} />,
-//     document.querySelector("#makePawpost")
-//   );
-// };
-
-const setup = function(csrf) {
+const createFeedWindow = csrf => {
   ReactDOM.render(
-    <PawpostForm csrf={csrf} />,
-    document.querySelector("#makePawpost")
+    <CreatePawpostContainer pawposts={[]} csrf={csrf} />,
+    document.querySelector("#content")
   );
 
-  ReactDOM.render(
-    <PawpostList pawposts={[]} csrf={csrf} />,
-    document.querySelector("#pawposts")
-  );
+  // ReactDOM.render(
+  //   <PawpostForm csrf={csrf} />,
+  //   document.querySelector("#makePawpost")
+  // );
+
+  // ReactDOM.render(
+  //   <PawpostList pawposts={[]} csrf={csrf} />,
+  //   document.querySelector("#pawposts")
+  // );
 
   loadPawpostsFromServer(csrf);
 
+  console.log("feedWindow csrf", csrf);
+};
+
+const createSettingsWindow = csrf => {
+  ReactDOM.render(
+    <ChangePassword csrf={csrf} />,
+    document.querySelector("#content")
+  );
+};
+
+const setup = function(csrf) {
+  console.log("setup csrf", csrf);
   // const feedButton = document.querySelector("#feedButton");
   // const settingsButton = document.querySelector("#settingsButton");
-
   // feedButton.addEventListener("click", e => {
   //   e.preventDefault();
   //   createFeedWindow(csrf);
   //   return false;
   // });
-
   // settingsButton.addEventListener("click", e => {
   //   e.preventDefault();
   //   createSettingsWindow(csrf);
   //   return false;
   // });
-
-  // createFeedWindow(csrf); // default view
+  createFeedWindow(csrf); // default view
 };
 
 const getToken = () => {
