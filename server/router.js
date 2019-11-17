@@ -8,7 +8,6 @@ const router = app => {
     mid.requiresLogout,
     controllers.Account.loginPage
   );
-  app.get("/getDomos", mid.requiresLogin, controllers.Domo.getDomos);
   app.get("/getPawposts", mid.requiresLogin, controllers.Pawpost.getPawposts);
   app.post(
     "/login",
@@ -32,7 +31,6 @@ const router = app => {
     mid.requiresLogin,
     controllers.Account.changePass
   );
-  app.post("/updateDomo", mid.requiresLogin, controllers.Domo.edit);
   app.post(
     "/updatePawpost",
     mid.requiresLogin,

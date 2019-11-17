@@ -11,11 +11,10 @@ const session = require("express-session");
 const RedisStore = require("connect-redis")(session);
 const url = require("url");
 const csrf = require("csurf");
-// const fs = require("fs");
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
-const dbURL = process.env.MONGODB_URI || "mongodb://localhost/DomoMaker";
+const dbURL = process.env.MONGODB_URI || "mongodb://localhost/Pawprints";
 
 mongoose.connect(dbURL, err => {
   if (err) {
@@ -61,7 +60,7 @@ app.use(
       port: redisURL.port,
       pass: redisPASS
     }),
-    secret: "Domo Arigato",
+    secret: "Pawprints",
     resave: true,
     saveUninitialized: true,
     cookie: {

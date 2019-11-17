@@ -1,13 +1,13 @@
-const CreatePawpostContainer = csrf => {
-  console.log("csrf", csrf);
+const CreatePawpostContainer = props => {
+  console.log("csrf", props.csrf);
   return (
     <div>
       <h2 className="pageTitle">Feed</h2>
       <section id="makePawpost">
-        <PawpostForm csrf={csrf} />
+        <PawpostForm csrf={props.csrf} />
       </section>
       <section id="pawposts">
-        <PawpostList pawposts={[]} csrf={csrf} />
+        <PawpostList pawposts={[]} csrf={props.csrf} />
       </section>
     </div>
   );
@@ -69,6 +69,7 @@ const PawpostForm = props => {
 
 const PawpostList = function(props) {
   console.log("props.pawposts", props.pawposts);
+  console.log("props.csrf in pawpostList", props.csrf);
   if (props.pawposts.length === 0) {
     return (
       <div className="pawpostList">
