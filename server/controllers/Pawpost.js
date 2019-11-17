@@ -1,23 +1,23 @@
 const models = require("../models");
 
 const Pawpost = models.Pawpost;
-const Account = models.Account;
 
 const makePawpost = (req, res) => {
-  if (!req.body.content) {
+  if (!req.body.postContent) {
     return res.status(400).json({
       error: "Pawpost content required"
     });
   }
 
   const pawpostData = {
-    content: req.body.content,
+    content: req.body.postContent,
     contentImg: req.body.contentImg,
     profilePic: req.body.profilePic,
     owner: req.session.account._id,
     username: req.session.account.username
   };
 
+  console.log("data", pawpostData);
   const newPawpost = new Pawpost.PawpostModel(pawpostData);
   const pawpostPromise = newPawpost.save();
   pawpostPromise.then(() => res.json({ redirect: "/feed" }));

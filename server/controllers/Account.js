@@ -131,9 +131,9 @@ const changePass = (request, response) => {
         return Account.AccountModel.updateOne(
           { username: req.session.account.username },
           { salt, password: hash },
-          err => {
-            if (err) {
-              return res.status(400).json({ err });
+          error => {
+            if (error) {
+              return res.status(400).json({ error });
             }
             return res.json({ message: "password successfully changed" });
           }
@@ -143,10 +143,12 @@ const changePass = (request, response) => {
   );
 
   // see if current pwd matches the one in the db
-  // take current pwd from the form, hash it, compare it to the one stored in the db
+  // take current pwd from the form, hash it,
+  // compare it to the one stored in the db
   // if they're the same, then the current password entered is correct
 
-  // if correct current password and the new password are the same, then you dont want to change it and send back an error
+  // if correct current password and the new password are the same,
+  // then you dont want to change it and send back an error
   // else if 2 the new pwds are the same, then store it
 };
 

@@ -9,6 +9,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var CreatePawpostContainer = function CreatePawpostContainer(csrf) {
+  console.log("csrf", csrf);
   return React.createElement(
     "div",
     null,
@@ -35,8 +36,10 @@ var handlePawpost = function handlePawpost(e) {
 
   $("#toastMessage").animate({ bottom: "hide" }, 250);
 
-  console.log("content: ", $("#content").val());
-  if ($("#content").val() == "") {
+  console.log("postContent: ", $("#postContent").val());
+
+  console.log("content empty?", $("#postContent").val() == "");
+  if ($("#postContent").val() == "") {
     handleError("Content is empty!");
     return false;
   }
@@ -45,12 +48,13 @@ var handlePawpost = function handlePawpost(e) {
     loadPawpostsFromServer();
   });
 
-  $("#content").val("");
+  $("#postContent").val("");
 
   return false;
 };
 
 var PawpostForm = function PawpostForm(props) {
+  console.log("props.csrf", props.csrf);
   return React.createElement(
     "div",
     { className: "formLayout" },
@@ -68,9 +72,9 @@ var PawpostForm = function PawpostForm(props) {
       React.createElement("textarea", {
         rows: "5",
         cols: "60",
-        id: "content",
+        id: "postContent",
         placeholder: "What's on your mind?",
-        name: "content"
+        name: "postContent"
       }),
       React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
       React.createElement("input", { className: "makePawpostSubmit", type: "submit", value: "Post" })
@@ -106,7 +110,7 @@ var PawpostList = function PawpostList(props) {
       { key: pawpost._id, className: "pawpost" },
       React.createElement("div", { id: "renderModal" }),
       React.createElement("img", {
-        src: "./assets/img/cookie.jpg",
+        src: "./assets/img/propic.jpg",
         alt: "profile pic",
         className: "profilePic"
       }),
@@ -289,6 +293,8 @@ var createFeedWindow = function createFeedWindow(csrf) {
   ReactDOM.render(React.createElement(CreatePawpostContainer, { pawposts: [], csrf: csrf }), document.querySelector("#content"));
 
   loadPawpostsFromServer(csrf);
+
+  console.log("feedWindow csrf", csrf);
 };
 
 var createSettingsWindow = function createSettingsWindow(csrf) {
@@ -296,6 +302,7 @@ var createSettingsWindow = function createSettingsWindow(csrf) {
 };
 
 var setup = function setup(csrf) {
+  console.log("setup csrf", csrf);
   var feedButton = document.querySelector("#feedButton");
   var settingsButton = document.querySelector("#settingsButton");
   feedButton.addEventListener("click", function (e) {

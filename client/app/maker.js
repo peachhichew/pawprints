@@ -1,4 +1,5 @@
 const CreatePawpostContainer = csrf => {
+  console.log("csrf", csrf);
   return (
     <div>
       <h2 className="pageTitle">Feed</h2>
@@ -17,8 +18,10 @@ const handlePawpost = e => {
 
   $("#toastMessage").animate({ bottom: "hide" }, 250);
 
-  console.log("content: ", $("#content").val());
-  if ($("#content").val() == "") {
+  console.log("postContent: ", $("#postContent").val());
+
+  console.log("content empty?", $("#postContent").val() == "");
+  if ($("#postContent").val() == "") {
     handleError("Content is empty!");
     return false;
   }
@@ -32,12 +35,13 @@ const handlePawpost = e => {
     }
   );
 
-  $("#content").val("");
+  $("#postContent").val("");
 
   return false;
 };
 
 const PawpostForm = props => {
+  console.log("props.csrf", props.csrf);
   return (
     <div className="formLayout">
       <img className="profilePic" src="./assets/img/propic.jpg" />
@@ -52,9 +56,9 @@ const PawpostForm = props => {
         <textarea
           rows="5"
           cols="60"
-          id="content"
+          id="postContent"
           placeholder="What's on your mind?"
-          name="content"
+          name="postContent"
         />
         <input type="hidden" name="_csrf" value={props.csrf} />
         <input className="makePawpostSubmit" type="submit" value="Post" />
@@ -86,7 +90,7 @@ const PawpostList = function(props) {
       <div key={pawpost._id} className="pawpost">
         <div id="renderModal" />
         <img
-          src="./assets/img/cookie.jpg"
+          src="./assets/img/propic.jpg"
           alt="profile pic"
           className="profilePic"
         />
@@ -224,6 +228,8 @@ const createFeedWindow = csrf => {
   );
 
   loadPawpostsFromServer(csrf);
+
+  console.log("feedWindow csrf", csrf);
 };
 
 const createSettingsWindow = csrf => {
@@ -234,6 +240,7 @@ const createSettingsWindow = csrf => {
 };
 
 const setup = function(csrf) {
+  console.log("setup csrf", csrf);
   const feedButton = document.querySelector("#feedButton");
   const settingsButton = document.querySelector("#settingsButton");
   feedButton.addEventListener("click", e => {
