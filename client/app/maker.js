@@ -17,7 +17,7 @@ const handlePawpost = e => {
 
   $("#toastMessage").animate({ bottom: "hide" }, 250);
 
-  console.log($("#content").val());
+  console.log("content: ", $("#content").val());
   if ($("#content").val() == "") {
     handleError("Content is empty!");
     return false;
@@ -40,7 +40,7 @@ const handlePawpost = e => {
 const PawpostForm = props => {
   return (
     <div className="formLayout">
-      <img className="profilePic" src="./assets/img/cookie.jpg"></img>
+      <img className="profilePic" src="./assets/img/propic.jpg" />
       <form
         id="pawpostForm"
         onSubmit={handlePawpost}
@@ -55,7 +55,7 @@ const PawpostForm = props => {
           id="content"
           placeholder="What's on your mind?"
           name="content"
-        ></textarea>
+        />
         <input type="hidden" name="_csrf" value={props.csrf} />
         <input className="makePawpostSubmit" type="submit" value="Post" />
       </form>
@@ -129,7 +129,7 @@ class Modal extends React.Component {
           <div className="footer">
             <h3>Edit Pawpost</h3>
             <button onClick={this.props.onClose} className="closeButton">
-              <i className="fa fa-times fa-lg" aria-hidden="true"></i>
+              <i className="fa fa-times fa-lg" aria-hidden="true" />
             </button>
           </div>
           {this.props.children}
@@ -179,7 +179,7 @@ class EditPawpost extends React.Component {
     return (
       <div>
         <button onClick={this.toggleModal} className="editButton">
-          <i className="fa fa-pencil" aria-hidden="true"></i>
+          <i className="fa fa-pencil" aria-hidden="true" />
         </button>
 
         <Modal show={this.state.isOpen} onClose={this.toggleModal}>
@@ -196,7 +196,7 @@ class EditPawpost extends React.Component {
               id="contentEdit"
               placeholder={this.state.pawposts.content}
               name="contentEdit"
-            ></textarea>
+            />
             <input type="hidden" name="_csrf" value={this.state.csrf} />
             <input type="hidden" name="_id" value={this.state.pawposts._id} />
             <input className="makePawpostSubmit" type="submit" value="Update" />

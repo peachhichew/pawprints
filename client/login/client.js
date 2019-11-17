@@ -55,7 +55,7 @@ const LoginWindow = props => {
     <div>
       <div className="slogan">
         <h1>
-          P<i className="fa fa-paw" aria-hidden="true"></i>wprints
+          P<i className="fa fa-paw" aria-hidden="true" />wprints
         </h1>
         <p>The social media platform for animals.</p>
       </div>
@@ -81,7 +81,7 @@ const SignupWindow = props => {
     <div>
       <div className="slogan">
         <h1>
-          P<i className="fa fa-paw" aria-hidden="true"></i>wprints
+          P<i className="fa fa-paw" aria-hidden="true" />wprints
         </h1>
         <p>The social media platform for animals.</p>
       </div>
@@ -149,5 +149,5 @@ const getToken = () => {
 
 $(document).ready(function() {
   getToken();
-  // $("#bg").css("background-image", `url(${changeBackground()})`);
+  $("#bg").css("background-image", `url(${changeBackground()})`);
 });

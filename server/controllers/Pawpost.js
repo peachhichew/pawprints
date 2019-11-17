@@ -4,7 +4,6 @@ const Pawpost = models.Pawpost;
 const Account = models.Account;
 
 const makePawpost = (req, res) => {
-  // console.log("req.body", req.body);
   if (!req.body.content) {
     return res.status(400).json({
       error: "Pawpost content required"

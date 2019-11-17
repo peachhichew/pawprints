@@ -35,7 +35,7 @@ var handlePawpost = function handlePawpost(e) {
 
   $("#toastMessage").animate({ bottom: "hide" }, 250);
 
-  console.log($("#content").val());
+  console.log("content: ", $("#content").val());
   if ($("#content").val() == "") {
     handleError("Content is empty!");
     return false;
@@ -54,7 +54,7 @@ var PawpostForm = function PawpostForm(props) {
   return React.createElement(
     "div",
     { className: "formLayout" },
-    React.createElement("img", { className: "profilePic", src: "./assets/img/cookie.jpg" }),
+    React.createElement("img", { className: "profilePic", src: "./assets/img/propic.jpg" }),
     React.createElement(
       "form",
       {
@@ -400,12 +400,10 @@ var ChangePassword = function ChangePassword(props) {
 
 var handleError = function handleError(message) {
   $("#errorMessage").text(message);
-  // $("#toastMessage").animate({ width: "toggle" }, 350);
   $("#toastMessage").animate({ bottom: "toggle" }, 250);
 };
 
 var redirect = function redirect(response) {
-  // $("#toastMessage").animate({ width: "hide" }, 350);
   $("#toastMessage").animate({ bottom: "hide" }, 250);
   window.location = response.redirect;
 };
@@ -434,11 +432,5 @@ var changeBackground = function changeBackground() {
   imgs[4] = "ludemeula-fernandes-9UUoGaaHtNE-unsplash.jpg";
   imgs[5] = "mikhail-vasilyev-IFxjDdqK_0U-unsplash.jpg";
   var rand = Math.floor(Math.random() * imgs.length);
-
-  console.log(rand);
-
-  console.log("./../hosted/img/" + imgs[rand]);
-  // /Users/sky/Documents/School/IGME-430/pawprints/hosted/img/alexandru-zdrobau-_STvosrG-pw-unsplash.jpg
-  // /Users/sky/Documents/School/IGME-430/pawprints/client/helper/helper.js
-  return "./../hosted/img/" + imgs[rand];
+  return "./images/" + imgs[rand];
 };
