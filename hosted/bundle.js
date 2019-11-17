@@ -439,6 +439,10 @@ var changeBackground = function changeBackground() {
   imgs[3] = "krista-mangulsone-9gz3wfHr65U-unsplash.jpg";
   imgs[4] = "ludemeula-fernandes-9UUoGaaHtNE-unsplash.jpg";
   imgs[5] = "mikhail-vasilyev-IFxjDdqK_0U-unsplash.jpg";
+  imgs[6] = "ipet-photo-T-0EW-SEbsE-unsplash.jpg";
+  imgs[7] = "james-barker-v3-zcCWMjgM-unsplash.jpg";
+  imgs[8] = "mark-zamora-Qu-T7JOu-Iw-unsplash.jpg";
+  imgs[9] = "cole-keister-cX-KEISwDIw-unsplash.jpg";
   var rand = Math.floor(Math.random() * imgs.length);
   return "./images/" + imgs[rand];
 };
