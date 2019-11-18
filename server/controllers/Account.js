@@ -139,7 +139,7 @@ const changePass = (request, response) => {
     req.body.currentPassword,
     (err, doc) => {
       console.log("doc", doc);
-      Account.AccountModel.generateHash(
+      return Account.AccountModel.generateHash(
         req.body.newPassword1, (salt, hash) => {
         return Account.AccountModel.updateOne(
           { username: req.session.account.username },
@@ -152,7 +152,6 @@ const changePass = (request, response) => {
           }
         );
       });
-    return;    
     }
   );
   return;
