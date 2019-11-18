@@ -152,6 +152,7 @@ const changePass = (request, response) => {
           }
         );
       });
+    return;    
     }
   );
   return;
