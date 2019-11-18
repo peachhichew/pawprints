@@ -1,0 +1,22 @@
+SOURCES/ASSETS USED FOR THIS PROJECT:
+    Background images from Unsplash:
+        https://unsplash.com/photos/_STvosrG-pw
+        https://unsplash.com/photos/IFxjDdqK_0U
+        https://unsplash.com/photos/9UUoGaaHtNE
+        https://unsplash.com/photos/b9K_LTz079c
+        https://unsplash.com/photos/TKgOIwPVmkg
+        https://unsplash.com/photos/915UJQaxtrk
+        https://unsplash.com/photos/9gz3wfHr65U
+        https://unsplash.com/photos/T-0EW-SEbsE
+        https://unsplash.com/photos/v3-zcCWMjgM
+        https://unsplash.com/photos/Qu-T7JOu-Iw
+        https://unsplash.com/photos/cX-KEISwDIw
+
+    Creating the modal for updating a pawpost: 
+        https://daveceddia.com/open-modal-in-react/
+
+    Fontawesome icons for login, signup, logout, feed, settings, pawprint (for logo): 
+        https://fontawesome.com/v4.7.0/icons/
+
+    Changing background image opacity: 
+        https://scotch.io/tutorials/how-to-change-a-css-background-images-opacity
