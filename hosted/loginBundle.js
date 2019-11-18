@@ -159,11 +159,13 @@ $(document).ready(function () {
 });
 "use strict";
 
+// Display a message when an error occurs
 var handleError = function handleError(message) {
   $("#errorMessage").text(message);
   $("#toastMessage").animate({ bottom: "toggle" }, 250);
 };
 
+// Redirects the page to a different part of the app
 var redirect = function redirect(response) {
   $("#toastMessage").animate({ bottom: "hide" }, 250);
   window.location = response.redirect;
@@ -184,6 +186,7 @@ var sendAjax = function sendAjax(type, action, data, success) {
   });
 };
 
+// Randomly loads a background image from the server
 var changeBackground = function changeBackground() {
   var imgs = [];
   imgs[0] = "alexandru-zdrobau-_STvosrG-pw-unsplash.jpg";

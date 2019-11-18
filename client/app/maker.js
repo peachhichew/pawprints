@@ -1,5 +1,6 @@
+// Add more structure to the app.handlebars page and render
+// the PawpostForm and PawpostList components
 const CreatePawpostContainer = props => {
-  console.log("csrf", props.csrf);
   return (
     <div>
       <h2 className="pageTitle">Feed</h2>
@@ -13,14 +14,13 @@ const CreatePawpostContainer = props => {
   );
 };
 
+// Use AJAX to send a POST request to the server to add a new
+// pawpost. Then, clear out the form when finished.
 const handlePawpost = e => {
   e.preventDefault();
 
   $("#toastMessage").animate({ bottom: "hide" }, 250);
 
-  console.log("postContent: ", $("#postContent").val());
-
-  console.log("content empty?", $("#postContent").val() == "");
   if ($("#postContent").val() == "") {
     handleError("Content is empty!");
     return false;
@@ -40,8 +40,8 @@ const handlePawpost = e => {
   return false;
 };
 
+// Renders the form for adding a new pawpost
 const PawpostForm = props => {
-  console.log("props.csrf", props.csrf);
   return (
     <div className="formLayout">
       <img className="profilePic" src="./assets/img/propic.jpg" />
@@ -67,9 +67,10 @@ const PawpostForm = props => {
   );
 };
 
+// Display all pawposts to the screen and properly format the information.
+// Also, render the EditPawpost component to allow the user to edit their
+// previous pawposts.
 const PawpostList = function(props) {
-  console.log("props.pawposts", props.pawposts);
-  console.log("props.csrf in pawpostList", props.csrf);
   if (props.pawposts.length === 0) {
     return (
       <div className="pawpostList">
@@ -121,6 +122,7 @@ const PawpostList = function(props) {
   return <div className="pawpostList">{pawpostNodes.reverse()}</div>;
 };
 
+// Base modal component for editing a pawpost
 class Modal extends React.Component {
   render() {
     // Render nothing if the "show" prop is false
@@ -144,12 +146,13 @@ class Modal extends React.Component {
   }
 }
 
+// Use AJAX to send a POST request to the server when the user wants to
+// edit a pawpost
 const handleEditPawpost = e => {
   e.preventDefault();
 
   $("#toastMessage").animate({ bottom: "hide" }, 250);
 
-  console.log("inside contentEdit", $("#contentEdit").val());
   if ($("#contentEdit").val() == "") {
     handleError("All fields are required");
     return false;
@@ -167,6 +170,8 @@ const handleEditPawpost = e => {
   return false;
 };
 
+// Toggles the visibility of the edit pawpost modal and renders a form
+// for the editing.
 class EditPawpost extends React.Component {
   constructor(props) {
     super(props);
@@ -179,8 +184,6 @@ class EditPawpost extends React.Component {
   }
 
   render() {
-    console.log(this.state);
-
     return (
       <div>
         <button onClick={this.toggleModal} className="editButton">
@@ -212,8 +215,8 @@ class EditPawpost extends React.Component {
   }
 }
 
+// Sends a GET request to the server to retrieve all pawposts
 const loadPawpostsFromServer = csrf => {
-  console.log("inside loadPawpostsFromServer");
   sendAjax("GET", "/getPawposts", null, data => {
     ReactDOM.render(
       <PawpostList pawposts={data.pawposts} csrf={csrf} />,
@@ -222,6 +225,7 @@ const loadPawpostsFromServer = csrf => {
   });
 };
 
+// Renders the CreatePawpostContainer component on the scrreen
 const createFeedWindow = csrf => {
   ReactDOM.render(
     <CreatePawpostContainer pawposts={[]} csrf={csrf} />,
@@ -229,10 +233,9 @@ const createFeedWindow = csrf => {
   );
 
   loadPawpostsFromServer(csrf);
-
-  console.log("feedWindow csrf", csrf);
 };
 
+// Renders the ChangePassword component on the screen
 const createSettingsWindow = csrf => {
   ReactDOM.render(
     <ChangePassword csrf={csrf} />,
@@ -240,8 +243,10 @@ const createSettingsWindow = csrf => {
   );
 };
 
+// Renders the feed or settings components based on which button is
+// clicked in the nav. The default appearance of the "/feed" page
+// should display the feed + pawpost content.
 const setup = function(csrf) {
-  console.log("setup csrf", csrf);
   const feedButton = document.querySelector("#feedButton");
   const settingsButton = document.querySelector("#settingsButton");
   feedButton.addEventListener("click", e => {
@@ -257,6 +262,7 @@ const setup = function(csrf) {
   createFeedWindow(csrf); // default view
 };
 
+// Retrieves the csrf token from the server
 const getToken = () => {
   sendAjax("GET", "/getToken", null, result => {
     setup(result.csrfToken);

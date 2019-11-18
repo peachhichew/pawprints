@@ -2,6 +2,8 @@ const models = require("../models");
 
 const Pawpost = models.Pawpost;
 
+// Create a new pawpost on the page by grabbing the data from the
+// form and saving it to the db.
 const makePawpost = (req, res) => {
   if (!req.body.postContent) {
     return res.status(400).json({
@@ -17,7 +19,6 @@ const makePawpost = (req, res) => {
     username: req.session.account.username
   };
 
-  console.log("data", pawpostData);
   const newPawpost = new Pawpost.PawpostModel(pawpostData);
   const pawpostPromise = newPawpost.save();
   pawpostPromise.then(() => res.json({ redirect: "/feed" }));
@@ -29,11 +30,13 @@ const makePawpost = (req, res) => {
     return res.status(400).json({ error: "An error occurred" });
   });
 
-  console.log("pawpostData", pawpostData);
-
   return pawpostPromise;
 };
 
+// To let the user edit their pawposts, we need to find the
+// account id and check that it matches the id of the owner.
+// If it does, we can update the appropriate fields and save
+// that to the db.
 const editPawpost = (request, response) => {
   const req = request;
   const res = response;
@@ -51,21 +54,17 @@ const editPawpost = (request, response) => {
     let pawpostPromise;
     if (doc.owner.equals(req.session.account._id)) {
       let pawpost = doc;
-      console.log("req.body.contentEdit", req.body.contentEdit);
       pawpost.content = req.body.contentEdit;
       pawpost.contentImg = req.body.contentImgEdit;
       pawpost.profilePic = req.body.profilePicEdit;
       pawpostPromise = pawpost.save();
 
-      console.log("pawpost in controller before then: ", pawpost);
-
       pawpostPromise.then(() => {
-        console.log("pawpost in controller: ", pawpost);
         res.json({ pawpost });
       });
 
       pawpostPromise.catch(() => {
-        return res.status(400).json({ error: "An error occurred21123" });
+        return res.status(400).json({ error: "An error occurred" });
       });
 
       return pawpostPromise;
@@ -75,6 +74,7 @@ const editPawpost = (request, response) => {
   });
 };
 
+// Renders the /feed page and all the existing pawposts
 const feedPage = (req, res) => {
   Pawpost.PawpostModel.findByOwner(req.session.account._id, (err, docs) => {
     if (err) {
@@ -82,19 +82,14 @@ const feedPage = (req, res) => {
       return res.status(400).json({ error: "An error occurred" });
     }
 
-    console.log("docs", docs);
-
     return res.render("app", { csrfToken: req.csrfToken(), pawposts: docs });
   });
 };
 
+// Retrieves each pawpost by finding the associated account owner id
 const getPawposts = (request, response) => {
   const req = request;
   const res = response;
-
-  // const username = `${Account.AccountModel.toAPI.username}`;
-  // console.log("username: ", username);
-  // console.log("username: ", req.session.account.username);
 
   return Pawpost.PawpostModel.findByOwner(
     req.session.account._id,
@@ -103,7 +98,6 @@ const getPawposts = (request, response) => {
         console.log(err);
         return res.status(400).json({ error: "An error occurred" });
       }
-      console.log("get docs: ", docs);
 
       return res.json({ pawposts: docs });
     }

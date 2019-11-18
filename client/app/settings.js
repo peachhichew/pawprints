@@ -1,10 +1,8 @@
+// Displays an error message if any fields are empty. Sends
+// a POST request to the server using AJAX to change the pwd.
 const handleChangePassword = e => {
-  console.log("change password");
   e.preventDefault();
 
-  console.log("current pwd:", $("#currentPassword").val());
-  console.log("new pwd:", $("#newPassword1").val());
-  console.log("new pwd 2:", $("#newPassword1").val());
   if (
     $("#currentPassword").val() == "" ||
     $("#newPassword1").val() == "" ||
@@ -19,13 +17,14 @@ const handleChangePassword = e => {
     $("#changePasswordForm").attr("action"),
     $("#changePasswordForm").serialize(),
     function() {
-      console.log("meow");
+      console.log("Password changed");
     }
   );
 
   return false;
 };
 
+// Contains the form to change the password on the settings page.
 const ChangePassword = props => {
   return (
     <div>

@@ -2,19 +2,21 @@ const models = require("../models");
 
 const Account = models.Account;
 
+// Function to render the login page
 const loginPage = (req, res) => {
   res.render("login", { csrfToken: req.csrfToken() });
 };
 
+// When the user is logging out, destroy the current session
+// and redirect the user to the index page
 const logout = (req, res) => {
   req.session.destroy();
   res.redirect("/");
 };
 
-const settingsPage = (req, res) => {
-  res.render("settings", { csrfToken: req.csrfToken() });
-};
-
+// When the user logs in, validate the credentials by using
+// the Account Model's authenticate() function to ensure that
+// the username and password match the account in the db.
 const login = (request, response) => {
   const req = request;
   const res = response;
@@ -22,8 +24,6 @@ const login = (request, response) => {
   // force cast to strings to cover some security flaws
   const username = `${req.body.username}`;
   const password = `${req.body.pass}`;
-  console.log("username: ", username);
-  console.log("pwd: ", password);
 
   if (!username || !password) {
     return res.status(400).json({ error: "All fields are required" });
@@ -44,6 +44,9 @@ const login = (request, response) => {
   );
 };
 
+// Upon successful account creation, generate a hash to encrypt the
+// password. Ensure that this username doesn't already exist in the db
+// and that the passwords match.
 const signup = (request, response) => {
   const req = request;
   const res = response;
@@ -52,18 +55,16 @@ const signup = (request, response) => {
   req.body.username = `${req.body.username}`;
   req.body.pass = `${req.body.pass}`;
   req.body.pass2 = `${req.body.pass2}`;
-  console.log("username: ", req.body.username);
-  console.log("password: ", req.body.pass);
 
+  // return an error if there are any empty fields
   if (!req.body.username || !req.body.pass || !req.body.pass2) {
     return res.status(400).json({ error: "All fields are required" });
   }
 
+  // return an error if the passwords don't match
   if (req.body.pass !== req.body.pass2) {
     return res.status(400).json({ error: "Passwords do not match" });
   }
-
-  console.log("req.body.pass:", req.body.pass);
 
   return Account.AccountModel.generateHash(req.body.pass, (salt, hash) => {
     const accountData = {
@@ -93,6 +94,12 @@ const signup = (request, response) => {
   });
 };
 
+// If the user is able to use the password provided in the field, then
+// we know it is the correct password and the authentication will be
+// successful. Next, we generate a hash for the new password entered
+// and we update the password according to the username of the existing
+// account. We will need to use the salt from the current/old password
+// to generate the hash for the new password.
 const changePass = (request, response) => {
   const req = request;
   const res = response;
@@ -102,6 +109,7 @@ const changePass = (request, response) => {
   req.body.newPassword1 = `${req.body.newPassword1}`;
   req.body.newPassword2 = `${req.body.newPassword2}`;
 
+  // check if there are any empty fields
   if (
     !req.body.currentPassword ||
     !req.body.newPassword1 ||
@@ -110,10 +118,13 @@ const changePass = (request, response) => {
     return res.status(400).json({ error: "All fields are required" });
   }
 
+  // make sure the new passwords are the same
   if (req.body.newPassword1 !== req.body.newPassword2) {
     return res.status(400).json({ error: "New passwords do not match" });
   }
 
+  // if the new passwords are the same as the existing password, send
+  // back an error
   if (
     req.body.currentPassword === req.body.newPassword1 &&
     req.body.currentPassword === req.body.newPassword2
@@ -141,17 +152,9 @@ const changePass = (request, response) => {
       });
     }
   );
-
-  // see if current pwd matches the one in the db
-  // take current pwd from the form, hash it,
-  // compare it to the one stored in the db
-  // if they're the same, then the current password entered is correct
-
-  // if correct current password and the new password are the same,
-  // then you dont want to change it and send back an error
-  // else if 2 the new pwds are the same, then store it
 };
 
+// Generates a new csrf token
 const getToken = (request, response) => {
   const req = request;
   const res = response;
@@ -167,5 +170,4 @@ module.exports.login = login;
 module.exports.logout = logout;
 module.exports.signup = signup;
 module.exports.getToken = getToken;
-module.exports.settingsPage = settingsPage;
 module.exports.changePass = changePass;

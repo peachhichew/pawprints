@@ -1,4 +1,4 @@
-// checks if we attached an account to their session
+// Checks if we attached an account to their session
 // then redirect to homepage
 const requiresLogin = (req, res, next) => {
   if (!req.session.account) {
@@ -7,7 +7,7 @@ const requiresLogin = (req, res, next) => {
   return next();
 };
 
-// check if user is already logged in, if so, attach an account to their session
+// Check if user is already logged in. if so, attach an account to their session
 // and then redirect them to the app
 const requiresLogout = (req, res, next) => {
   if (req.session.account) {
@@ -17,6 +17,7 @@ const requiresLogout = (req, res, next) => {
   return next();
 };
 
+// Ensure that we are using HTTPs, not just HTTP.
 const requiresSecure = (req, res, next) => {
   if (req.headers["x-forwarded-proto"] !== "https") {
     return res.redirect(`https://${req.hostname}${req.url}`);
@@ -25,6 +26,7 @@ const requiresSecure = (req, res, next) => {
   return next();
 };
 
+// Otherwise, bypass it
 const bypassSecure = (req, res, next) => {
   next();
 };

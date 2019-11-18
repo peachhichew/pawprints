@@ -8,8 +8,9 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+// Add more structure to the app.handlebars page and render
+// the PawpostForm and PawpostList components
 var CreatePawpostContainer = function CreatePawpostContainer(props) {
-  console.log("csrf", props.csrf);
   return React.createElement(
     "div",
     null,
@@ -31,14 +32,13 @@ var CreatePawpostContainer = function CreatePawpostContainer(props) {
   );
 };
 
+// Use AJAX to send a POST request to the server to add a new
+// pawpost. Then, clear out the form when finished.
 var handlePawpost = function handlePawpost(e) {
   e.preventDefault();
 
   $("#toastMessage").animate({ bottom: "hide" }, 250);
 
-  console.log("postContent: ", $("#postContent").val());
-
-  console.log("content empty?", $("#postContent").val() == "");
   if ($("#postContent").val() == "") {
     handleError("Content is empty!");
     return false;
@@ -53,8 +53,8 @@ var handlePawpost = function handlePawpost(e) {
   return false;
 };
 
+// Renders the form for adding a new pawpost
 var PawpostForm = function PawpostForm(props) {
-  console.log("props.csrf", props.csrf);
   return React.createElement(
     "div",
     { className: "formLayout" },
@@ -82,9 +82,10 @@ var PawpostForm = function PawpostForm(props) {
   );
 };
 
+// Display all pawposts to the screen and properly format the information.
+// Also, render the EditPawpost component to allow the user to edit their
+// previous pawposts.
 var PawpostList = function PawpostList(props) {
-  console.log("props.pawposts", props.pawposts);
-  console.log("props.csrf in pawpostList", props.csrf);
   if (props.pawposts.length === 0) {
     return React.createElement(
       "div",
@@ -157,6 +158,8 @@ var PawpostList = function PawpostList(props) {
   );
 };
 
+// Base modal component for editing a pawpost
+
 var Modal = function (_React$Component) {
   _inherits(Modal, _React$Component);
 
@@ -203,12 +206,15 @@ var Modal = function (_React$Component) {
   return Modal;
 }(React.Component);
 
+// Use AJAX to send a POST request to the server when the user wants to
+// edit a pawpost
+
+
 var handleEditPawpost = function handleEditPawpost(e) {
   e.preventDefault();
 
   $("#toastMessage").animate({ bottom: "hide" }, 250);
 
-  console.log("inside contentEdit", $("#contentEdit").val());
   if ($("#contentEdit").val() == "") {
     handleError("All fields are required");
     return false;
@@ -220,6 +226,9 @@ var handleEditPawpost = function handleEditPawpost(e) {
 
   return false;
 };
+
+// Toggles the visibility of the edit pawpost modal and renders a form
+// for the editing.
 
 var EditPawpost = function (_React$Component2) {
   _inherits(EditPawpost, _React$Component2);
@@ -242,8 +251,6 @@ var EditPawpost = function (_React$Component2) {
   }, {
     key: "render",
     value: function render() {
-      console.log(this.state);
-
       return React.createElement(
         "div",
         null,
@@ -283,27 +290,31 @@ var EditPawpost = function (_React$Component2) {
   return EditPawpost;
 }(React.Component);
 
+// Sends a GET request to the server to retrieve all pawposts
+
+
 var loadPawpostsFromServer = function loadPawpostsFromServer(csrf) {
-  console.log("inside loadPawpostsFromServer");
   sendAjax("GET", "/getPawposts", null, function (data) {
     ReactDOM.render(React.createElement(PawpostList, { pawposts: data.pawposts, csrf: csrf }), document.querySelector("#pawposts"));
   });
 };
 
+// Renders the CreatePawpostContainer component on the scrreen
 var createFeedWindow = function createFeedWindow(csrf) {
   ReactDOM.render(React.createElement(CreatePawpostContainer, { pawposts: [], csrf: csrf }), document.querySelector("#content"));
 
   loadPawpostsFromServer(csrf);
-
-  console.log("feedWindow csrf", csrf);
 };
 
+// Renders the ChangePassword component on the screen
 var createSettingsWindow = function createSettingsWindow(csrf) {
   ReactDOM.render(React.createElement(ChangePassword, { csrf: csrf }), document.querySelector("#content"));
 };
 
+// Renders the feed or settings components based on which button is
+// clicked in the nav. The default appearance of the "/feed" page
+// should display the feed + pawpost content.
 var setup = function setup(csrf) {
-  console.log("setup csrf", csrf);
   var feedButton = document.querySelector("#feedButton");
   var settingsButton = document.querySelector("#settingsButton");
   feedButton.addEventListener("click", function (e) {
@@ -319,6 +330,7 @@ var setup = function setup(csrf) {
   createFeedWindow(csrf); // default view
 };
 
+// Retrieves the csrf token from the server
 var getToken = function getToken() {
   sendAjax("GET", "/getToken", null, function (result) {
     setup(result.csrfToken);
@@ -330,25 +342,24 @@ $(document).ready(function () {
 });
 "use strict";
 
+// Displays an error message if any fields are empty. Sends
+// a POST request to the server using AJAX to change the pwd.
 var handleChangePassword = function handleChangePassword(e) {
-  console.log("change password");
   e.preventDefault();
 
-  console.log("current pwd:", $("#currentPassword").val());
-  console.log("new pwd:", $("#newPassword1").val());
-  console.log("new pwd 2:", $("#newPassword1").val());
   if ($("#currentPassword").val() == "" || $("#newPassword1").val() == "" || $("#newPassword2").val() == "") {
     handleError("All fields are required");
     return false;
   }
 
   sendAjax("POST", $("#changePasswordForm").attr("action"), $("#changePasswordForm").serialize(), function () {
-    console.log("meow");
+    console.log("Password changed");
   });
 
   return false;
 };
 
+// Contains the form to change the password on the settings page.
 var ChangePassword = function ChangePassword(props) {
   return React.createElement(
     "div",
@@ -406,11 +417,13 @@ var ChangePassword = function ChangePassword(props) {
 };
 "use strict";
 
+// Display a message when an error occurs
 var handleError = function handleError(message) {
   $("#errorMessage").text(message);
   $("#toastMessage").animate({ bottom: "toggle" }, 250);
 };
 
+// Redirects the page to a different part of the app
 var redirect = function redirect(response) {
   $("#toastMessage").animate({ bottom: "hide" }, 250);
   window.location = response.redirect;
@@ -431,6 +444,7 @@ var sendAjax = function sendAjax(type, action, data, success) {
   });
 };
 
+// Randomly loads a background image from the server
 var changeBackground = function changeBackground() {
   var imgs = [];
   imgs[0] = "alexandru-zdrobau-_STvosrG-pw-unsplash.jpg";

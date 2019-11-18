@@ -9,6 +9,7 @@ let PawpostModel = {};
 const convertId = mongoose.Types.ObjectId;
 const setName = content => _.escape(content).trim();
 
+// Outline the schema for each pawpost
 const PawpostSchema = new mongoose.Schema({
   content: {
     type: String,
@@ -41,6 +42,8 @@ const PawpostSchema = new mongoose.Schema({
   }
 });
 
+// Return information related to the pawpost content, content image,
+// profile picture, post date creation, and username.
 PawpostSchema.statics.toAPI = doc => ({
   content: doc.content,
   contentImg: doc.contentImg,
@@ -49,6 +52,7 @@ PawpostSchema.statics.toAPI = doc => ({
   username: doc.username
 });
 
+// Return data associated with the account owner
 PawpostSchema.statics.findByOwner = (ownerId, callback) => {
   const search = {
     owner: convertId(ownerId)
@@ -59,6 +63,7 @@ PawpostSchema.statics.findByOwner = (ownerId, callback) => {
     .exec(callback);
 };
 
+// Find the account session id
 PawpostSchema.statics.findById = (id, callback) => {
   const search = {
     _id: convertId(id)
@@ -67,6 +72,7 @@ PawpostSchema.statics.findById = (id, callback) => {
   return PawpostModel.findOne(search, callback);
 };
 
+// Find the usernrame associated with the current account
 PawpostSchema.static.findByUsername = (username, callback) => {
   const search = {
     username

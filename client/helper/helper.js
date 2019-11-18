@@ -1,8 +1,10 @@
+// Display a message when an error occurs
 const handleError = message => {
   $("#errorMessage").text(message);
   $("#toastMessage").animate({ bottom: "toggle" }, 250);
 };
 
+// Redirects the page to a different part of the app
 const redirect = response => {
   $("#toastMessage").animate({ bottom: "hide" }, 250);
   window.location = response.redirect;
@@ -23,6 +25,7 @@ const sendAjax = (type, action, data, success) => {
   });
 };
 
+// Randomly loads a background image from the server
 const changeBackground = () => {
   let imgs = [];
   imgs[0] = "alexandru-zdrobau-_STvosrG-pw-unsplash.jpg";
