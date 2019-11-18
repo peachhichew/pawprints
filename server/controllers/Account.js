@@ -138,7 +138,9 @@ const changePass = (request, response) => {
     req.session.account.username,
     req.body.currentPassword,
     (err, doc) => {
-      Account.AccountModel.generateHash(req.body.newPassword1, (salt, hash) => {
+      console.log("doc", doc);
+      Account.AccountModel.generateHash(
+        req.body.newPassword1, (salt, hash) => {
         return Account.AccountModel.updateOne(
           { username: req.session.account.username },
           { salt, password: hash },
@@ -152,6 +154,7 @@ const changePass = (request, response) => {
       });
     }
   );
+  return;
 };
 
 // Generates a new csrf token
