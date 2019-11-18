@@ -134,7 +134,7 @@ const changePass = (request, response) => {
       .json({ error: "Current and new passwords are the same" });
   }
 
-  Account.AccountModel.authenticate(
+  return Account.AccountModel.authenticate(
     req.session.account.username,
     req.body.currentPassword,
     (err, doc) => {
@@ -152,9 +152,9 @@ const changePass = (request, response) => {
           }
         );
       });
+      return;
     }
   );
-  return;
 };
 
 // Generates a new csrf token
