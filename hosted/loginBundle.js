@@ -1,13 +1,16 @@
 "use strict";
 
+// Check if the fields are empty and then redirect the user
+// to the feed page upon success
 var handleLogin = function handleLogin(e) {
   e.preventDefault();
 
-  // $("#toastMessage").animate({ width: "hide" }, 350);
   $("#toastMessage").animate({ bottom: "hide" }, 250);
 
   if ($("#user").val() == "" || $("#pass").val() == "") {
     handleError("Username or password is empty");
+    $("#toastMessage").css("border-top", "5px solid #d5300d");
+    $("#errorMessage").css("color", "#d5300d");
     return false;
   }
 
@@ -18,19 +21,24 @@ var handleLogin = function handleLogin(e) {
   return false;
 };
 
+// Validate the form data and redirect the user to the /feed page
+// upon successful account creation
 var handleSignup = function handleSignup(e) {
   e.preventDefault();
 
-  // $("#toastMessage").animate({ width: "hide" }, 350);
   $("#toastMessage").animate({ bottom: "hide" }, 250);
 
   if ($("#user").val() == "" || $("#pass").val() == "" || $("#pass2").val() == "") {
     handleError("All fields are required");
+    $("#toastMessage").css("border-top", "5px solid #d5300d");
+    $("#errorMessage").css("color", "#d5300d");
     return false;
   }
 
   if ($("#pass").val() !== $("#pass2").val()) {
     handleError("Passwords do not match");
+    $("#toastMessage").css("border-top", "5px solid #d5300d");
+    $("#errorMessage").css("color", "#d5300d");
     return false;
   }
 
@@ -38,6 +46,7 @@ var handleSignup = function handleSignup(e) {
   return false;
 };
 
+// Renders the component that contains the form for logging in
 var LoginWindow = function LoginWindow(props) {
   return React.createElement(
     "div",
@@ -76,6 +85,7 @@ var LoginWindow = function LoginWindow(props) {
   );
 };
 
+// Renders the component for signing up
 var SignupWindow = function SignupWindow(props) {
   return React.createElement(
     "div",
@@ -120,14 +130,18 @@ var SignupWindow = function SignupWindow(props) {
   );
 };
 
+// Renders LoginWindow component to the screen
 var CreateLoginWindow = function CreateLoginWindow(csrf) {
   ReactDOM.render(React.createElement(LoginWindow, { csrf: csrf }), document.querySelector("#content"));
 };
 
+// Renders the SignupWindow to the screen
 var CreateSignupWindow = function CreateSignupWindow(csrf) {
   ReactDOM.render(React.createElement(SignupWindow, { csrf: csrf }), document.querySelector("#content"));
 };
 
+// Renders the appropriate component based on which button
+// has been clicked
 var setup = function setup(csrf) {
   var loginButton = document.querySelector("#loginButton");
   var signupButton = document.querySelector("#signupButton");
@@ -147,6 +161,7 @@ var setup = function setup(csrf) {
   CreateLoginWindow(csrf); // default view
 };
 
+// Uses AJAX to send a GET request for retrieving the csrf token
 var getToken = function getToken() {
   sendAjax("GET", "/getToken", null, function (result) {
     setup(result.csrfToken);

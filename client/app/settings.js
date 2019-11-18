@@ -9,6 +9,8 @@ const handleChangePassword = e => {
     $("#newPassword2").val() == ""
   ) {
     handleError("All fields are required");
+    $("#toastMessage").css("border-top", `5px solid #d5300d`);
+    $("#errorMessage").css("color", `#d5300d`);
     return false;
   }
 
@@ -17,7 +19,12 @@ const handleChangePassword = e => {
     $("#changePasswordForm").attr("action"),
     $("#changePasswordForm").serialize(),
     function() {
-      console.log("Password changed");
+      handleError("Password changed successfully");
+      $("#toastMessage").css("border-top", `5px solid #358c02`);
+      $("#errorMessage").css("color", `#358c02`);
+      $("#currentPassword").val("");
+      $("#newPassword1").val("");
+      $("#newPassword2").val("");
     }
   );
 

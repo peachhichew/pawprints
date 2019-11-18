@@ -23,6 +23,8 @@ const handlePawpost = e => {
 
   if ($("#postContent").val() == "") {
     handleError("Content is empty!");
+    $("#toastMessage").css("border-top", `5px solid #d5300d`);
+    $("#errorMessage").css("color", `#d5300d`);
     return false;
   }
 
