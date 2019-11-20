@@ -10,6 +10,9 @@ const CreatePawpostContainer = props => {
       <section id="pawposts">
         <PawpostList pawposts={[]} csrf={props.csrf} />
       </section>
+      <section id="uploadImageTest">
+        <UploadImage csrf={props.csrf} />
+      </section>
     </div>
   );
 };
@@ -64,6 +67,24 @@ const PawpostForm = props => {
         />
         <input type="hidden" name="_csrf" value={props.csrf} />
         <input className="makePawpostSubmit" type="submit" value="Post" />
+      </form>
+    </div>
+  );
+};
+
+const UploadImage = props => {
+  return (
+    <div>
+      <form
+        action="/upload"
+        enctype="multipart/form-data"
+        method="POST"
+        id="uploadImgForm"
+        // onSubmit={handleUploadImage}
+      >
+        <input type="file" name="photo" />
+        <input type="submit" value="Upload Photo" />
+        <input type="hidden" name="_csrf" value={props.csrf} />
       </form>
     </div>
   );

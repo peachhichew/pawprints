@@ -140,18 +140,20 @@ const changePass = (request, response) => {
     (err, doc) => {
       console.log("doc", doc);
       return Account.AccountModel.generateHash(
-        req.body.newPassword1, (salt, hash) => {
-        return Account.AccountModel.updateOne(
-          { username: req.session.account.username },
-          { salt, password: hash },
-          error => {
-            if (error) {
-              return res.status(400).json({ error });
+        req.body.newPassword1,
+        (salt, hash) => {
+          return Account.AccountModel.updateOne(
+            { username: req.session.account.username },
+            { salt, password: hash },
+            error => {
+              if (error) {
+                return res.status(400).json({ error });
+              }
+              return res.json({ message: "password successfully changed" });
             }
-            return res.json({ message: "password successfully changed" });
-          }
-        );
-      });
+          );
+        }
+      );
     }
   );
 };

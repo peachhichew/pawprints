@@ -11,6 +11,7 @@ const session = require("express-session");
 const RedisStore = require("connect-redis")(session);
 const url = require("url");
 const csrf = require("csurf");
+const multer = require("multer");
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
@@ -52,6 +53,52 @@ app.use(
   })
 );
 
+// app.use(bodyParser.urlencoded({ extended: false }));
+// app.use(bodyParser.json());
+app.use("/test", express.static(__dirname + "/../public"));
+
+//MULTER CONFIG: to get file photos to temp server storage
+const multerConfig = {
+  //specify diskStorage (another option is memory)
+  storage: multer.diskStorage({
+    //specify destination
+    destination: function(req, file, next) {
+      console.log("in destination");
+      next(null, "./public/photo-storage");
+    },
+
+    //specify the filename to be unique
+    filename: function(req, file, next) {
+      console.log(file);
+      //get the file mimetype ie 'image/jpeg' split and prefer the second value ie'jpeg'
+      const ext = file.mimetype.split("/")[1];
+      //set the file fieldname to a unique name containing the original name, current datetime and the extension.
+      next(null, file.fieldname + "-" + Date.now() + "." + ext);
+    }
+  }),
+
+  // filter out and prevent non-image files.
+  fileFilter: function(req, file, next) {
+    if (!file) {
+      next();
+    }
+
+    // only permit image mimetypes
+    const image = file.mimetype.startsWith("image/");
+    console.log("image: ", image);
+    if (image) {
+      console.log("photo uploaded");
+      next(null, true);
+    } else {
+      console.log("file not supported");
+      //TODO:  A better message response to user on failure.
+      return next();
+    }
+  }
+};
+
+// console.log("multerConfig", multerConfig);
+
 app.use(
   session({
     key: "sessionid",
@@ -85,6 +132,15 @@ app.use((err, req, res, next) => {
 
 router(app);
 
+app.post("/upload", multer(multerConfig).single("photo"), function(req, res) {
+  console.log("multerConfig in POST:", multerConfig);
+  //Here is where I could add functions to then get the url of the new photo
+  //And relocate that to a cloud storage solution with a callback containing its new url
+  //then ideally loading that into your database solution.   Use case - user uploading an avatar...
+  res.send(
+    'Complete! Check out your public/photo-storage folder.  Please note that files not encoded with an image mimetype are rejected. <a href="index.html">try again</a>'
+  );
+});
 app.listen(port, err => {
   if (err) {
     throw err;

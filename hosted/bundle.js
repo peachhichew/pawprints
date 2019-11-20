@@ -28,6 +28,11 @@ var CreatePawpostContainer = function CreatePawpostContainer(props) {
       "section",
       { id: "pawposts" },
       React.createElement(PawpostList, { pawposts: [], csrf: props.csrf })
+    ),
+    React.createElement(
+      "section",
+      { id: "uploadImageTest" },
+      React.createElement(UploadImage, { csrf: props.csrf })
     )
   );
 };
@@ -80,6 +85,26 @@ var PawpostForm = function PawpostForm(props) {
       }),
       React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
       React.createElement("input", { className: "makePawpostSubmit", type: "submit", value: "Post" })
+    )
+  );
+};
+
+var UploadImage = function UploadImage(props) {
+  return React.createElement(
+    "div",
+    null,
+    React.createElement(
+      "form",
+      {
+        action: "/upload",
+        enctype: "multipart/form-data",
+        method: "POST",
+        id: "uploadImgForm"
+        // onSubmit={handleUploadImage}
+      },
+      React.createElement("input", { type: "file", name: "photo" }),
+      React.createElement("input", { type: "submit", value: "Upload Photo" }),
+      React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf })
     )
   );
 };
