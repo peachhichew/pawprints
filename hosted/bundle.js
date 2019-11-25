@@ -28,6 +28,11 @@ var CreatePawpostContainer = function CreatePawpostContainer(props) {
       "section",
       { id: "pawposts" },
       React.createElement(PawpostList, { pawposts: [], csrf: props.csrf })
+    ),
+    React.createElement(
+      "section",
+      { id: "uploadImageTest" },
+      React.createElement(UploadImage, { csrf: props.csrf })
     )
   );
 };
@@ -292,9 +297,26 @@ var EditPawpost = function (_React$Component2) {
   return EditPawpost;
 }(React.Component);
 
+var UploadImage = function UploadImage(props) {
+  return React.createElement(
+    "div",
+    null,
+    React.createElement(
+      "form",
+      {
+        id: "uploadForm",
+        action: "/upload",
+        method: "POST",
+        encType: "multipart/form-data"
+      },
+      React.createElement("input", { type: "file", name: "sampleFile" }),
+      React.createElement("input", { type: "submit", value: "Upload" }),
+      React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf })
+    )
+  );
+};
+
 // Sends a GET request to the server to retrieve all pawposts
-
-
 var loadPawpostsFromServer = function loadPawpostsFromServer(csrf) {
   sendAjax("GET", "/getPawposts", null, function (data) {
     ReactDOM.render(React.createElement(PawpostList, { pawposts: data.pawposts, csrf: csrf }), document.querySelector("#pawposts"));
@@ -310,7 +332,7 @@ var createFeedWindow = function createFeedWindow(csrf) {
 
 // Renders the ChangePassword component on the screen
 var createSettingsWindow = function createSettingsWindow(csrf) {
-  ReactDOM.render(React.createElement(ChangePassword, { csrf: csrf }), document.querySelector("#content"));
+  ReactDOM.render(React.createElement(ChangeSettingsContainer, { csrf: csrf }), document.querySelector("#content"));
 };
 
 // Renders the feed or settings components based on which button is
@@ -344,6 +366,33 @@ $(document).ready(function () {
 });
 "use strict";
 
+var ChangeSettingsContainer = function ChangeSettingsContainer(props) {
+  return React.createElement(
+    "div",
+    null,
+    React.createElement(
+      "h2",
+      { className: "pageTitle" },
+      "Settings"
+    ),
+    React.createElement(
+      "section",
+      { id: "profilePic" },
+      React.createElement(
+        "h3",
+        null,
+        "Profile Picture"
+      ),
+      React.createElement(UploadImage, { csrf: props.csrf })
+    ),
+    React.createElement(
+      "section",
+      { id: "changePwd" },
+      React.createElement(ChangePassword, { csrf: props.csrf })
+    )
+  );
+};
+
 // Displays an error message if any fields are empty. Sends
 // a POST request to the server using AJAX to change the pwd.
 var handleChangePassword = function handleChangePassword(e) {
@@ -373,11 +422,6 @@ var ChangePassword = function ChangePassword(props) {
   return React.createElement(
     "div",
     null,
-    React.createElement(
-      "h2",
-      { className: "pageTitle" },
-      "Settings"
-    ),
     React.createElement(
       "div",
       { className: "changePassword" },

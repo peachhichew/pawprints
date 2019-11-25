@@ -10,6 +10,9 @@ const CreatePawpostContainer = props => {
       <section id="pawposts">
         <PawpostList pawposts={[]} csrf={props.csrf} />
       </section>
+      <section id="uploadImageTest">
+        <UploadImage csrf={props.csrf} />
+      </section>
     </div>
   );
 };
@@ -217,6 +220,23 @@ class EditPawpost extends React.Component {
   }
 }
 
+const UploadImage = props => {
+  return (
+    <div>
+      <form
+        id="uploadForm"
+        action="/upload"
+        method="POST"
+        encType="multipart/form-data"
+      >
+        <input type="file" name="sampleFile" />
+        <input type="submit" value="Upload" />
+        <input type="hidden" name="_csrf" value={props.csrf} />
+      </form>
+    </div>
+  );
+};
+
 // Sends a GET request to the server to retrieve all pawposts
 const loadPawpostsFromServer = csrf => {
   sendAjax("GET", "/getPawposts", null, data => {
@@ -240,7 +260,7 @@ const createFeedWindow = csrf => {
 // Renders the ChangePassword component on the screen
 const createSettingsWindow = csrf => {
   ReactDOM.render(
-    <ChangePassword csrf={csrf} />,
+    <ChangeSettingsContainer csrf={csrf} />,
     document.querySelector("#content")
   );
 };

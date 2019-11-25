@@ -11,17 +11,22 @@ const session = require("express-session");
 const RedisStore = require("connect-redis")(session);
 const url = require("url");
 const csrf = require("csurf");
+const fileUpload = require("express-fileupload");
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
 const dbURL = process.env.MONGODB_URI || "mongodb://localhost/Pawprints";
 
-mongoose.connect(dbURL, err => {
-  if (err) {
-    console.log("Could not connect to database");
-    throw err;
+mongoose.connect(
+  dbURL,
+  { useNewUrlParser: true, useUnifiedTopology: true },
+  err => {
+    if (err) {
+      console.log("Could not connect to database");
+      throw err;
+    }
   }
-});
+);
 
 let redisURL = {
   hostname: "redis-16081.c83.us-east-1-2.ec2.cloud.redislabs.com", // your hostname from RedisLabs
@@ -43,9 +48,14 @@ const app = express();
 app.use("/assets", express.static(path.resolve(`${__dirname}/../hosted/`)));
 app.use(favicon(`${__dirname}/../hosted/img/favicon.png`));
 app.use("/images", express.static(path.resolve(`${__dirname}/../hosted/img/`)));
+app.use(express.static(path.join(__dirname, "/../hosted")));
 
 app.disable("x-powered-by");
 app.use(compression());
+
+//Add the file upload package. This will place all uploaded files into req.files
+app.use(fileUpload());
+
 app.use(
   bodyParser.urlencoded({
     extended: true

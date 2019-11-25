@@ -1,5 +1,7 @@
 const controllers = require("./controllers");
 const mid = require("./middleware");
+// const image = require("./controllers/Image.js");
+const file = require("./controllers/files.js");
 
 const router = app => {
   app.get(
@@ -36,6 +38,13 @@ const router = app => {
     mid.requiresLogin,
     controllers.Pawpost.editPawpost
   );
+
+  //Images get uploaded using /upload
+  app.post("/upload", file.upload);
+
+  //Images can be retrieved using /retrieve?name=THE_FILE_NAME_WITH_EXTENSION
+  app.get("/retrieve", file.retrieve);
+
   app.get(
     "/",
     mid.requiresSecure,
