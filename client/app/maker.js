@@ -117,6 +117,7 @@ const PawpostList = function(props) {
           <h3 className="pawpostContentImg">{pawpost.contentImg}</h3>
         </div>
         <EditPawpost pawposts={pawpost} csrf={props.csrf} />
+        <DeletePawpost pawposts={pawpost} csrf={props.csrf} />
       </div>
     );
   });
@@ -217,9 +218,69 @@ class EditPawpost extends React.Component {
   }
 }
 
+const handleDeletePawpost = e => {
+  // e.preventDefault();
+
+  $("#toastMessage").animate({ bottom: "hide" }, 250);
+
+  sendAjax(
+    "DELETE",
+    $("#pawpostFormDelete").attr("action"),
+    $("#pawpostFormDelete").serialize(),
+    function() {
+      loadPawpostsFromServer();
+    }
+  );
+
+  // return false;
+};
+
+class DeletePawpost extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { isOpen: false, pawposts: props.pawposts, csrf: props.csrf };
+    this.toggleModal = this.toggleModal.bind(this);
+  }
+
+  toggleModal() {
+    this.setState({ isOpen: !this.state.isOpen });
+  }
+
+  render() {
+    return (
+      <div>
+        <button onClick={this.toggleModal} id="deleteButton">
+          <i className="fa fa-trash" aria-hidden="true"></i>
+        </button>
+
+        <Modal show={this.state.isOpen} onClose={this.toggleModal}>
+          <form
+            id="pawpostFormDelete"
+            onSubmit={handleDeletePawpost}
+            name="pawpostFormDelete"
+            action="/deletePawpost"
+            method="DELETE"
+          >
+            <p>Are you sure you want to delete this pawpost?</p>
+            <input type="hidden" name="_csrf" value={this.state.csrf} />
+            <input type="hidden" name="_id" value={this.state.pawposts._id} />
+            <input className="makePawpostSubmit" type="submit" value="Yes" />
+            <input
+              className="cancelDeletePawpost"
+              onClick={this.toggleModal}
+              value="No"
+            />
+          </form>
+        </Modal>
+      </div>
+    );
+  }
+}
+
 // Sends a GET request to the server to retrieve all pawposts
 const loadPawpostsFromServer = csrf => {
   sendAjax("GET", "/getPawposts", null, data => {
+    console.log("data.pawposts", data.pawposts);
     ReactDOM.render(
       <PawpostList pawposts={data.pawposts} csrf={csrf} />,
       document.querySelector("#pawposts")

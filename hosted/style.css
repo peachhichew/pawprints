@@ -365,3 +365,26 @@ button {
   color: #fff;
   margin-top: 20px;
 }
+
+#deleteButton {
+  padding: 0;
+  /* height: 15px; */
+  color: #777;
+  background-color: #fff;
+}
+
+#deleteButton:hover {
+  cursor: pointer;
+  color: #212121;
+}
+
+.cancelDeletePawpost {
+  width: 70px;
+  padding: 5px;
+  text-align: center;
+  color: #fff;
+  background-color: #d5300d;
+  border-radius: 3px;
+  color: #fff;
+  float: right;
+}

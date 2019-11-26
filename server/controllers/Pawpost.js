@@ -51,6 +51,8 @@ const editPawpost = (request, response) => {
       return res.status(400).json({ error: "Invalid pawpost" });
     }
 
+    console.log("doc in editPawpost(): ", doc);
+
     let pawpostPromise;
     if (doc.owner.equals(req.session.account._id)) {
       let pawpost = doc;
@@ -74,6 +76,34 @@ const editPawpost = (request, response) => {
   });
 };
 
+const deletePawpost = (request, response) => {
+  const req = request;
+  const res = response;
+
+  Pawpost.PawpostModel.findById(req.body._id, (err, doc) => {
+    console.log("doc: ", doc);
+    if (err) {
+      console.log(err);
+      return res.status(400).json({ error: "An error occurred" });
+    }
+
+    if (!doc) {
+      return res.status(400).json({ error: "Invalid pawpost" });
+    }
+
+    return Pawpost.PawpostModel.remove({ _id: req.body._id }, error => {
+      if (error) {
+        console.log(err);
+        return res.status(400).json({ error: "An error occurred" });
+      }
+
+      // res.redirect("/feed");
+      // return res.render("app", { csrfToken: req.csrfToken() });
+      return res.status(200).json({ message: "Pawpost successfully deleted" });
+    });
+  });
+};
+
 // Renders the /feed page and all the existing pawposts
 const feedPage = (req, res) => {
   Pawpost.PawpostModel.findByOwner(req.session.account._id, (err, docs) => {
@@ -83,6 +113,17 @@ const feedPage = (req, res) => {
     }
 
     return res.render("app", { csrfToken: req.csrfToken(), pawposts: docs });
+  });
+};
+
+const getAllUsersPawposts = (req, res) => {
+  return Pawpost.PawpostModel.find({}, (err, docs) => {
+    if (err) {
+      console.log(err);
+      return res.status(400).json({ error: "An error occurred" });
+    } else {
+      res.json({ pawposts: docs });
+    }
   });
 };
 
@@ -108,3 +149,5 @@ module.exports.makePawpost = makePawpost;
 module.exports.getPawposts = getPawposts;
 module.exports.feedPage = feedPage;
 module.exports.editPawpost = editPawpost;
+module.exports.deletePawpost = deletePawpost;
+module.exports.getAllUsersPawposts = getAllUsersPawposts;

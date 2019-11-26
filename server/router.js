@@ -36,6 +36,16 @@ const router = app => {
     mid.requiresLogin,
     controllers.Pawpost.editPawpost
   );
+  app.delete(
+    "/deletePawpost",
+    mid.requiresLogin,
+    controllers.Pawpost.deletePawpost
+  );
+  app.get(
+    "/allPawposts",
+    mid.requiresLogin,
+    controllers.Pawpost.getAllUsersPawposts
+  );
   app.get(
     "/",
     mid.requiresSecure,

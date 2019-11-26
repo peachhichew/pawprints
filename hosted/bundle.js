@@ -149,7 +149,8 @@ var PawpostList = function PawpostList(props) {
           pawpost.contentImg
         )
       ),
-      React.createElement(EditPawpost, { pawposts: pawpost, csrf: props.csrf })
+      React.createElement(EditPawpost, { pawposts: pawpost, csrf: props.csrf }),
+      React.createElement(DeletePawpost, { pawposts: pawpost, csrf: props.csrf })
     );
   });
 
@@ -292,11 +293,87 @@ var EditPawpost = function (_React$Component2) {
   return EditPawpost;
 }(React.Component);
 
+var handleDeletePawpost = function handleDeletePawpost(e) {
+  // e.preventDefault();
+
+  $("#toastMessage").animate({ bottom: "hide" }, 250);
+
+  sendAjax("DELETE", $("#pawpostFormDelete").attr("action"), $("#pawpostFormDelete").serialize(), function () {
+    loadPawpostsFromServer();
+  });
+
+  // return false;
+};
+
+var DeletePawpost = function (_React$Component3) {
+  _inherits(DeletePawpost, _React$Component3);
+
+  function DeletePawpost(props) {
+    _classCallCheck(this, DeletePawpost);
+
+    var _this3 = _possibleConstructorReturn(this, (DeletePawpost.__proto__ || Object.getPrototypeOf(DeletePawpost)).call(this, props));
+
+    _this3.state = { isOpen: false, pawposts: props.pawposts, csrf: props.csrf };
+    _this3.toggleModal = _this3.toggleModal.bind(_this3);
+    return _this3;
+  }
+
+  _createClass(DeletePawpost, [{
+    key: "toggleModal",
+    value: function toggleModal() {
+      this.setState({ isOpen: !this.state.isOpen });
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      return React.createElement(
+        "div",
+        null,
+        React.createElement(
+          "button",
+          { onClick: this.toggleModal, id: "deleteButton" },
+          React.createElement("i", { className: "fa fa-trash", "aria-hidden": "true" })
+        ),
+        React.createElement(
+          Modal,
+          { show: this.state.isOpen, onClose: this.toggleModal },
+          React.createElement(
+            "form",
+            {
+              id: "pawpostFormDelete",
+              onSubmit: handleDeletePawpost,
+              name: "pawpostFormDelete",
+              action: "/deletePawpost",
+              method: "DELETE"
+            },
+            React.createElement(
+              "p",
+              null,
+              "Are you sure you want to delete this pawpost?"
+            ),
+            React.createElement("input", { type: "hidden", name: "_csrf", value: this.state.csrf }),
+            React.createElement("input", { type: "hidden", name: "_id", value: this.state.pawposts._id }),
+            React.createElement("input", { className: "makePawpostSubmit", type: "submit", value: "Yes" }),
+            React.createElement("input", {
+              className: "cancelDeletePawpost",
+              onClick: this.toggleModal,
+              value: "No"
+            })
+          )
+        )
+      );
+    }
+  }]);
+
+  return DeletePawpost;
+}(React.Component);
+
 // Sends a GET request to the server to retrieve all pawposts
 
 
 var loadPawpostsFromServer = function loadPawpostsFromServer(csrf) {
   sendAjax("GET", "/getPawposts", null, function (data) {
+    console.log("data.pawposts", data.pawposts);
     ReactDOM.render(React.createElement(PawpostList, { pawposts: data.pawposts, csrf: csrf }), document.querySelector("#pawposts"));
   });
 };
