@@ -21,7 +21,7 @@ const makePawpost = (req, res) => {
 
   const newPawpost = new Pawpost.PawpostModel(pawpostData);
   const pawpostPromise = newPawpost.save();
-  pawpostPromise.then(() => res.json({ redirect: "/feed" }));
+  pawpostPromise.then(() => res.json({ redirect: "/profile" }));
   pawpostPromise.catch(err => {
     if (err.code === 11000) {
       return res.status(400).json({ error: "Pawpost already exists" });
@@ -104,7 +104,18 @@ const deletePawpost = (request, response) => {
   });
 };
 
-// Renders the /feed page and all the existing pawposts
+// Renders the /profile page and all the existing pawposts
+const profilePage = (req, res) => {
+  Pawpost.PawpostModel.findByOwner(req.session.account._id, (err, docs) => {
+    if (err) {
+      console.log(err);
+      return res.status(400).json({ error: "An error occurred" });
+    }
+
+    return res.render("app", { csrfToken: req.csrfToken(), pawposts: docs });
+  });
+};
+
 const feedPage = (req, res) => {
   Pawpost.PawpostModel.findByOwner(req.session.account._id, (err, docs) => {
     if (err) {
@@ -147,6 +158,7 @@ const getPawposts = (request, response) => {
 
 module.exports.makePawpost = makePawpost;
 module.exports.getPawposts = getPawposts;
+module.exports.profilePage = profilePage;
 module.exports.feedPage = feedPage;
 module.exports.editPawpost = editPawpost;
 module.exports.deletePawpost = deletePawpost;

@@ -39,7 +39,7 @@ const login = (request, response) => {
 
       req.session.account = Account.AccountModel.toAPI(account);
 
-      return res.json({ redirect: "/feed" });
+      return res.json({ redirect: "/profile" });
     }
   );
 };
@@ -79,7 +79,7 @@ const signup = (request, response) => {
 
     savePromise.then(() => {
       req.session.account = Account.AccountModel.toAPI(newAccount);
-      return res.json({ redirect: "/feed" });
+      return res.json({ redirect: "/profile" });
     });
 
     savePromise.catch(err => {
@@ -140,18 +140,20 @@ const changePass = (request, response) => {
     (err, doc) => {
       console.log("doc", doc);
       return Account.AccountModel.generateHash(
-        req.body.newPassword1, (salt, hash) => {
-        return Account.AccountModel.updateOne(
-          { username: req.session.account.username },
-          { salt, password: hash },
-          error => {
-            if (error) {
-              return res.status(400).json({ error });
+        req.body.newPassword1,
+        (salt, hash) => {
+          return Account.AccountModel.updateOne(
+            { username: req.session.account.username },
+            { salt, password: hash },
+            error => {
+              if (error) {
+                return res.status(400).json({ error });
+              }
+              return res.json({ message: "password successfully changed" });
             }
-            return res.json({ message: "password successfully changed" });
-          }
-        );
-      });
+          );
+        }
+      );
     }
   );
 };

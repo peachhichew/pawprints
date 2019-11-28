@@ -3,12 +3,23 @@
 const CreatePawpostContainer = props => {
   return (
     <div>
-      <h2 className="pageTitle">Feed</h2>
+      <h2 className="pageTitle">Profile</h2>
       <section id="makePawpost">
         <PawpostForm csrf={props.csrf} />
       </section>
       <section id="pawposts">
         <PawpostList pawposts={[]} csrf={props.csrf} />
+      </section>
+    </div>
+  );
+};
+
+const CreateFeedContainer = props => {
+  return (
+    <div>
+      <h2 className="pageTitle">Feed</h2>
+      <section id="pawposts">
+        <PawpostsInFeed pawposts={[]} csrf={props.csrf} />
       </section>
     </div>
   );
@@ -33,7 +44,7 @@ const handlePawpost = e => {
     $("#pawpostForm").attr("action"),
     $("#pawpostForm").serialize(),
     function() {
-      loadPawpostsFromServer();
+      loadProfilePawpostsFromServer();
     }
   );
 
@@ -51,7 +62,7 @@ const PawpostForm = props => {
         id="pawpostForm"
         onSubmit={handlePawpost}
         name="pawpostForm"
-        action="/feed"
+        action="/profile"
         method="POST"
         className="pawpostForm"
       >
@@ -125,6 +136,57 @@ const PawpostList = function(props) {
   return <div className="pawpostList">{pawpostNodes.reverse()}</div>;
 };
 
+const PawpostsInFeed = function(props) {
+  if (props.pawposts.length === 0) {
+    return (
+      <div className="pawpostList">
+        <h3 className="emptyPawpost">No pawposts yet</h3>
+      </div>
+    );
+  }
+
+  const pawpostNodes = props.pawposts.map(function(pawpost) {
+    let options = {
+      year: "numeric",
+      month: "long",
+      day: "numeric"
+    };
+    let date = new Date(pawpost.createdDate.substring(0, 10));
+    let time = new Date(pawpost.createdDate);
+
+    return (
+      <div key={pawpost._id} className="pawpost">
+        <div id="renderModal" />
+        <img
+          src="./assets/img/propic.jpg"
+          alt="profile pic"
+          className="profilePic"
+        />
+        <div className="contentInfo">
+          <p className="statusUpdated">
+            <span className="username">{pawpost.username}</span> updated their
+            status.
+          </p>
+
+          <p className="pawpostDate">
+            {date.toLocaleDateString("en-US", options)} •
+            {` ${time
+              .toLocaleTimeString("en-US")
+              .substring(0, time.toLocaleTimeString("en-US").length - 6)} 
+              ${time
+                .toLocaleTimeString("en-US")
+                .substring(8, time.toLocaleTimeString("en-US").length)}`}
+          </p>
+          <p className="pawpostContent">{pawpost.content}</p>
+          <h3 className="pawpostContentImg">{pawpost.contentImg}</h3>
+        </div>
+      </div>
+    );
+  });
+
+  return <div className="pawpostList">{pawpostNodes.reverse()}</div>;
+};
+
 // Base modal component for editing a pawpost
 class Modal extends React.Component {
   render() {
@@ -166,7 +228,7 @@ const handleEditPawpost = e => {
     $("#pawpostFormEdit").attr("action"),
     $("#pawpostFormEdit").serialize(),
     function() {
-      loadPawpostsFromServer();
+      loadProfilePawpostsFromServer();
     }
   );
 
@@ -228,7 +290,7 @@ const handleDeletePawpost = e => {
     $("#pawpostFormDelete").attr("action"),
     $("#pawpostFormDelete").serialize(),
     function() {
-      loadPawpostsFromServer();
+      loadProfilePawpostsFromServer();
     }
   );
 
@@ -278,9 +340,19 @@ class DeletePawpost extends React.Component {
 }
 
 // Sends a GET request to the server to retrieve all pawposts
-const loadPawpostsFromServer = csrf => {
+const loadProfilePawpostsFromServer = csrf => {
   sendAjax("GET", "/getPawposts", null, data => {
     console.log("data.pawposts", data.pawposts);
+    ReactDOM.render(
+      <PawpostList pawposts={data.pawposts} csrf={csrf} />,
+      document.querySelector("#pawposts")
+    );
+  });
+};
+
+const loadFeedPawpostsFromServer = csrf => {
+  sendAjax("GET", "/allPawposts", null, data => {
+    console.log("data.pawposts all", data.pawposts);
     ReactDOM.render(
       <PawpostList pawposts={data.pawposts} csrf={csrf} />,
       document.querySelector("#pawposts")
@@ -291,11 +363,11 @@ const loadPawpostsFromServer = csrf => {
 // Renders the CreatePawpostContainer component on the scrreen
 const createFeedWindow = csrf => {
   ReactDOM.render(
-    <CreatePawpostContainer pawposts={[]} csrf={csrf} />,
+    <CreateFeedContainer pawposts={[]} csrf={csrf} />,
     document.querySelector("#content")
   );
 
-  loadPawpostsFromServer(csrf);
+  loadFeedPawpostsFromServer(csrf);
 };
 
 // Renders the ChangePassword component on the screen
@@ -306,11 +378,21 @@ const createSettingsWindow = csrf => {
   );
 };
 
+const createProfileWindow = csrf => {
+  ReactDOM.render(
+    <CreatePawpostContainer pawposts={[]} csrf={csrf} />,
+    document.querySelector("#content")
+  );
+
+  loadProfilePawpostsFromServer(csrf);
+};
+
 // Renders the feed or settings components based on which button is
 // clicked in the nav. The default appearance of the "/feed" page
 // should display the feed + pawpost content.
 const setup = function(csrf) {
   const feedButton = document.querySelector("#feedButton");
+  const profileButton = document.querySelector("#profileButton");
   const settingsButton = document.querySelector("#settingsButton");
   feedButton.addEventListener("click", e => {
     e.preventDefault();
@@ -322,7 +404,12 @@ const setup = function(csrf) {
     createSettingsWindow(csrf);
     return false;
   });
-  createFeedWindow(csrf); // default view
+  profileButton.addEventListener("click", e => {
+    e.preventDefault();
+    createProfileWindow(csrf);
+    return false;
+  });
+  createProfileWindow(csrf); // default view
 };
 
 // Retrieves the csrf token from the server

@@ -23,8 +23,8 @@ const router = app => {
     controllers.Account.signup
   );
   app.get("/logout", mid.requiresLogin, controllers.Account.logout);
-  app.get("/feed", mid.requiresLogin, controllers.Pawpost.feedPage);
-  app.post("/feed", mid.requiresLogin, controllers.Pawpost.makePawpost);
+  app.get("/profile", mid.requiresLogin, controllers.Pawpost.profilePage);
+  app.post("/profile", mid.requiresLogin, controllers.Pawpost.makePawpost);
   // app.get("/settings", mid.requiresLogin, controllers.Account.settingsPage);
   app.post(
     "/changePassword",
@@ -41,6 +41,7 @@ const router = app => {
     mid.requiresLogin,
     controllers.Pawpost.deletePawpost
   );
+  app.get("/feed", mid.requiresLogin, controllers.Pawpost.feedPage);
   app.get(
     "/allPawposts",
     mid.requiresLogin,

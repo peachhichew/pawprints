@@ -17,7 +17,7 @@ var CreatePawpostContainer = function CreatePawpostContainer(props) {
     React.createElement(
       "h2",
       { className: "pageTitle" },
-      "Feed"
+      "Profile"
     ),
     React.createElement(
       "section",
@@ -28,6 +28,23 @@ var CreatePawpostContainer = function CreatePawpostContainer(props) {
       "section",
       { id: "pawposts" },
       React.createElement(PawpostList, { pawposts: [], csrf: props.csrf })
+    )
+  );
+};
+
+var CreateFeedContainer = function CreateFeedContainer(props) {
+  return React.createElement(
+    "div",
+    null,
+    React.createElement(
+      "h2",
+      { className: "pageTitle" },
+      "Feed"
+    ),
+    React.createElement(
+      "section",
+      { id: "pawposts" },
+      React.createElement(PawpostsInFeed, { pawposts: [], csrf: props.csrf })
     )
   );
 };
@@ -47,7 +64,7 @@ var handlePawpost = function handlePawpost(e) {
   }
 
   sendAjax("POST", $("#pawpostForm").attr("action"), $("#pawpostForm").serialize(), function () {
-    loadPawpostsFromServer();
+    loadProfilePawpostsFromServer();
   });
 
   $("#postContent").val("");
@@ -67,7 +84,7 @@ var PawpostForm = function PawpostForm(props) {
         id: "pawpostForm",
         onSubmit: handlePawpost,
         name: "pawpostForm",
-        action: "/feed",
+        action: "/profile",
         method: "POST",
         className: "pawpostForm"
       },
@@ -161,6 +178,78 @@ var PawpostList = function PawpostList(props) {
   );
 };
 
+var PawpostsInFeed = function PawpostsInFeed(props) {
+  if (props.pawposts.length === 0) {
+    return React.createElement(
+      "div",
+      { className: "pawpostList" },
+      React.createElement(
+        "h3",
+        { className: "emptyPawpost" },
+        "No pawposts yet"
+      )
+    );
+  }
+
+  var pawpostNodes = props.pawposts.map(function (pawpost) {
+    var options = {
+      year: "numeric",
+      month: "long",
+      day: "numeric"
+    };
+    var date = new Date(pawpost.createdDate.substring(0, 10));
+    var time = new Date(pawpost.createdDate);
+
+    return React.createElement(
+      "div",
+      { key: pawpost._id, className: "pawpost" },
+      React.createElement("div", { id: "renderModal" }),
+      React.createElement("img", {
+        src: "./assets/img/propic.jpg",
+        alt: "profile pic",
+        className: "profilePic"
+      }),
+      React.createElement(
+        "div",
+        { className: "contentInfo" },
+        React.createElement(
+          "p",
+          { className: "statusUpdated" },
+          React.createElement(
+            "span",
+            { className: "username" },
+            pawpost.username
+          ),
+          " updated their status."
+        ),
+        React.createElement(
+          "p",
+          { className: "pawpostDate" },
+          date.toLocaleDateString("en-US", options),
+          " \u2022",
+          " " + time.toLocaleTimeString("en-US").substring(0, time.toLocaleTimeString("en-US").length - 6) + " \n              " + time.toLocaleTimeString("en-US").substring(8, time.toLocaleTimeString("en-US").length)
+        ),
+        React.createElement(
+          "p",
+          { className: "pawpostContent" },
+          pawpost.content
+        ),
+        React.createElement(
+          "h3",
+          { className: "pawpostContentImg" },
+          pawpost.contentImg
+        )
+      )
+    );
+  });
+
+  return React.createElement(
+    "div",
+    { className: "pawpostList" },
+    pawpostNodes.reverse()
+  );
+};
+
 // Base modal component for editing a pawpost
 
 var Modal = function (_React$Component) {
@@ -224,7 +313,7 @@ var handleEditPawpost = function handleEditPawpost(e) {
   }
 
   sendAjax("POST", $("#pawpostFormEdit").attr("action"), $("#pawpostFormEdit").serialize(), function () {
-    loadPawpostsFromServer();
+    loadProfilePawpostsFromServer();
   });
 
   return false;
@@ -299,7 +388,7 @@ var handleDeletePawpost = function handleDeletePawpost(e) {
   $("#toastMessage").animate({ bottom: "hide" }, 250);
 
   sendAjax("DELETE", $("#pawpostFormDelete").attr("action"), $("#pawpostFormDelete").serialize(), function () {
-    loadPawpostsFromServer();
+    loadProfilePawpostsFromServer();
   });
 
   // return false;
@@ -371,18 +460,25 @@ var DeletePawpost = function (_React$Component3) {
 // Sends a GET request to the server to retrieve all pawposts
 
 
-var loadPawpostsFromServer = function loadPawpostsFromServer(csrf) {
+var loadProfilePawpostsFromServer = function loadProfilePawpostsFromServer(csrf) {
   sendAjax("GET", "/getPawposts", null, function (data) {
     console.log("data.pawposts", data.pawposts);
     ReactDOM.render(React.createElement(PawpostList, { pawposts: data.pawposts, csrf: csrf }), document.querySelector("#pawposts"));
   });
 };
 
+var loadFeedPawpostsFromServer = function loadFeedPawpostsFromServer(csrf) {
+  sendAjax("GET", "/allPawposts", null, function (data) {
+    console.log("data.pawposts all", data.pawposts);
+    ReactDOM.render(React.createElement(PawpostList, { pawposts: data.pawposts, csrf: csrf }), document.querySelector("#pawposts"));
+  });
+};
+
 // Renders the CreatePawpostContainer component on the scrreen
 var createFeedWindow = function createFeedWindow(csrf) {
-  ReactDOM.render(React.createElement(CreatePawpostContainer, { pawposts: [], csrf: csrf }), document.querySelector("#content"));
+  ReactDOM.render(React.createElement(CreateFeedContainer, { pawposts: [], csrf: csrf }), document.querySelector("#content"));
 
-  loadPawpostsFromServer(csrf);
+  loadFeedPawpostsFromServer(csrf);
 };
 
 // Renders the ChangePassword component on the screen
@@ -390,11 +486,18 @@ var createSettingsWindow = function createSettingsWindow(csrf) {
   ReactDOM.render(React.createElement(ChangePassword, { csrf: csrf }), document.querySelector("#content"));
 };
 
+var createProfileWindow = function createProfileWindow(csrf) {
+  ReactDOM.render(React.createElement(CreatePawpostContainer, { pawposts: [], csrf: csrf }), document.querySelector("#content"));
+
+  loadProfilePawpostsFromServer(csrf);
+};
+
 // Renders the feed or settings components based on which button is
 // clicked in the nav. The default appearance of the "/feed" page
 // should display the feed + pawpost content.
 var setup = function setup(csrf) {
   var feedButton = document.querySelector("#feedButton");
+  var profileButton = document.querySelector("#profileButton");
   var settingsButton = document.querySelector("#settingsButton");
   feedButton.addEventListener("click", function (e) {
     e.preventDefault();
@@ -406,7 +509,12 @@ var setup = function setup(csrf) {
     createSettingsWindow(csrf);
     return false;
   });
-  createFeedWindow(csrf); // default view
+  profileButton.addEventListener("click", function (e) {
+    e.preventDefault();
+    createProfileWindow(csrf);
+    return false;
+  });
+  createProfileWindow(csrf); // default view
 };
 
 // Retrieves the csrf token from the server
