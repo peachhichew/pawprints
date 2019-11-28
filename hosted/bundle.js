@@ -179,6 +179,7 @@ var PawpostList = function PawpostList(props) {
 };
 
 var PawpostsInFeed = function PawpostsInFeed(props) {
+  console.log("inside pawpostsInFeed");
   if (props.pawposts.length === 0) {
     return React.createElement(
       "div",
@@ -203,7 +204,6 @@ var PawpostsInFeed = function PawpostsInFeed(props) {
     return React.createElement(
       "div",
       { key: pawpost._id, className: "pawpost" },
-      React.createElement("div", { id: "renderModal" }),
       React.createElement("img", {
         src: "./assets/img/propic.jpg",
         alt: "profile pic",
@@ -470,7 +470,7 @@ var loadProfilePawpostsFromServer = function loadProfilePawpostsFromServer(csrf)
 var loadFeedPawpostsFromServer = function loadFeedPawpostsFromServer(csrf) {
   sendAjax("GET", "/allPawposts", null, function (data) {
     console.log("data.pawposts all", data.pawposts);
-    ReactDOM.render(React.createElement(PawpostList, { pawposts: data.pawposts, csrf: csrf }), document.querySelector("#pawposts"));
+    ReactDOM.render(React.createElement(PawpostsInFeed, { pawposts: data.pawposts, csrf: csrf }), document.querySelector("#pawposts"));
   });
 };
 

@@ -137,6 +137,7 @@ const PawpostList = function(props) {
 };
 
 const PawpostsInFeed = function(props) {
+  console.log("inside pawpostsInFeed");
   if (props.pawposts.length === 0) {
     return (
       <div className="pawpostList">
@@ -156,7 +157,6 @@ const PawpostsInFeed = function(props) {
 
     return (
       <div key={pawpost._id} className="pawpost">
-        <div id="renderModal" />
         <img
           src="./assets/img/propic.jpg"
           alt="profile pic"
@@ -354,7 +354,7 @@ const loadFeedPawpostsFromServer = csrf => {
   sendAjax("GET", "/allPawposts", null, data => {
     console.log("data.pawposts all", data.pawposts);
     ReactDOM.render(
-      <PawpostList pawposts={data.pawposts} csrf={csrf} />,
+      <PawpostsInFeed pawposts={data.pawposts} csrf={csrf} />,
       document.querySelector("#pawposts")
     );
   });
