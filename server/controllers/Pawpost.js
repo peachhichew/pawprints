@@ -110,9 +110,10 @@ const profilePage = (req, res) => {
     if (err) {
       console.log(err);
       return res.status(400).json({ error: "An error occurred" });
+    } else {
+      res.render("app", { csrfToken: req.csrfToken(), pawposts: docs });
+      return res.status(200).json({ message: "Page loaded successfully" });
     }
-
-    return res.render("app", { csrfToken: req.csrfToken(), pawposts: docs });
   });
 };
 
@@ -122,8 +123,7 @@ const feedPage = (req, res) => {
       console.log(err);
       return res.status(400).json({ error: "An error occurred" });
     }
-    res.render("app", { csrfToken: req.csrfToken(), pawposts: docs });
-    return;
+    return res.render("app", { csrfToken: req.csrfToken(), pawposts: docs });
   });
 };
 
