@@ -125,7 +125,7 @@ const feedPage = (req, res) => {
         return res.status(400).json({ error: "An error occurred" });
       }
 
-      return res.render("app", { csrfToken: req.csrfToken(), pawposts: docs });
+      res.render("app", { csrfToken: req.csrfToken(), pawposts: docs });
     }
   );
 };
