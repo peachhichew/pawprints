@@ -129,6 +129,7 @@ const feedPage = (req, res) => {
           pawposts: docs
         });
       }
+      return;
     }
   );
 };
