@@ -117,15 +117,20 @@ const profilePage = (req, res) => {
 };
 
 const feedPage = (req, res) => {
-  Pawpost.PawpostModel.findByOwner(req.session.account._id, (err, docs) => {
-    if (err) {
-      console.log(err);
-      return res.status(400).json({ error: "An error occurred" });
+  return Pawpost.PawpostModel.findByOwner(
+    req.session.account._id,
+    (err, docs) => {
+      if (err) {
+        console.log(err);
+        return res.status(400).json({ error: "An error occurred" });
+      } else {
+        return res.render("app", {
+          csrfToken: req.csrfToken(),
+          pawposts: docs
+        });
+      }
     }
-
-    return res.render("app", { csrfToken: req.csrfToken(), pawposts: docs });
-  });
-  return;
+  );
 };
 
 const getAllUsersPawposts = (req, res) => {
