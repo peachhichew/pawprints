@@ -39,6 +39,32 @@ const FileSchema = new mongoose.Schema({
   }
 });
 
+// Return information related to the pawpost content, content image,
+// profile picture, post date creation, and username.
+FileSchema.statics.toAPI = doc => ({
+  name: doc.name
+});
+
+// Return data associated with the account owner
+FileSchema.statics.findByOwner = (ownerId, callback) => {
+  const search = {
+    owner: convertId(ownerId)
+  };
+
+  return FileModel.find(search)
+    .select("name _id username")
+    .exec(callback);
+};
+
+// Find the account session id
+FileSchema.statics.findById = (id, callback) => {
+  const search = {
+    _id: convertId(id)
+  };
+
+  return FileModel.findOne(search, callback);
+};
+
 //Create our file model based on the schema above
 FileModel = mongoose.model("FileModel", FileSchema);
 

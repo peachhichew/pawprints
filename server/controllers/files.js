@@ -3,7 +3,8 @@ const filedb = require("../models/filestore.js");
 
 //Our upload controller
 const upload = (req, res) => {
-  console.log("req.files.sampleFile.name", req.files.sampleFile.name);
+  console.log("req.files.sampleFile.name:", req.files.sampleFile.name);
+  console.log("req.files.sampleFile: ", req.files.sampleFile);
   //If there are no files, return an error
   if (!req.files || Object.keys(req.files).length === 0) {
     return res.status(400).json({ error: "No files were uploaded" });
@@ -58,5 +59,22 @@ const retrieveImage = (req, res) => {
   });
 };
 
+const retrieveLatestImage = (request, response) => {
+  const req = request;
+  const res = response;
+  console.log("in retrieve latest image");
+  console.log("req.session.account._id", req.session.account._id);
+
+  return filedb.FileModel.findByOwner(req.session.account._id, (err, docs) => {
+    if (err) {
+      console.log(err);
+      return res.status(400).json({ error: "An error occurred" });
+    }
+
+    return res.json({ pawposts: docs });
+  });
+};
+
 module.exports.upload = upload;
 module.exports.retrieve = retrieveImage;
+module.exports.retrieveLatestImage = retrieveLatestImage;

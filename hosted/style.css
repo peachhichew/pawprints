@@ -367,3 +367,7 @@ button {
   color: #fff;
   margin-top: 20px;
 }
+
+.changeProfilePic {
+  width: 150px;
+}

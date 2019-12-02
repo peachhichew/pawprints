@@ -44,6 +44,7 @@ const router = app => {
 
   //Images can be retrieved using /retrieve?name=THE_FILE_NAME_WITH_EXTENSION
   app.get("/retrieve", file.retrieve);
+  app.get("/retrieveLatest", file.retrieveLatestImage);
 
   app.get(
     "/",

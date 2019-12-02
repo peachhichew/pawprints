@@ -301,6 +301,11 @@ var UploadImage = function UploadImage(props) {
   return React.createElement(
     "div",
     null,
+    React.createElement("img", {
+      src: "./assets/img/propic.jpg",
+      alt: "profile pic",
+      className: "changeProfilePic"
+    }),
     React.createElement(
       "form",
       {
@@ -319,6 +324,7 @@ var UploadImage = function UploadImage(props) {
 // Sends a GET request to the server to retrieve all pawposts
 var loadPawpostsFromServer = function loadPawpostsFromServer(csrf) {
   sendAjax("GET", "/getPawposts", null, function (data) {
+    console.log("data.pawposts: ", data.pawposts);
     ReactDOM.render(React.createElement(PawpostList, { pawposts: data.pawposts, csrf: csrf }), document.querySelector("#pawposts"));
   });
 };

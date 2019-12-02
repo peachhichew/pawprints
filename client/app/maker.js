@@ -223,6 +223,11 @@ class EditPawpost extends React.Component {
 const UploadImage = props => {
   return (
     <div>
+      <img
+        src="./assets/img/propic.jpg"
+        alt="profile pic"
+        className="changeProfilePic"
+      />
       <form
         id="uploadForm"
         action="/upload"
@@ -240,6 +245,7 @@ const UploadImage = props => {
 // Sends a GET request to the server to retrieve all pawposts
 const loadPawpostsFromServer = csrf => {
   sendAjax("GET", "/getPawposts", null, data => {
+    console.log("data.pawposts: ", data.pawposts);
     ReactDOM.render(
       <PawpostList pawposts={data.pawposts} csrf={csrf} />,
       document.querySelector("#pawposts")
