@@ -1,4 +1,4 @@
-const models = require("../models");
+const models = require('../models');
 
 const Pawpost = models.Pawpost;
 
@@ -7,7 +7,7 @@ const Pawpost = models.Pawpost;
 const makePawpost = (req, res) => {
   if (!req.body.postContent) {
     return res.status(400).json({
-      error: "Pawpost content required"
+      error: 'Pawpost content required',
     });
   }
 
@@ -16,18 +16,18 @@ const makePawpost = (req, res) => {
     contentImg: req.body.contentImg,
     profilePic: req.body.profilePic,
     owner: req.session.account._id,
-    username: req.session.account.username
+    username: req.session.account.username,
   };
 
   const newPawpost = new Pawpost.PawpostModel(pawpostData);
   const pawpostPromise = newPawpost.save();
-  pawpostPromise.then(() => res.json({ redirect: "/feed" }));
+  pawpostPromise.then(() => res.json({ redirect: '/feed' }));
   pawpostPromise.catch(err => {
     if (err.code === 11000) {
-      return res.status(400).json({ error: "Pawpost already exists" });
+      return res.status(400).json({ error: 'Pawpost already exists' });
     }
 
-    return res.status(400).json({ error: "An error occurred" });
+    return res.status(400).json({ error: 'An error occurred' });
   });
 
   return pawpostPromise;
@@ -44,16 +44,16 @@ const editPawpost = (request, response) => {
   Pawpost.PawpostModel.findById(req.body._id, (err, doc) => {
     if (err) {
       console.log(err);
-      return res.status(400).json({ error: "An error occurred" });
+      return res.status(400).json({ error: 'An error occurred' });
     }
 
     if (!doc) {
-      return res.status(400).json({ error: "Invalid pawpost" });
+      return res.status(400).json({ error: 'Invalid pawpost' });
     }
 
     let pawpostPromise;
     if (doc.owner.equals(req.session.account._id)) {
-      let pawpost = doc;
+      const pawpost = doc;
       pawpost.content = req.body.contentEdit;
       pawpost.contentImg = req.body.contentImgEdit;
       pawpost.profilePic = req.body.profilePicEdit;
@@ -63,9 +63,7 @@ const editPawpost = (request, response) => {
         res.json({ pawpost });
       });
 
-      pawpostPromise.catch(() => {
-        return res.status(400).json({ error: "An error occurred" });
-      });
+      pawpostPromise.catch(() => res.status(400).json({ error: 'An error occurred' }));
 
       return pawpostPromise;
     }
@@ -79,10 +77,10 @@ const feedPage = (req, res) => {
   Pawpost.PawpostModel.findByOwner(req.session.account._id, (err, docs) => {
     if (err) {
       console.log(err);
-      return res.status(400).json({ error: "An error occurred" });
+      return res.status(400).json({ error: 'An error occurred' });
     }
 
-    return res.render("app", { csrfToken: req.csrfToken(), pawposts: docs });
+    return res.render('app', { csrfToken: req.csrfToken(), pawposts: docs });
   });
 };
 
@@ -96,7 +94,7 @@ const getPawposts = (request, response) => {
     (err, docs) => {
       if (err) {
         console.log(err);
-        return res.status(400).json({ error: "An error occurred" });
+        return res.status(400).json({ error: 'An error occurred' });
       }
 
       return res.json({ pawposts: docs });

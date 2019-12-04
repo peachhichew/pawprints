@@ -28,11 +28,6 @@ var CreatePawpostContainer = function CreatePawpostContainer(props) {
       "section",
       { id: "pawposts" },
       React.createElement(PawpostList, { pawposts: [], csrf: props.csrf })
-    ),
-    React.createElement(
-      "section",
-      { id: "uploadImageTest" },
-      React.createElement(UploadImage, { csrf: props.csrf })
     )
   );
 };
@@ -278,13 +273,17 @@ var EditPawpost = function (_React$Component2) {
               action: "/updatePawpost",
               method: "POST"
             },
-            React.createElement("textarea", {
-              rows: "5",
-              cols: "68",
-              id: "contentEdit",
-              placeholder: this.state.pawposts.content,
-              name: "contentEdit"
-            }),
+            React.createElement(
+              "textarea",
+              {
+                rows: "5",
+                cols: "68",
+                id: "contentEdit"
+                // placeholder={this.state.pawposts.content}
+                , name: "contentEdit"
+              },
+              this.state.pawposts.content
+            ),
             React.createElement("input", { type: "hidden", name: "_csrf", value: this.state.csrf }),
             React.createElement("input", { type: "hidden", name: "_id", value: this.state.pawposts._id }),
             React.createElement("input", { className: "makePawpostSubmit", type: "submit", value: "Update" })
@@ -297,12 +296,21 @@ var EditPawpost = function (_React$Component2) {
   return EditPawpost;
 }(React.Component);
 
+var getProfilePic = function getProfilePic(csrf) {
+  sendAjax("GET", "/profilePic", null, function (data) {
+    console.log("data from getProfilePic", data.account.profilePic);
+    ReactDOM.render(React.createElement(UploadImage, { imgSrc: data.account.profilePic, csrf: csrf }), document.querySelector("#profilePic"));
+  });
+};
+
 var UploadImage = function UploadImage(props) {
+  console.log("props.imgSrc UploadImage()", props.imgSrc);
   return React.createElement(
     "div",
     null,
     React.createElement("img", {
-      src: "./assets/img/propic.jpg",
+      // src="./assets/img/propic.jpg"
+      src: "retrieve?_id=" + props.imgSrc,
       alt: "profile pic",
       className: "changeProfilePic"
     }),
@@ -338,7 +346,9 @@ var createFeedWindow = function createFeedWindow(csrf) {
 
 // Renders the ChangePassword component on the screen
 var createSettingsWindow = function createSettingsWindow(csrf) {
-  ReactDOM.render(React.createElement(ChangeSettingsContainer, { csrf: csrf }), document.querySelector("#content"));
+  ReactDOM.render(React.createElement(ChangeSettingsContainer, { imgSrc: "", csrf: csrf }), document.querySelector("#content"));
+
+  getProfilePic(csrf);
 };
 
 // Renders the feed or settings components based on which button is
@@ -373,6 +383,7 @@ $(document).ready(function () {
 "use strict";
 
 var ChangeSettingsContainer = function ChangeSettingsContainer(props) {
+  console.log("props.imgSrc in ChangeSettingsContainer", props.imgSrc);
   return React.createElement(
     "div",
     null,
@@ -389,7 +400,7 @@ var ChangeSettingsContainer = function ChangeSettingsContainer(props) {
         null,
         "Profile Picture"
       ),
-      React.createElement(UploadImage, { csrf: props.csrf })
+      React.createElement(UploadImage, { imgSrc: props.imgSrc, csrf: props.csrf })
     ),
     React.createElement(
       "section",

@@ -1,10 +1,11 @@
 const ChangeSettingsContainer = props => {
+  console.log("props.imgSrc in ChangeSettingsContainer", props.imgSrc);
   return (
     <div>
       <h2 className="pageTitle">Settings</h2>
       <section id="profilePic">
         <h3>Profile Picture</h3>
-        <UploadImage csrf={props.csrf} />
+        <UploadImage imgSrc={props.imgSrc} csrf={props.csrf} />
       </section>
       <section id="changePwd">
         <ChangePassword csrf={props.csrf} />

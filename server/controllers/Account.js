@@ -140,18 +140,39 @@ const changePass = (request, response) => {
     (err, doc) => {
       console.log("doc", doc);
       return Account.AccountModel.generateHash(
-        req.body.newPassword1, (salt, hash) => {
-        return Account.AccountModel.updateOne(
-          { username: req.session.account.username },
-          { salt, password: hash },
-          error => {
-            if (error) {
-              return res.status(400).json({ error });
+        req.body.newPassword1,
+        (salt, hash) =>
+          Account.AccountModel.updateOne(
+            { username: req.session.account.username },
+            { salt, password: hash },
+            error => {
+              if (error) {
+                return res.status(400).json({ error });
+              }
+              return res.json({ message: "password successfully changed" });
             }
-            return res.json({ message: "password successfully changed" });
-          }
-        );
-      });
+          )
+      );
+    }
+  );
+};
+
+const profilePicId = (request, response) => {
+  const req = request;
+  const res = response;
+
+  return Account.AccountModel.findOne(
+    { username: req.session.account.username },
+    "username profilePic",
+    (err, docs) => {
+      if (err) {
+        console.log(err);
+        return res.status(400).json({ error: "An error occurred" });
+      }
+
+      // console.log("docs for profilePic:", docs);
+
+      return res.json({ account: docs });
     }
   );
 };
@@ -173,3 +194,4 @@ module.exports.logout = logout;
 module.exports.signup = signup;
 module.exports.getToken = getToken;
 module.exports.changePass = changePass;
+module.exports.profilePicId = profilePicId;

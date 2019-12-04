@@ -10,9 +10,9 @@ const CreatePawpostContainer = props => {
       <section id="pawposts">
         <PawpostList pawposts={[]} csrf={props.csrf} />
       </section>
-      <section id="uploadImageTest">
+      {/* <section id="uploadImageTest">
         <UploadImage csrf={props.csrf} />
-      </section>
+      </section> */}
     </div>
   );
 };
@@ -207,9 +207,11 @@ class EditPawpost extends React.Component {
               rows="5"
               cols="68"
               id="contentEdit"
-              placeholder={this.state.pawposts.content}
+              // placeholder={this.state.pawposts.content}
               name="contentEdit"
-            />
+            >
+              {this.state.pawposts.content}
+            </textarea>
             <input type="hidden" name="_csrf" value={this.state.csrf} />
             <input type="hidden" name="_id" value={this.state.pawposts._id} />
             <input className="makePawpostSubmit" type="submit" value="Update" />
@@ -220,11 +222,23 @@ class EditPawpost extends React.Component {
   }
 }
 
+const getProfilePic = csrf => {
+  sendAjax("GET", "/profilePic", null, data => {
+    console.log("data from getProfilePic", data.account.profilePic);
+    ReactDOM.render(
+      <UploadImage imgSrc={data.account.profilePic} csrf={csrf} />,
+      document.querySelector("#profilePic")
+    );
+  });
+};
+
 const UploadImage = props => {
+  console.log("props.imgSrc UploadImage()", props.imgSrc);
   return (
     <div>
       <img
-        src="./assets/img/propic.jpg"
+        // src="./assets/img/propic.jpg"
+        src={`retrieve?_id=${props.imgSrc}`}
         alt="profile pic"
         className="changeProfilePic"
       />
@@ -266,9 +280,11 @@ const createFeedWindow = csrf => {
 // Renders the ChangePassword component on the screen
 const createSettingsWindow = csrf => {
   ReactDOM.render(
-    <ChangeSettingsContainer csrf={csrf} />,
+    <ChangeSettingsContainer imgSrc={""} csrf={csrf} />,
     document.querySelector("#content")
   );
+
+  getProfilePic(csrf);
 };
 
 // Renders the feed or settings components based on which button is

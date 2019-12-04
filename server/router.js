@@ -39,13 +39,14 @@ const router = app => {
     controllers.Pawpost.editPawpost
   );
 
-  //Images get uploaded using /upload
+  // Images get uploaded using /upload
   app.post("/upload", file.upload);
 
-  //Images can be retrieved using /retrieve?name=THE_FILE_NAME_WITH_EXTENSION
+  // Images can be retrieved using /retrieve?name=THE_FILE_NAME_WITH_EXTENSION
   app.get("/retrieve", file.retrieve);
   app.get("/retrieveLatest", file.retrieveLatestImage);
 
+  app.get("/profilePic", controllers.Account.profilePicId);
   app.get(
     "/",
     mid.requiresSecure,
@@ -53,7 +54,7 @@ const router = app => {
     controllers.Account.loginPage
   );
 
-  app.get("*", function(req, res) {
+  app.get("*", (req, res) => {
     // res.sendFile(path.join(__dirname + '/page404.html'));
     // res.send("404: Page not Found", 404);
     res.redirect("/");
