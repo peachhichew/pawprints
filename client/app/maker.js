@@ -57,6 +57,12 @@ const handlePawpost = e => {
 // Renders the form for adding a new pawpost
 const PawpostForm = props => {
   console.log("props.imgSrc in PawpostForm:", props.imgSrc);
+  if (props.imgSrc === undefined || props.imgSrc === "") {
+    console.log("image src is undefined or blank");
+    $(".profilePic").attr("src", "./assets/img/propic.jpg");
+  } else {
+    $(".profilePic").attr("src", `retrieve?_id=${props.imgSrc}`);
+  }
   return (
     <div className="formLayout">
       <img
@@ -395,7 +401,7 @@ const loadProfilePawpostsFromServer = (csrf, imgSrc) => {
   });
 };
 
-const testProfilePicAndPosts = csrf => {
+const loadPawpostsAndProfilePic = csrf => {
   sendAjax("GET", "/getPawposts", null, pawpostData => {
     console.log("pawpostData.pawposts: ", pawpostData.pawposts);
     sendAjax("GET", "/profilePic", null, data => {
@@ -453,8 +459,7 @@ const createProfileWindow = csrf => {
   );
 
   loadProfilePawpostsFromServer(csrf);
-  // getProfilePic(csrf);
-  testProfilePicAndPosts(csrf);
+  loadPawpostsAndProfilePic(csrf);
 };
 
 // Renders the feed or settings components based on which button is

@@ -76,6 +76,12 @@ var handlePawpost = function handlePawpost(e) {
 // Renders the form for adding a new pawpost
 var PawpostForm = function PawpostForm(props) {
   console.log("props.imgSrc in PawpostForm:", props.imgSrc);
+  if (props.imgSrc === undefined || props.imgSrc === "") {
+    console.log("image src is undefined or blank");
+    $(".profilePic").attr("src", "./assets/img/propic.jpg");
+  } else {
+    $(".profilePic").attr("src", "retrieve?_id=" + props.imgSrc);
+  }
   return React.createElement(
     "div",
     { className: "formLayout" },
@@ -515,7 +521,7 @@ var loadProfilePawpostsFromServer = function loadProfilePawpostsFromServer(csrf,
   });
 };
 
-var testProfilePicAndPosts = function testProfilePicAndPosts(csrf) {
+var loadPawpostsAndProfilePic = function loadPawpostsAndProfilePic(csrf) {
   sendAjax("GET", "/getPawposts", null, function (pawpostData) {
     console.log("pawpostData.pawposts: ", pawpostData.pawposts);
     sendAjax("GET", "/profilePic", null, function (data) {
@@ -555,8 +561,7 @@ var createProfileWindow = function createProfileWindow(csrf) {
   ReactDOM.render(React.createElement(CreatePawpostContainer, { imgSrc: "", pawposts: [], csrf: csrf }), document.querySelector("#content"));
 
   loadProfilePawpostsFromServer(csrf);
-  // getProfilePic(csrf);
-  testProfilePicAndPosts(csrf);
+  loadPawpostsAndProfilePic(csrf);
 };
 
 // Renders the feed or settings components based on which button is
@@ -597,7 +602,7 @@ $(document).ready(function () {
 "use strict";
 
 var ChangeSettingsContainer = function ChangeSettingsContainer(props) {
-  console.log("props.imgSrc in ChangeSettingsContainer", props.imgSrc);
+  console.log("ChangeSettingsContainer", props.imgSrc);
   return React.createElement(
     "div",
     null,

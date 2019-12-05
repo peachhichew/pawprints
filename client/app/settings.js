@@ -1,5 +1,5 @@
 const ChangeSettingsContainer = props => {
-  console.log("props.imgSrc in ChangeSettingsContainer", props.imgSrc);
+  console.log("ChangeSettingsContainer", props.imgSrc);
   return (
     <div>
       <h2 className="pageTitle">Settings</h2>

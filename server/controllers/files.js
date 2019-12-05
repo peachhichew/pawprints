@@ -53,7 +53,6 @@ const upload = (req, res) => {
 
 // Our retrieval controller
 const retrieveImage = (req, res) => {
-  console.log(": ", req.query._id);
   // Find the file by name in the database if it exists
   filedb.FileModel.findOne({ _id: req.query._id }, (error, doc) => {
     // If there is an error let the user know
@@ -72,7 +71,7 @@ const retrieveImage = (req, res) => {
       "Content-Length": doc.size
     });
 
-    console.log("doc in retrieveImage()", doc);
+    console.log("doc in retrieveImage()", doc._id);
 
     // Finally send back the image data
     return res.end(doc.data);
