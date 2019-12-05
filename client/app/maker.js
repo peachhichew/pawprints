@@ -1,18 +1,16 @@
 // Add more structure to the app.handlebars page and render
 // the PawpostForm and PawpostList components
 const CreatePawpostContainer = props => {
+  console.log("createPawpostContainer props.imgSrc:", props.imgSrc);
   return (
     <div>
       <h2 className="pageTitle">Profile</h2>
       <section id="makePawpost">
-        <PawpostForm csrf={props.csrf} />
+        <PawpostForm imgSrc={props.imgSrc} csrf={props.csrf} />
       </section>
       <section id="pawposts">
-        <PawpostList pawposts={[]} csrf={props.csrf} />
+        <PawpostList imgSrc={props.imgSrc} pawposts={[]} csrf={props.csrf} />
       </section>
-      {/* <section id="uploadImageTest">
-        <UploadImage csrf={props.csrf} />
-      </section> */}
     </div>
   );
 };
@@ -58,9 +56,14 @@ const handlePawpost = e => {
 
 // Renders the form for adding a new pawpost
 const PawpostForm = props => {
+  console.log("props.imgSrc in PawpostForm:", props.imgSrc);
   return (
     <div className="formLayout">
-      <img className="profilePic" src="./assets/img/propic.jpg" />
+      <img
+        className="profilePic"
+        // src="./assets/img/propic.jpg"
+        src={`retrieve?_id=${props.imgSrc}`}
+      />
       <form
         id="pawpostForm"
         onSubmit={handlePawpost}
@@ -87,6 +90,7 @@ const PawpostForm = props => {
 // Also, render the EditPawpost component to allow the user to edit their
 // previous pawposts.
 const PawpostList = function(props) {
+  console.log("props.imgSrc in PawpostList():", props.imgSrc);
   if (props.pawposts.length === 0) {
     return (
       <div className="pawpostList">
@@ -108,7 +112,8 @@ const PawpostList = function(props) {
       <div key={pawpost._id} className="pawpost">
         <div id="renderModal" />
         <img
-          src="./assets/img/propic.jpg"
+          // src="./assets/img/propic.jpg"
+          src={`retrieve?_id=${props.imgSrc}`}
           alt="profile pic"
           className="profilePic"
         />
@@ -355,7 +360,7 @@ const getProfilePic = csrf => {
 };
 
 const UploadImage = props => {
-  console.log("props.imgSrc UploadImage()", props.imgSrc);
+  // console.log("props.imgSrc UploadImage()", props.imgSrc);
   return (
     <div>
       <h3>Profile Picture</h3>
@@ -380,13 +385,34 @@ const UploadImage = props => {
 };
 
 // Sends a GET request to the server to retrieve all pawposts
-const loadProfilePawpostsFromServer = csrf => {
+const loadProfilePawpostsFromServer = (csrf, imgSrc) => {
   sendAjax("GET", "/getPawposts", null, data => {
     console.log("data.pawposts: ", data.pawposts);
     ReactDOM.render(
-      <PawpostList pawposts={data.pawposts} csrf={csrf} />,
+      <PawpostList imgSrc={imgSrc} pawposts={data.pawposts} csrf={csrf} />,
       document.querySelector("#pawposts")
     );
+  });
+};
+
+const testProfilePicAndPosts = csrf => {
+  sendAjax("GET", "/getPawposts", null, pawpostData => {
+    console.log("pawpostData.pawposts: ", pawpostData.pawposts);
+    sendAjax("GET", "/profilePic", null, data => {
+      ReactDOM.render(
+        <PawpostForm imgSrc={data.account.profilePic} csrf={csrf} />,
+        document.querySelector("#makePawpost")
+      );
+
+      ReactDOM.render(
+        <PawpostList
+          imgSrc={data.account.profilePic}
+          pawposts={pawpostData.pawposts}
+          csrf={csrf}
+        />,
+        document.querySelector("#pawposts")
+      );
+    });
   });
 };
 
@@ -422,11 +448,13 @@ const createSettingsWindow = csrf => {
 
 const createProfileWindow = csrf => {
   ReactDOM.render(
-    <CreatePawpostContainer pawposts={[]} csrf={csrf} />,
+    <CreatePawpostContainer imgSrc={""} pawposts={[]} csrf={csrf} />,
     document.querySelector("#content")
   );
 
   loadProfilePawpostsFromServer(csrf);
+  // getProfilePic(csrf);
+  testProfilePicAndPosts(csrf);
 };
 
 // Renders the feed or settings components based on which button is

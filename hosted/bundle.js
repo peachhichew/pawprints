@@ -11,6 +11,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 // Add more structure to the app.handlebars page and render
 // the PawpostForm and PawpostList components
 var CreatePawpostContainer = function CreatePawpostContainer(props) {
+  console.log("createPawpostContainer props.imgSrc:", props.imgSrc);
   return React.createElement(
     "div",
     null,
@@ -22,12 +23,12 @@ var CreatePawpostContainer = function CreatePawpostContainer(props) {
     React.createElement(
       "section",
       { id: "makePawpost" },
-      React.createElement(PawpostForm, { csrf: props.csrf })
+      React.createElement(PawpostForm, { imgSrc: props.imgSrc, csrf: props.csrf })
     ),
     React.createElement(
       "section",
       { id: "pawposts" },
-      React.createElement(PawpostList, { pawposts: [], csrf: props.csrf })
+      React.createElement(PawpostList, { imgSrc: props.imgSrc, pawposts: [], csrf: props.csrf })
     )
   );
 };
@@ -74,10 +75,15 @@ var handlePawpost = function handlePawpost(e) {
 
 // Renders the form for adding a new pawpost
 var PawpostForm = function PawpostForm(props) {
+  console.log("props.imgSrc in PawpostForm:", props.imgSrc);
   return React.createElement(
     "div",
     { className: "formLayout" },
-    React.createElement("img", { className: "profilePic", src: "./assets/img/propic.jpg" }),
+    React.createElement("img", {
+      className: "profilePic"
+      // src="./assets/img/propic.jpg"
+      , src: "retrieve?_id=" + props.imgSrc
+    }),
     React.createElement(
       "form",
       {
@@ -105,6 +111,7 @@ var PawpostForm = function PawpostForm(props) {
 // Also, render the EditPawpost component to allow the user to edit their
 // previous pawposts.
 var PawpostList = function PawpostList(props) {
+  console.log("props.imgSrc in PawpostList():", props.imgSrc);
   if (props.pawposts.length === 0) {
     return React.createElement(
       "div",
@@ -131,7 +138,8 @@ var PawpostList = function PawpostList(props) {
       { key: pawpost._id, className: "pawpost" },
       React.createElement("div", { id: "renderModal" }),
       React.createElement("img", {
-        src: "./assets/img/propic.jpg",
+        // src="./assets/img/propic.jpg"
+        src: "retrieve?_id=" + props.imgSrc,
         alt: "profile pic",
         className: "profilePic"
       }),
@@ -469,7 +477,7 @@ var getProfilePic = function getProfilePic(csrf) {
 };
 
 var UploadImage = function UploadImage(props) {
-  console.log("props.imgSrc UploadImage()", props.imgSrc);
+  // console.log("props.imgSrc UploadImage()", props.imgSrc);
   return React.createElement(
     "div",
     null,
@@ -500,10 +508,25 @@ var UploadImage = function UploadImage(props) {
 };
 
 // Sends a GET request to the server to retrieve all pawposts
-var loadProfilePawpostsFromServer = function loadProfilePawpostsFromServer(csrf) {
+var loadProfilePawpostsFromServer = function loadProfilePawpostsFromServer(csrf, imgSrc) {
   sendAjax("GET", "/getPawposts", null, function (data) {
     console.log("data.pawposts: ", data.pawposts);
-    ReactDOM.render(React.createElement(PawpostList, { pawposts: data.pawposts, csrf: csrf }), document.querySelector("#pawposts"));
+    ReactDOM.render(React.createElement(PawpostList, { imgSrc: imgSrc, pawposts: data.pawposts, csrf: csrf }), document.querySelector("#pawposts"));
+  });
+};
+
+var testProfilePicAndPosts = function testProfilePicAndPosts(csrf) {
+  sendAjax("GET", "/getPawposts", null, function (pawpostData) {
+    console.log("pawpostData.pawposts: ", pawpostData.pawposts);
+    sendAjax("GET", "/profilePic", null, function (data) {
+      ReactDOM.render(React.createElement(PawpostForm, { imgSrc: data.account.profilePic, csrf: csrf }), document.querySelector("#makePawpost"));
+
+      ReactDOM.render(React.createElement(PawpostList, {
+        imgSrc: data.account.profilePic,
+        pawposts: pawpostData.pawposts,
+        csrf: csrf
+      }), document.querySelector("#pawposts"));
+    });
   });
 };
 
@@ -529,9 +552,11 @@ var createSettingsWindow = function createSettingsWindow(csrf) {
 };
 
 var createProfileWindow = function createProfileWindow(csrf) {
-  ReactDOM.render(React.createElement(CreatePawpostContainer, { pawposts: [], csrf: csrf }), document.querySelector("#content"));
+  ReactDOM.render(React.createElement(CreatePawpostContainer, { imgSrc: "", pawposts: [], csrf: csrf }), document.querySelector("#content"));
 
   loadProfilePawpostsFromServer(csrf);
+  // getProfilePic(csrf);
+  testProfilePicAndPosts(csrf);
 };
 
 // Renders the feed or settings components based on which button is
