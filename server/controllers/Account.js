@@ -158,6 +158,26 @@ const changePass = (request, response) => {
   );
 };
 
+const profilePicId = (request, response) => {
+  const req = request;
+  const res = response;
+
+  return Account.AccountModel.findOne(
+    { username: req.session.account.username },
+    "username profilePic",
+    (err, docs) => {
+      if (err) {
+        console.log(err);
+        return res.status(400).json({ error: "An error occurred" });
+      }
+
+      // console.log("docs for profilePic:", docs);
+
+      return res.json({ account: docs });
+    }
+  );
+};
+
 // Generates a new csrf token
 const getToken = (request, response) => {
   const req = request;
@@ -175,3 +195,4 @@ module.exports.logout = logout;
 module.exports.signup = signup;
 module.exports.getToken = getToken;
 module.exports.changePass = changePass;
+module.exports.profilePicId = profilePicId;

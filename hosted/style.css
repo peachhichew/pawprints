@@ -348,9 +348,11 @@ button {
   padding-top: 20px;
 }
 
-.changePassword {
+.changePassword,
+#profilePic {
   width: 550px;
   margin: 0 auto;
+  padding-bottom: 30px;
 }
 
 #currentPassword,
@@ -394,4 +396,8 @@ button {
   border-radius: 3px;
   color: #fff;
   float: right;
+}
+
+.changeProfilePic {
+  width: 150px;
 }

@@ -55,7 +55,7 @@ const editPawpost = (request, response) => {
 
     let pawpostPromise;
     if (doc.owner.equals(req.session.account._id)) {
-      let pawpost = doc;
+      const pawpost = doc;
       pawpost.content = req.body.contentEdit;
       pawpost.contentImg = req.body.contentImgEdit;
       pawpost.profilePic = req.body.profilePicEdit;
@@ -65,9 +65,9 @@ const editPawpost = (request, response) => {
         res.json({ pawpost });
       });
 
-      pawpostPromise.catch(() => {
-        return res.status(400).json({ error: "An error occurred" });
-      });
+      pawpostPromise.catch(() =>
+        res.status(400).json({ error: "An error occurred" })
+      );
 
       return pawpostPromise;
     }

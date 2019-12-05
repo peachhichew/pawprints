@@ -10,6 +10,9 @@ const CreatePawpostContainer = props => {
       <section id="pawposts">
         <PawpostList pawposts={[]} csrf={props.csrf} />
       </section>
+      {/* <section id="uploadImageTest">
+        <UploadImage csrf={props.csrf} />
+      </section> */}
     </div>
   );
 };
@@ -267,9 +270,11 @@ class EditPawpost extends React.Component {
               rows="5"
               cols="68"
               id="contentEdit"
-              placeholder={this.state.pawposts.content}
+              // placeholder={this.state.pawposts.content}
               name="contentEdit"
-            />
+            >
+              {this.state.pawposts.content}
+            </textarea>
             <input type="hidden" name="_csrf" value={this.state.csrf} />
             <input type="hidden" name="_id" value={this.state.pawposts._id} />
             <input className="makePawpostSubmit" type="submit" value="Update" />
@@ -339,10 +344,45 @@ class DeletePawpost extends React.Component {
   }
 }
 
+const getProfilePic = csrf => {
+  sendAjax("GET", "/profilePic", null, data => {
+    console.log("data from getProfilePic", data.account.profilePic);
+    ReactDOM.render(
+      <UploadImage imgSrc={data.account.profilePic} csrf={csrf} />,
+      document.querySelector("#profilePic")
+    );
+  });
+};
+
+const UploadImage = props => {
+  console.log("props.imgSrc UploadImage()", props.imgSrc);
+  return (
+    <div>
+      <h3>Profile Picture</h3>
+      <img
+        // src="./assets/img/propic.jpg"
+        src={`retrieve?_id=${props.imgSrc}`}
+        alt="profile pic"
+        className="changeProfilePic"
+      />
+      <form
+        id="uploadForm"
+        action="/upload"
+        method="POST"
+        encType="multipart/form-data"
+      >
+        <input type="file" name="sampleFile" />
+        <input type="submit" value="Upload" />
+        <input type="hidden" name="_csrf" value={props.csrf} />
+      </form>
+    </div>
+  );
+};
+
 // Sends a GET request to the server to retrieve all pawposts
 const loadProfilePawpostsFromServer = csrf => {
   sendAjax("GET", "/getPawposts", null, data => {
-    console.log("data.pawposts", data.pawposts);
+    console.log("data.pawposts: ", data.pawposts);
     ReactDOM.render(
       <PawpostList pawposts={data.pawposts} csrf={csrf} />,
       document.querySelector("#pawposts")
@@ -373,9 +413,11 @@ const createFeedWindow = csrf => {
 // Renders the ChangePassword component on the screen
 const createSettingsWindow = csrf => {
   ReactDOM.render(
-    <ChangePassword csrf={csrf} />,
+    <ChangeSettingsContainer imgSrc={""} csrf={csrf} />,
     document.querySelector("#content")
   );
+
+  getProfilePic(csrf);
 };
 
 const createProfileWindow = csrf => {

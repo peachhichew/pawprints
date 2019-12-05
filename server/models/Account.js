@@ -1,5 +1,5 @@
-const crypto = require("crypto");
-const mongoose = require("mongoose");
+const crypto = require('crypto');
+const mongoose = require('mongoose');
 
 mongoose.Promise = global.Promise;
 
@@ -15,27 +15,31 @@ const AccountSchema = new mongoose.Schema({
     required: true,
     trim: true,
     unique: true,
-    match: /^[A-Za-z0-9_\-.]{1,16}$/
+    match: /^[A-Za-z0-9_\-.]{1,16}$/,
   },
   salt: {
     type: Buffer,
-    required: true
+    required: true,
   },
   password: {
     type: String,
-    required: true
+    required: true,
   },
   createdDate: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
+  profilePic: {
+    type: mongoose.Schema.ObjectId,
+  },
 });
 
 // Return an object with the data containing the username and owner id.
 AccountSchema.statics.toAPI = doc => ({
   // _id is built into your mongo document and is guaranteed to be unique
   username: doc.username,
-  _id: doc._id
+  _id: doc._id,
+  profilePic: doc.profilePic,
 });
 
 // Use the password from the param and verify that it is valid
@@ -47,9 +51,9 @@ const validatePassword = (doc, password, callback) => {
     doc.salt,
     iterations,
     keyLength,
-    "RSA-SHA512",
+    'RSA-SHA512',
     (err, hash) => {
-      if (hash.toString("hex") !== pass) {
+      if (hash.toString('hex') !== pass) {
         return callback(false);
       }
       return callback(true);
@@ -60,7 +64,7 @@ const validatePassword = (doc, password, callback) => {
 // Search for a username within the db
 AccountSchema.statics.findByUsername = (name, callback) => {
   const search = {
-    username: name
+    username: name,
   };
 
   return AccountModel.findOne(search, callback);
@@ -76,8 +80,8 @@ AccountSchema.statics.generateHash = (password, callback) => {
     salt,
     iterations,
     keyLength,
-    "RSA-SHA512",
-    (err, hash) => callback(salt, hash.toString("hex"))
+    'RSA-SHA512',
+    (err, hash) => callback(salt, hash.toString('hex'))
   );
 };
 
@@ -102,7 +106,7 @@ AccountSchema.statics.authenticate = (username, password, callback) =>
     });
   });
 
-AccountModel = mongoose.model("Account", AccountSchema);
+AccountModel = mongoose.model('Account', AccountSchema);
 
 module.exports.AccountModel = AccountModel;
 module.exports.AccountSchema = AccountSchema;

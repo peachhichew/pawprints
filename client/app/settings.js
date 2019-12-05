@@ -1,3 +1,18 @@
+const ChangeSettingsContainer = props => {
+  console.log("props.imgSrc in ChangeSettingsContainer", props.imgSrc);
+  return (
+    <div>
+      <h2 className="pageTitle">Settings</h2>
+      <section id="profilePic">
+        <UploadImage imgSrc={props.imgSrc} csrf={props.csrf} />
+      </section>
+      <section id="changePwd">
+        <ChangePassword csrf={props.csrf} />
+      </section>
+    </div>
+  );
+};
+
 // Displays an error message if any fields are empty. Sends
 // a POST request to the server using AJAX to change the pwd.
 const handleChangePassword = e => {
@@ -35,7 +50,6 @@ const handleChangePassword = e => {
 const ChangePassword = props => {
   return (
     <div>
-      <h2 className="pageTitle">Settings</h2>
       <div className="changePassword">
         <h3>Change password</h3>
         <form
