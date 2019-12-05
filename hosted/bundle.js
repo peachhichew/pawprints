@@ -308,6 +308,11 @@ var UploadImage = function UploadImage(props) {
   return React.createElement(
     "div",
     null,
+    React.createElement(
+      "h3",
+      null,
+      "Profile Picture"
+    ),
     React.createElement("img", {
       // src="./assets/img/propic.jpg"
       src: "retrieve?_id=" + props.imgSrc,
@@ -395,11 +400,6 @@ var ChangeSettingsContainer = function ChangeSettingsContainer(props) {
     React.createElement(
       "section",
       { id: "profilePic" },
-      React.createElement(
-        "h3",
-        null,
-        "Profile Picture"
-      ),
       React.createElement(UploadImage, { imgSrc: props.imgSrc, csrf: props.csrf })
     ),
     React.createElement(

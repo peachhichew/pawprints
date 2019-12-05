@@ -4,7 +4,6 @@ const ChangeSettingsContainer = props => {
     <div>
       <h2 className="pageTitle">Settings</h2>
       <section id="profilePic">
-        <h3>Profile Picture</h3>
         <UploadImage imgSrc={props.imgSrc} csrf={props.csrf} />
       </section>
       <section id="changePwd">

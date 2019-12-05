@@ -236,6 +236,7 @@ const UploadImage = props => {
   console.log("props.imgSrc UploadImage()", props.imgSrc);
   return (
     <div>
+      <h3>Profile Picture</h3>
       <img
         // src="./assets/img/propic.jpg"
         src={`retrieve?_id=${props.imgSrc}`}
