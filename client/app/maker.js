@@ -50,6 +50,20 @@ const handlePawpost = e => {
     }
   );
 
+  if ($("#fileInput").val() !== "") {
+    console.log("posting to upload content");
+    sendAjax(
+      "POST",
+      $("#uploadContentImageForm").attr("action"),
+      $("#uploadContentImageForm").serialize(),
+      function() {
+        console.log("uploading pic");
+        // loadProfilePawpostsFromServer();
+        // loadPawpostsAndProfilePic();
+      }
+    );
+  }
+
   $("#postContent").val("");
 
   return false;
@@ -86,6 +100,7 @@ const PawpostForm = props => {
           placeholder="What's on your mind?"
           name="postContent"
         />
+        <UploadContentImage csrf={props.csrf} />
         <input type="hidden" name="_csrf" value={props.csrf} />
         <input className="makePawpostSubmit" type="submit" value="Post" />
       </form>
@@ -173,8 +188,8 @@ const PawpostsInFeed = function(props) {
     return (
       <div key={pawpost._id} className="pawpost">
         <img
-          // src="./assets/img/propic.jpg"
-          src={`retrieve?_id=${props.imgSrc}`}
+          src="./assets/img/propic.jpg"
+          // src={`retrieve?_id=${props.imgSrc}`}
           // src={}
           alt="profile pic"
           // className="profilePic"
@@ -397,6 +412,34 @@ const UploadImage = props => {
   );
 };
 
+const UploadContentImage = props => {
+  return (
+    <div>
+      <form
+        id="uploadContentImageForm"
+        action="/upload/contentImage"
+        method="POST"
+        encType="multipart/form-data"
+      >
+        {/* <div style="height:0px;overflow:hidden"> */}
+        <input type="file" id="fileInput" name="sampleFile" />
+        {/* </div> */}
+        {/* <button
+          type="button"
+          onClick={() => {
+            $("#fileInput").click();
+          }}
+        >
+          <i className="fa fa-file-image-o" aria-hidden="true"></i>
+        </button> */}
+
+        {/* <input type="submit" value="Upload" /> */}
+        <input type="hidden" name="_csrf" value={props.csrf} />
+      </form>
+    </div>
+  );
+};
+
 // Sends a GET request to the server to retrieve all pawposts
 const loadProfilePawpostsFromServer = (csrf, imgSrc) => {
   sendAjax("GET", "/getPawposts", null, data => {
@@ -489,8 +532,8 @@ const createFeedWindow = csrf => {
     document.querySelector("#content")
   );
 
-  // loadFeedPawpostsFromServer(csrf);
-  loadFeedAndProfilePic(csrf);
+  loadFeedPawpostsFromServer(csrf);
+  // loadFeedAndProfilePic(csrf);
 };
 
 // Renders the ChangePassword component on the screen

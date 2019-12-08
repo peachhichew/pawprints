@@ -69,6 +69,15 @@ var handlePawpost = function handlePawpost(e) {
     loadPawpostsAndProfilePic();
   });
 
+  if ($("#fileInput").val() !== "") {
+    console.log("posting to upload content");
+    sendAjax("POST", $("#uploadContentImageForm").attr("action"), $("#uploadContentImageForm").serialize(), function () {
+      console.log("uploading pic");
+      // loadProfilePawpostsFromServer();
+      // loadPawpostsAndProfilePic();
+    });
+  }
+
   $("#postContent").val("");
 
   return false;
@@ -108,6 +117,7 @@ var PawpostForm = function PawpostForm(props) {
         placeholder: "What's on your mind?",
         name: "postContent"
       }),
+      React.createElement(UploadContentImage, { csrf: props.csrf }),
       React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
       React.createElement("input", { className: "makePawpostSubmit", type: "submit", value: "Post" })
     )
@@ -220,8 +230,8 @@ var PawpostsInFeed = function PawpostsInFeed(props) {
       "div",
       { key: pawpost._id, className: "pawpost" },
       React.createElement("img", {
-        // src="./assets/img/propic.jpg"
-        src: "retrieve?_id=" + props.imgSrc
+        src: "./assets/img/propic.jpg"
+        // src={`retrieve?_id=${props.imgSrc}`}
         // src={}
         , alt: "profile pic"
         // className="profilePic"
@@ -520,6 +530,24 @@ var UploadImage = function UploadImage(props) {
   );
 };
 
+var UploadContentImage = function UploadContentImage(props) {
+  return React.createElement(
+    "div",
+    null,
+    React.createElement(
+      "form",
+      {
+        id: "uploadContentImageForm",
+        action: "/upload/contentImage",
+        method: "POST",
+        encType: "multipart/form-data"
+      },
+      React.createElement("input", { type: "file", id: "fileInput", name: "sampleFile" }),
+      React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf })
+    )
+  );
+};
+
 // Sends a GET request to the server to retrieve all pawposts
 var loadProfilePawpostsFromServer = function loadProfilePawpostsFromServer(csrf, imgSrc) {
   sendAjax("GET", "/getPawposts", null, function (data) {
@@ -589,8 +617,8 @@ var loadFeedPawpostsFromServer = function loadFeedPawpostsFromServer(csrf) {
 var createFeedWindow = function createFeedWindow(csrf) {
   ReactDOM.render(React.createElement(CreateFeedContainer, { imgSrc: "", pawposts: [], csrf: csrf }), document.querySelector("#content"));
 
-  // loadFeedPawpostsFromServer(csrf);
-  loadFeedAndProfilePic(csrf);
+  loadFeedPawpostsFromServer(csrf);
+  // loadFeedAndProfilePic(csrf);
 };
 
 // Renders the ChangePassword component on the screen

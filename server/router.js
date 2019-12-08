@@ -52,6 +52,7 @@ const router = app => {
 
   // Images get uploaded using /upload
   app.post("/upload", file.upload);
+  app.post("/upload/contentImage", file.uploadContentImage);
 
   // Images can be retrieved using /retrieve?name=THE_FILE_NAME_WITH_EXTENSION
   app.get("/retrieve", file.retrieve);

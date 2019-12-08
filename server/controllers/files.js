@@ -2,6 +2,7 @@
 const filedb = require("../models/filestore.js");
 const models = require("../models");
 const Account = models.Account;
+const Pawpost = models.Pawpost;
 
 // Our upload controller
 const upload = (req, res) => {
@@ -30,6 +31,53 @@ const upload = (req, res) => {
     Account.AccountModel.updateOne(
       { username: req.session.account.username },
       { profilePic: imageModel._id },
+      err => {
+        if (err) {
+          res
+            .status(400)
+            .json({ error: "Something went wrong, unable to update" });
+        }
+
+        res.json({ message: "upload successful" });
+      }
+    );
+  });
+
+  // If there is an error while saving, let the user know
+  savePromise.catch(error => {
+    res.json({ error });
+  });
+
+  // Return out
+  return savePromise;
+};
+
+const uploadContentImage = (req, res) => {
+  console.log("req.files", req.files);
+  if (!req.files || Object.keys(req.files).length === 0) {
+    return res
+      .status(400)
+      .json({ error: "No files were uploaded for the pawpost" });
+  }
+
+  // Otherwise, grab the file we are looking for
+  // This name (sampleFile) comes from the html form's input
+  const sampleFile = req.files.sampleFile;
+
+  // Have the model create an image with this data
+  const imageModel = new filedb.FileModel(sampleFile);
+
+  console.log("imageModel", imageModel);
+
+  // Save the image to mongo
+  const savePromise = imageModel.save();
+
+  // When it is finished saving, let the user know
+  savePromise.then(() => {
+    console.log("_id in uploadContentImage", req.body._id);
+    Pawpost.PawpostModel.updateOne(
+      { username: req.session.account.username, _id: req.body._id },
+      { contentImg: imageModel._id },
       err => {
         if (err) {
           res
@@ -93,3 +141,4 @@ const retrieveLatestImage = (request, response) => {
 module.exports.upload = upload;
 module.exports.retrieve = retrieveImage;
 module.exports.retrieveLatestImage = retrieveLatestImage;
+module.exports.uploadContentImage = uploadContentImage;
