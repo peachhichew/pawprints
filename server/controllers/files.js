@@ -5,9 +5,9 @@ const Account = models.Account;
 
 // Our upload controller
 const upload = (req, res) => {
-  console.log("req.files.sampleFile.name:", req.files.sampleFile.name);
-  console.log("req.files.sampleFile: ", req.files.sampleFile);
-  console.log("req.files", req.files);
+  // console.log("req.files.sampleFile.name:", req.files.sampleFile.name);
+  // console.log("req.files.sampleFile: ", req.files.sampleFile);
+  // console.log("req.files", req.files);
   // If there are no files, return an error
   if (!req.files || Object.keys(req.files).length === 0) {
     return res.status(400).json({ error: "No files were uploaded" });
@@ -71,8 +71,6 @@ const retrieveImage = (req, res) => {
       "Content-Length": doc.size
     });
 
-    console.log("doc in retrieveImage()", doc._id);
-
     // Finally send back the image data
     return res.end(doc.data);
   });
@@ -81,8 +79,8 @@ const retrieveImage = (req, res) => {
 const retrieveLatestImage = (request, response) => {
   const req = request;
   const res = response;
-  console.log("in retrieve latest image");
-  console.log("req.session.account._id", req.session.account._id);
+  // console.log("in retrieve latest image");
+  // console.log("req.session.account._id", req.session.account._id);
 
   filedb.FileModel.findOne({}, "img createdAt name", (err, img) => {
     if (err) res.send(err);

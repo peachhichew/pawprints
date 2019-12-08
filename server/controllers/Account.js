@@ -163,7 +163,8 @@ const profilePicId = (request, response) => {
   const res = response;
 
   return Account.AccountModel.findOne(
-    { username: req.session.account.username },
+    // { username: req.session.account.username },
+    { username: req.query.username },
     "username profilePic",
     (err, docs) => {
       if (err) {

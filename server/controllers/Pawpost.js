@@ -51,7 +51,7 @@ const editPawpost = (request, response) => {
       return res.status(400).json({ error: "Invalid pawpost" });
     }
 
-    console.log("doc in editPawpost(): ", doc);
+    // console.log("doc in editPawpost(): ", doc);
 
     let pawpostPromise;
     if (doc.owner.equals(req.session.account._id)) {

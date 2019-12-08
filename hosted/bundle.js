@@ -45,7 +45,7 @@ var CreateFeedContainer = function CreateFeedContainer(props) {
     React.createElement(
       "section",
       { id: "pawposts" },
-      React.createElement(PawpostsInFeed, { pawposts: [], csrf: props.csrf })
+      React.createElement(PawpostsInFeed, { imgSrc: props.imgSrc, pawposts: [], csrf: props.csrf })
     )
   );
 };
@@ -65,7 +65,8 @@ var handlePawpost = function handlePawpost(e) {
   }
 
   sendAjax("POST", $("#pawpostForm").attr("action"), $("#pawpostForm").serialize(), function () {
-    loadProfilePawpostsFromServer();
+    // loadProfilePawpostsFromServer();
+    loadPawpostsAndProfilePic();
   });
 
   $("#postContent").val("");
@@ -193,7 +194,7 @@ var PawpostList = function PawpostList(props) {
 };
 
 var PawpostsInFeed = function PawpostsInFeed(props) {
-  console.log("inside pawpostsInFeed");
+  console.log("props.imgSrc:", props.imgSrc);
   if (props.pawposts.length === 0) {
     return React.createElement(
       "div",
@@ -219,9 +220,12 @@ var PawpostsInFeed = function PawpostsInFeed(props) {
       "div",
       { key: pawpost._id, className: "pawpost" },
       React.createElement("img", {
-        src: "./assets/img/propic.jpg",
-        alt: "profile pic",
-        className: "profilePic"
+        // src="./assets/img/propic.jpg"
+        src: "retrieve?_id=" + props.imgSrc
+        // src={}
+        , alt: "profile pic"
+        // className="profilePic"
+        , className: "feedProfilePic"
       }),
       React.createElement(
         "div",
@@ -327,7 +331,8 @@ var handleEditPawpost = function handleEditPawpost(e) {
   }
 
   sendAjax("POST", $("#pawpostFormEdit").attr("action"), $("#pawpostFormEdit").serialize(), function () {
-    loadProfilePawpostsFromServer();
+    // loadProfilePawpostsFromServer();
+    loadPawpostsAndProfilePic();
   });
 
   return false;
@@ -406,7 +411,9 @@ var handleDeletePawpost = function handleDeletePawpost(e) {
   $("#toastMessage").animate({ bottom: "hide" }, 250);
 
   sendAjax("DELETE", $("#pawpostFormDelete").attr("action"), $("#pawpostFormDelete").serialize(), function () {
-    loadProfilePawpostsFromServer();
+    // loadProfilePawpostsFromServer();
+
+    loadPawpostsAndProfilePic();
   });
 
   // return false;
@@ -523,8 +530,9 @@ var loadProfilePawpostsFromServer = function loadProfilePawpostsFromServer(csrf,
 
 var loadPawpostsAndProfilePic = function loadPawpostsAndProfilePic(csrf) {
   sendAjax("GET", "/getPawposts", null, function (pawpostData) {
-    console.log("pawpostData.pawposts: ", pawpostData.pawposts);
-    sendAjax("GET", "/profilePic", null, function (data) {
+    // console.log("pawpostData.pawposts: ", pawpostData.pawposts);
+
+    sendAjax("GET", "/profilePic?username=" + pawpostData.pawposts[0].username, null, function (data) {
       ReactDOM.render(React.createElement(PawpostForm, { imgSrc: data.account.profilePic, csrf: csrf }), document.querySelector("#makePawpost"));
 
       ReactDOM.render(React.createElement(PawpostList, {
@@ -532,6 +540,40 @@ var loadPawpostsAndProfilePic = function loadPawpostsAndProfilePic(csrf) {
         pawposts: pawpostData.pawposts,
         csrf: csrf
       }), document.querySelector("#pawposts"));
+    });
+  });
+};
+
+var loadFeedAndProfilePic = function loadFeedAndProfilePic(csrf) {
+  sendAjax("GET", "/allPawposts", null, function (pawpostData) {
+    // console.log("pawpostData.pawposts: ", pawpostData.pawposts);
+    var users = pawpostData.pawposts.map(function (pawpost) {
+      return pawpost.username;
+    });
+
+    users.forEach(function (user) {
+      sendAjax("GET", "/profilePic?username=" + user, null, function (data) {
+        console.log("user: " + user + " data: " + data.account.profilePic);
+        ReactDOM.render(React.createElement(PawpostsInFeed, {
+          imgSrc: data.account.profilePic,
+          pawposts: pawpostData.pawposts,
+          csrf: csrf
+        }), document.querySelector("#pawposts"));
+
+        // $(".feedProfilePic")[3].src = `retrieve?_id=${data.account.profilePic}`;
+      });
+
+      // console.log("getUsername: ", getUsername);
+      // sendAjax("GET", `/profilePic?username=${getUsername}`, null, data => {
+      //   ReactDOM.render(
+      //     <PawpostsInFeed
+      //       imgSrc={data.account.profilePic}
+      //       pawposts={pawpostData.pawposts}
+      //       csrf={csrf}
+      //     />,
+      //     document.querySelector("#pawposts")
+      //   );
+      // });
     });
   });
 };
@@ -545,9 +587,10 @@ var loadFeedPawpostsFromServer = function loadFeedPawpostsFromServer(csrf) {
 
 // Renders the CreatePawpostContainer component on the scrreen
 var createFeedWindow = function createFeedWindow(csrf) {
-  ReactDOM.render(React.createElement(CreateFeedContainer, { pawposts: [], csrf: csrf }), document.querySelector("#content"));
+  ReactDOM.render(React.createElement(CreateFeedContainer, { imgSrc: "", pawposts: [], csrf: csrf }), document.querySelector("#content"));
 
-  loadFeedPawpostsFromServer(csrf);
+  // loadFeedPawpostsFromServer(csrf);
+  loadFeedAndProfilePic(csrf);
 };
 
 // Renders the ChangePassword component on the screen
@@ -560,7 +603,7 @@ var createSettingsWindow = function createSettingsWindow(csrf) {
 var createProfileWindow = function createProfileWindow(csrf) {
   ReactDOM.render(React.createElement(CreatePawpostContainer, { imgSrc: "", pawposts: [], csrf: csrf }), document.querySelector("#content"));
 
-  loadProfilePawpostsFromServer(csrf);
+  // loadProfilePawpostsFromServer(csrf);
   loadPawpostsAndProfilePic(csrf);
 };
 
@@ -602,7 +645,6 @@ $(document).ready(function () {
 "use strict";
 
 var ChangeSettingsContainer = function ChangeSettingsContainer(props) {
-  console.log("ChangeSettingsContainer", props.imgSrc);
   return React.createElement(
     "div",
     null,

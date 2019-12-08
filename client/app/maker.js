@@ -20,7 +20,7 @@ const CreateFeedContainer = props => {
     <div>
       <h2 className="pageTitle">Feed</h2>
       <section id="pawposts">
-        <PawpostsInFeed pawposts={[]} csrf={props.csrf} />
+        <PawpostsInFeed imgSrc={props.imgSrc} pawposts={[]} csrf={props.csrf} />
       </section>
     </div>
   );
@@ -45,7 +45,8 @@ const handlePawpost = e => {
     $("#pawpostForm").attr("action"),
     $("#pawpostForm").serialize(),
     function() {
-      loadProfilePawpostsFromServer();
+      // loadProfilePawpostsFromServer();
+      loadPawpostsAndProfilePic();
     }
   );
 
@@ -151,7 +152,7 @@ const PawpostList = function(props) {
 };
 
 const PawpostsInFeed = function(props) {
-  console.log("inside pawpostsInFeed");
+  console.log("props.imgSrc:", props.imgSrc);
   if (props.pawposts.length === 0) {
     return (
       <div className="pawpostList">
@@ -172,9 +173,12 @@ const PawpostsInFeed = function(props) {
     return (
       <div key={pawpost._id} className="pawpost">
         <img
-          src="./assets/img/propic.jpg"
+          // src="./assets/img/propic.jpg"
+          src={`retrieve?_id=${props.imgSrc}`}
+          // src={}
           alt="profile pic"
-          className="profilePic"
+          // className="profilePic"
+          className="feedProfilePic"
         />
         <div className="contentInfo">
           <p className="statusUpdated">
@@ -242,7 +246,8 @@ const handleEditPawpost = e => {
     $("#pawpostFormEdit").attr("action"),
     $("#pawpostFormEdit").serialize(),
     function() {
-      loadProfilePawpostsFromServer();
+      // loadProfilePawpostsFromServer();
+      loadPawpostsAndProfilePic();
     }
   );
 
@@ -306,7 +311,9 @@ const handleDeletePawpost = e => {
     $("#pawpostFormDelete").attr("action"),
     $("#pawpostFormDelete").serialize(),
     function() {
-      loadProfilePawpostsFromServer();
+      // loadProfilePawpostsFromServer();
+
+      loadPawpostsAndProfilePic();
     }
   );
 
@@ -403,21 +410,64 @@ const loadProfilePawpostsFromServer = (csrf, imgSrc) => {
 
 const loadPawpostsAndProfilePic = csrf => {
   sendAjax("GET", "/getPawposts", null, pawpostData => {
-    console.log("pawpostData.pawposts: ", pawpostData.pawposts);
-    sendAjax("GET", "/profilePic", null, data => {
-      ReactDOM.render(
-        <PawpostForm imgSrc={data.account.profilePic} csrf={csrf} />,
-        document.querySelector("#makePawpost")
-      );
+    // console.log("pawpostData.pawposts: ", pawpostData.pawposts);
 
-      ReactDOM.render(
-        <PawpostList
-          imgSrc={data.account.profilePic}
-          pawposts={pawpostData.pawposts}
-          csrf={csrf}
-        />,
-        document.querySelector("#pawposts")
-      );
+    sendAjax(
+      "GET",
+      `/profilePic?username=${pawpostData.pawposts[0].username}`,
+      null,
+      data => {
+        ReactDOM.render(
+          <PawpostForm imgSrc={data.account.profilePic} csrf={csrf} />,
+          document.querySelector("#makePawpost")
+        );
+
+        ReactDOM.render(
+          <PawpostList
+            imgSrc={data.account.profilePic}
+            pawposts={pawpostData.pawposts}
+            csrf={csrf}
+          />,
+          document.querySelector("#pawposts")
+        );
+      }
+    );
+  });
+};
+
+const loadFeedAndProfilePic = csrf => {
+  sendAjax("GET", "/allPawposts", null, pawpostData => {
+    // console.log("pawpostData.pawposts: ", pawpostData.pawposts);
+    const users = pawpostData.pawposts.map(function(pawpost) {
+      return pawpost.username;
+    });
+
+    users.forEach(user => {
+      sendAjax("GET", `/profilePic?username=${user}`, null, data => {
+        console.log(`user: ${user} data: ${data.account.profilePic}`);
+        ReactDOM.render(
+          <PawpostsInFeed
+            imgSrc={data.account.profilePic}
+            pawposts={pawpostData.pawposts}
+            csrf={csrf}
+          />,
+          document.querySelector("#pawposts")
+        );
+
+        // $(".feedProfilePic")[3].src = `retrieve?_id=${data.account.profilePic}`;
+      });
+
+      // console.log("getUsername: ", getUsername);
+      // sendAjax("GET", `/profilePic?username=${getUsername}`, null, data => {
+      //   ReactDOM.render(
+      //     <PawpostsInFeed
+      //       imgSrc={data.account.profilePic}
+      //       pawposts={pawpostData.pawposts}
+      //       csrf={csrf}
+      //     />,
+      //     document.querySelector("#pawposts")
+      //   );
+      // });
     });
   });
 };
@@ -435,11 +485,12 @@ const loadFeedPawpostsFromServer = csrf => {
 // Renders the CreatePawpostContainer component on the scrreen
 const createFeedWindow = csrf => {
   ReactDOM.render(
-    <CreateFeedContainer pawposts={[]} csrf={csrf} />,
+    <CreateFeedContainer imgSrc={""} pawposts={[]} csrf={csrf} />,
     document.querySelector("#content")
   );
 
-  loadFeedPawpostsFromServer(csrf);
+  // loadFeedPawpostsFromServer(csrf);
+  loadFeedAndProfilePic(csrf);
 };
 
 // Renders the ChangePassword component on the screen
@@ -458,7 +509,7 @@ const createProfileWindow = csrf => {
     document.querySelector("#content")
   );
 
-  loadProfilePawpostsFromServer(csrf);
+  // loadProfilePawpostsFromServer(csrf);
   loadPawpostsAndProfilePic(csrf);
 };
 
