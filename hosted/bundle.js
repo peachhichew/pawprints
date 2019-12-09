@@ -11,7 +11,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 // Add more structure to the app.handlebars page and render
 // the PawpostForm and PawpostList components
 var CreatePawpostContainer = function CreatePawpostContainer(props) {
-  console.log("createPawpostContainer props.imgSrc:", props.imgSrc);
+  // console.log("createPawpostContainer props.imgSrc:", props.imgSrc);
   return React.createElement(
     "div",
     null,
@@ -92,7 +92,6 @@ var handlePawpost = function handlePawpost(e) {
     loadPawpostsAndProfilePic();
   });
 
-  // console.log("contentImageFile", $("#contentImageFile").val());
   if ($("#contentImageFile").val() !== "") {
     fileUpload(e);
   }
@@ -105,7 +104,6 @@ var handlePawpost = function handlePawpost(e) {
 
 // Renders the form for adding a new pawpost
 var PawpostForm = function PawpostForm(props) {
-  console.log("props.imgSrc in PawpostForm:", props.imgSrc);
   return React.createElement(
     "div",
     { className: "formLayout" },
@@ -143,7 +141,7 @@ var PawpostForm = function PawpostForm(props) {
 // Also, render the EditPawpost component to allow the user to edit their
 // previous pawposts.
 var PawpostList = function PawpostList(props) {
-  console.log("props.imgSrc in PawpostList():", props.imgSrc);
+  // console.log("props.imgSrc in PawpostList():", props.imgSrc);
   if (props.pawposts.length === 0) {
     return React.createElement(
       "div",
@@ -157,7 +155,7 @@ var PawpostList = function PawpostList(props) {
   }
 
   var pawpostNodes = props.pawposts.map(function (pawpost) {
-    console.log("pawpost.contentImg in PawpostList", pawpost.contentImg);
+    // console.log("pawpost.contentImg in PawpostList", pawpost.contentImg);
     var options = {
       year: "numeric",
       month: "long",
@@ -170,8 +168,6 @@ var PawpostList = function PawpostList(props) {
       "div",
       { key: pawpost._id, className: "pawpost" },
       React.createElement("img", {
-        // src="./assets/img/propic.jpg"
-        // src={`retrieve?_id=${props.imgSrc}`}
         src: props.imgSrc === undefined ? "./assets/img/propic.jpg" : "retrieve?_id=" + props.imgSrc,
         alt: "profile pic",
         className: "profilePic"
@@ -219,7 +215,7 @@ var PawpostList = function PawpostList(props) {
 };
 
 var PawpostsInFeed = function PawpostsInFeed(props) {
-  console.log("props.pawposts:", props.pawposts);
+  // console.log("props.pawposts:", props.pawposts);
   if (props.pawposts.length === 0) {
     return React.createElement(
       "div",
@@ -245,12 +241,9 @@ var PawpostsInFeed = function PawpostsInFeed(props) {
       "div",
       { key: pawpost._id, className: "pawpost" },
       React.createElement("img", {
-        // src="./assets/img/propic.jpg"
-        src: pawpost.profilePic === undefined ? "./assets/img/propic.jpg" : "retrieve?_id=" + pawpost.profilePic
-        // src={}
-        , alt: "profile pic"
-        // className="profilePic"
-        , className: "feedProfilePic"
+        src: pawpost.profilePic === undefined ? "./assets/img/propic.jpg" : "retrieve?_id=" + pawpost.profilePic,
+        alt: "profile pic",
+        className: "profilePic"
       }),
       React.createElement(
         "div",
@@ -508,13 +501,13 @@ var DeletePawpost = function (_React$Component3) {
 
 var getProfilePic = function getProfilePic(csrf) {
   sendAjax("GET", "/profilePic", null, function (data) {
-    console.log("data from getProfilePic", data.account.profilePic);
+    // console.log("data from getProfilePic", data.account.profilePic);
     ReactDOM.render(React.createElement(UploadImage, { imgSrc: data.account.profilePic, csrf: csrf }), document.querySelector("#profilePic"));
   });
 };
 
 var UploadImage = function UploadImage(props) {
-  console.log("props.imgSrc UploadImage():", props.imgSrc);
+  // console.log("props.imgSrc UploadImage():", props.imgSrc);
   return React.createElement(
     "div",
     null,
@@ -567,7 +560,7 @@ var UploadPawpostImage = function UploadPawpostImage(props) {
 // Sends a GET request to the server to retrieve all pawposts
 var loadProfilePawpostsFromServer = function loadProfilePawpostsFromServer(csrf, imgSrc) {
   sendAjax("GET", "/getPawposts", null, function (data) {
-    console.log("data.pawposts: ", data.pawposts);
+    // console.log("data.pawposts: ", data.pawposts);
     ReactDOM.render(React.createElement(PawpostList, { imgSrc: imgSrc, pawposts: data.pawposts, csrf: csrf }), document.querySelector("#pawposts"));
   });
 };
@@ -619,7 +612,7 @@ var loadFeedAndProfilePic = function loadFeedAndProfilePic(csrf) {
 
 var loadFeedPawpostsFromServer = function loadFeedPawpostsFromServer(csrf) {
   sendAjax("GET", "/allPawposts", null, function (data) {
-    console.log("data.pawposts all", data.pawposts);
+    // console.log("data.pawposts all", data.pawposts);
     ReactDOM.render(React.createElement(PawpostsInFeed, { pawposts: data.pawposts, csrf: csrf }), document.querySelector("#pawposts"));
   });
 };

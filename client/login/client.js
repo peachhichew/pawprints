@@ -12,8 +12,6 @@ const handleLogin = e => {
     return false;
   }
 
-  console.log($("input[name=_csrf]").val());
-
   sendAjax(
     "POST",
     $("#loginForm").attr("action"),
@@ -64,7 +62,8 @@ const LoginWindow = props => {
     <div>
       <div className="slogan">
         <h1>
-          P<i className="fa fa-paw" aria-hidden="true" />wprints
+          P<i className="fa fa-paw" aria-hidden="true" />
+          wprints
         </h1>
         <p>The social media platform for animals.</p>
       </div>
@@ -91,7 +90,8 @@ const SignupWindow = props => {
     <div>
       <div className="slogan">
         <h1>
-          P<i className="fa fa-paw" aria-hidden="true" />wprints
+          P<i className="fa fa-paw" aria-hidden="true" />
+          wprints
         </h1>
         <p>The social media platform for animals.</p>
       </div>

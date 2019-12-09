@@ -1,7 +1,7 @@
 // Add more structure to the app.handlebars page and render
 // the PawpostForm and PawpostList components
 const CreatePawpostContainer = props => {
-  console.log("createPawpostContainer props.imgSrc:", props.imgSrc);
+  // console.log("createPawpostContainer props.imgSrc:", props.imgSrc);
   return (
     <div>
       <h2 className="pageTitle">Profile</h2>
@@ -75,7 +75,6 @@ const handlePawpost = e => {
     }
   );
 
-  // console.log("contentImageFile", $("#contentImageFile").val());
   if ($("#contentImageFile").val() !== "") {
     fileUpload(e);
   }
@@ -88,7 +87,6 @@ const handlePawpost = e => {
 
 // Renders the form for adding a new pawpost
 const PawpostForm = props => {
-  console.log("props.imgSrc in PawpostForm:", props.imgSrc);
   return (
     <div className="formLayout">
       <img
@@ -128,7 +126,7 @@ const PawpostForm = props => {
 // Also, render the EditPawpost component to allow the user to edit their
 // previous pawposts.
 const PawpostList = function(props) {
-  console.log("props.imgSrc in PawpostList():", props.imgSrc);
+  // console.log("props.imgSrc in PawpostList():", props.imgSrc);
   if (props.pawposts.length === 0) {
     return (
       <div className="pawpostList">
@@ -138,7 +136,7 @@ const PawpostList = function(props) {
   }
 
   const pawpostNodes = props.pawposts.map(function(pawpost) {
-    console.log("pawpost.contentImg in PawpostList", pawpost.contentImg);
+    // console.log("pawpost.contentImg in PawpostList", pawpost.contentImg);
     let options = {
       year: "numeric",
       month: "long",
@@ -149,10 +147,7 @@ const PawpostList = function(props) {
 
     return (
       <div key={pawpost._id} className="pawpost">
-        {/* <div id="renderModal" /> */}
         <img
-          // src="./assets/img/propic.jpg"
-          // src={`retrieve?_id=${props.imgSrc}`}
           src={
             props.imgSrc === undefined
               ? "./assets/img/propic.jpg"
@@ -196,7 +191,7 @@ const PawpostList = function(props) {
 };
 
 const PawpostsInFeed = function(props) {
-  console.log("props.pawposts:", props.pawposts);
+  // console.log("props.pawposts:", props.pawposts);
   if (props.pawposts.length === 0) {
     return (
       <div className="pawpostList">
@@ -217,16 +212,13 @@ const PawpostsInFeed = function(props) {
     return (
       <div key={pawpost._id} className="pawpost">
         <img
-          // src="./assets/img/propic.jpg"
           src={
             pawpost.profilePic === undefined
               ? "./assets/img/propic.jpg"
               : `retrieve?_id=${pawpost.profilePic}`
           }
-          // src={}
           alt="profile pic"
-          // className="profilePic"
-          className="feedProfilePic"
+          className="profilePic"
         />
         <div className="contentInfo">
           <p className="statusUpdated">
@@ -419,7 +411,7 @@ class DeletePawpost extends React.Component {
 
 const getProfilePic = csrf => {
   sendAjax("GET", `/profilePic`, null, data => {
-    console.log("data from getProfilePic", data.account.profilePic);
+    // console.log("data from getProfilePic", data.account.profilePic);
     ReactDOM.render(
       <UploadImage imgSrc={data.account.profilePic} csrf={csrf} />,
       document.querySelector("#profilePic")
@@ -428,7 +420,7 @@ const getProfilePic = csrf => {
 };
 
 const UploadImage = props => {
-  console.log("props.imgSrc UploadImage():", props.imgSrc);
+  // console.log("props.imgSrc UploadImage():", props.imgSrc);
   return (
     <div>
       <h3>Profile Picture</h3>
@@ -479,7 +471,7 @@ const UploadPawpostImage = props => {
 // Sends a GET request to the server to retrieve all pawposts
 const loadProfilePawpostsFromServer = (csrf, imgSrc) => {
   sendAjax("GET", "/getPawposts", null, data => {
-    console.log("data.pawposts: ", data.pawposts);
+    // console.log("data.pawposts: ", data.pawposts);
     ReactDOM.render(
       <PawpostList imgSrc={imgSrc} pawposts={data.pawposts} csrf={csrf} />,
       document.querySelector("#pawposts")
@@ -543,7 +535,7 @@ const loadFeedAndProfilePic = csrf => {
 
 const loadFeedPawpostsFromServer = csrf => {
   sendAjax("GET", "/allPawposts", null, data => {
-    console.log("data.pawposts all", data.pawposts);
+    // console.log("data.pawposts all", data.pawposts);
     ReactDOM.render(
       <PawpostsInFeed pawposts={data.pawposts} csrf={csrf} />,
       document.querySelector("#pawposts")
