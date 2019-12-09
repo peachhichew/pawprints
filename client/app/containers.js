@@ -8,8 +8,7 @@ const CreatePawpostContainer = props => {
         <PawpostForm imgSrc={props.imgSrc} csrf={props.csrf} />
       </section>
       <section id="pawposts">
-        {/* <PawpostList imgSrc={props.imgSrc} pawposts={[]} csrf={props.csrf} /> */}
-        <TestComponent
+        <DisplayPawposts
           imgSrc={props.imgSrc}
           pawposts={[]}
           csrf={props.csrf}
@@ -26,8 +25,7 @@ const CreateFeedContainer = props => {
     <div>
       <h2 className="pageTitle">Feed</h2>
       <section id="pawposts">
-        {/* <PawpostsInFeed pawposts={[]} csrf={props.csrf} /> */}
-        <TestComponent
+        <DisplayPawposts
           imgSrc={""}
           pawposts={[]}
           csrf={props.csrf}

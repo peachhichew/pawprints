@@ -35,7 +35,8 @@ const handleChangePassword = e => {
 const UploadProfileImage = props => {
   return (
     <div>
-      <h3>Profile Picture</h3>
+      <h3 className="settingsTitle">Profile Picture</h3>
+      <p>Please upload square images only for the best user experience!</p>
       <img
         src={
           props.imgSrc === undefined

@@ -19,7 +19,7 @@ var CreatePawpostContainer = function CreatePawpostContainer(props) {
     React.createElement(
       "section",
       { id: "pawposts" },
-      React.createElement(TestComponent, {
+      React.createElement(DisplayPawposts, {
         imgSrc: props.imgSrc,
         pawposts: [],
         csrf: props.csrf,
@@ -42,7 +42,7 @@ var CreateFeedContainer = function CreateFeedContainer(props) {
     React.createElement(
       "section",
       { id: "pawposts" },
-      React.createElement(TestComponent, {
+      React.createElement(DisplayPawposts, {
         imgSrc: "",
         pawposts: [],
         csrf: props.csrf,
@@ -192,138 +192,10 @@ var PawpostForm = function PawpostForm(props) {
   );
 };
 
-// Display all pawposts to the screen and properly format the information.
-// Also, render the EditPawpost component to allow the user to edit their
-// previous pawposts.
-// const PawpostList = function(props) {
-//   if (props.pawposts.length === 0) {
-//     return (
-//       <div className="pawpostList">
-//         <h3 className="emptyPawpost">No pawposts yet</h3>
-//       </div>
-//     );
-//   }
-
-//   const pawpostNodes = props.pawposts.map(function(pawpost) {
-//     let options = {
-//       year: "numeric",
-//       month: "long",
-//       day: "numeric"
-//     };
-//     let date = new Date(pawpost.createdDate.substring(0, 10));
-//     let time = new Date(pawpost.createdDate);
-
-//     return (
-//       <div key={pawpost._id} className="pawpost">
-//         <img
-//           src={
-//             props.imgSrc === undefined
-//               ? "./assets/img/propic.jpg"
-//               : `retrieve?_id=${props.imgSrc}`
-//           }
-//           alt="profile pic"
-//           className="profilePic"
-//         />
-//         <div className="contentInfo">
-//           <p className="statusUpdated">
-//             <span className="username">{pawpost.username}</span> updated their
-//             status.
-//           </p>
-
-//           <p className="pawpostDate">
-//             {date.toLocaleDateString("en-US", options)} •
-//             {` ${time
-//               .toLocaleTimeString("en-US")
-//               .substring(0, time.toLocaleTimeString("en-US").length - 6)}
-//               ${time
-//                 .toLocaleTimeString("en-US")
-//                 .substring(8, time.toLocaleTimeString("en-US").length)}`}
-//           </p>
-//           <p className="pawpostContent">{pawpost.content}</p>
-//           <img
-//             className="pawpostContentImg"
-//             src={
-//               pawpost.contentImg === undefined
-//                 ? null
-//                 : `/retrieve?_id=${pawpost.contentImg}`
-//             }
-//           />
-//         </div>
-//         <EditPawpost pawposts={pawpost} csrf={props.csrf} />
-//         <DeletePawpost pawposts={pawpost} csrf={props.csrf} />
-//       </div>
-//     );
-//   });
-
-//   return <div className="pawpostList">{pawpostNodes.reverse()}</div>;
-// };
-
-// const PawpostsInFeed = function(props) {
-//   // console.log("props.pawposts:", props.pawposts);
-//   if (props.pawposts.length === 0) {
-//     return (
-//       <div className="pawpostList">
-//         <h3 className="emptyPawpost">No pawposts yet</h3>
-//       </div>
-//     );
-//   }
-
-//   const pawpostNodes = props.pawposts.map(function(pawpost) {
-//     let options = {
-//       year: "numeric",
-//       month: "long",
-//       day: "numeric"
-//     };
-//     let date = new Date(pawpost.createdDate.substring(0, 10));
-//     let time = new Date(pawpost.createdDate);
-
-//     return (
-//       <div key={pawpost._id} className="pawpost">
-//         <img
-//           src={
-//             pawpost.profilePic === undefined
-//               ? "./assets/img/propic.jpg"
-//               : `retrieve?_id=${pawpost.profilePic}`
-//           }
-//           alt="profile pic"
-//           className="profilePic"
-//         />
-//         <div className="contentInfo">
-//           <p className="statusUpdated">
-//             <span className="username">{pawpost.username}</span> updated their
-//             status.
-//           </p>
-
-//           <p className="pawpostDate">
-//             {date.toLocaleDateString("en-US", options)} •
-//             {` ${time
-//               .toLocaleTimeString("en-US")
-//               .substring(0, time.toLocaleTimeString("en-US").length - 6)}
-//               ${time
-//                 .toLocaleTimeString("en-US")
-//                 .substring(8, time.toLocaleTimeString("en-US").length)}`}
-//           </p>
-//           <p className="pawpostContent">{pawpost.content}</p>
-//           <img
-//             className="pawpostContentImg"
-//             src={
-//               pawpost.contentImg === undefined
-//                 ? null
-//                 : `/retrieve?_id=${pawpost.contentImg}`
-//             }
-//           />
-//         </div>
-//       </div>
-//     );
-//   });
-
-//   return <div className="pawpostList">{pawpostNodes.reverse()}</div>;
-// };
-
 // Display all feed or profile pawposts to the screen and properly format
 // the information. Also, render the EditPawpost and DeletePawpost components
 //  to allow the user to edit/delete their previous pawposts.
-var TestComponent = function TestComponent(props) {
+var DisplayPawposts = function DisplayPawposts(props) {
   if (props.pawposts.length === 0) {
     return React.createElement(
       "div",
@@ -395,7 +267,7 @@ var TestComponent = function TestComponent(props) {
   );
 };
 
-// Base modal component for editing a pawpost
+// Base modal component for editing/deleting a pawpost
 
 var Modal = function (_React$Component) {
   _inherits(Modal, _React$Component);
@@ -647,7 +519,7 @@ var loadPawpostsAndProfilePic = function loadPawpostsAndProfilePic(csrf) {
       //   pawposts={pawpostData.pawposts}
       //   csrf={csrf}
       // />,
-      React.createElement(TestComponent, {
+      React.createElement(DisplayPawposts, {
         imgSrc: data.account.profilePic,
         pawposts: pawpostData.pawposts,
         csrf: csrf,
@@ -663,7 +535,7 @@ var loadFeedPawpostsFromServer = function loadFeedPawpostsFromServer(csrf) {
   sendAjax("GET", "/allPawposts", null, function (data) {
     ReactDOM.render(
     // <PawpostsInFeed pawposts={data.pawposts} csrf={csrf} />,
-    React.createElement(TestComponent, {
+    React.createElement(DisplayPawposts, {
       imgSrc: "",
       pawposts: data.pawposts,
       csrf: csrf,
@@ -740,8 +612,13 @@ var UploadProfileImage = function UploadProfileImage(props) {
     null,
     React.createElement(
       "h3",
-      null,
+      { className: "settingsTitle" },
       "Profile Picture"
+    ),
+    React.createElement(
+      "p",
+      null,
+      "Please upload square images only for the best user experience!"
     ),
     React.createElement("img", {
       src: props.imgSrc === undefined ? "./assets/img/propic.jpg" : "retrieve?_id=" + props.imgSrc,

@@ -94,138 +94,10 @@ const PawpostForm = props => {
   );
 };
 
-// Display all pawposts to the screen and properly format the information.
-// Also, render the EditPawpost component to allow the user to edit their
-// previous pawposts.
-// const PawpostList = function(props) {
-//   if (props.pawposts.length === 0) {
-//     return (
-//       <div className="pawpostList">
-//         <h3 className="emptyPawpost">No pawposts yet</h3>
-//       </div>
-//     );
-//   }
-
-//   const pawpostNodes = props.pawposts.map(function(pawpost) {
-//     let options = {
-//       year: "numeric",
-//       month: "long",
-//       day: "numeric"
-//     };
-//     let date = new Date(pawpost.createdDate.substring(0, 10));
-//     let time = new Date(pawpost.createdDate);
-
-//     return (
-//       <div key={pawpost._id} className="pawpost">
-//         <img
-//           src={
-//             props.imgSrc === undefined
-//               ? "./assets/img/propic.jpg"
-//               : `retrieve?_id=${props.imgSrc}`
-//           }
-//           alt="profile pic"
-//           className="profilePic"
-//         />
-//         <div className="contentInfo">
-//           <p className="statusUpdated">
-//             <span className="username">{pawpost.username}</span> updated their
-//             status.
-//           </p>
-
-//           <p className="pawpostDate">
-//             {date.toLocaleDateString("en-US", options)} •
-//             {` ${time
-//               .toLocaleTimeString("en-US")
-//               .substring(0, time.toLocaleTimeString("en-US").length - 6)}
-//               ${time
-//                 .toLocaleTimeString("en-US")
-//                 .substring(8, time.toLocaleTimeString("en-US").length)}`}
-//           </p>
-//           <p className="pawpostContent">{pawpost.content}</p>
-//           <img
-//             className="pawpostContentImg"
-//             src={
-//               pawpost.contentImg === undefined
-//                 ? null
-//                 : `/retrieve?_id=${pawpost.contentImg}`
-//             }
-//           />
-//         </div>
-//         <EditPawpost pawposts={pawpost} csrf={props.csrf} />
-//         <DeletePawpost pawposts={pawpost} csrf={props.csrf} />
-//       </div>
-//     );
-//   });
-
-//   return <div className="pawpostList">{pawpostNodes.reverse()}</div>;
-// };
-
-// const PawpostsInFeed = function(props) {
-//   // console.log("props.pawposts:", props.pawposts);
-//   if (props.pawposts.length === 0) {
-//     return (
-//       <div className="pawpostList">
-//         <h3 className="emptyPawpost">No pawposts yet</h3>
-//       </div>
-//     );
-//   }
-
-//   const pawpostNodes = props.pawposts.map(function(pawpost) {
-//     let options = {
-//       year: "numeric",
-//       month: "long",
-//       day: "numeric"
-//     };
-//     let date = new Date(pawpost.createdDate.substring(0, 10));
-//     let time = new Date(pawpost.createdDate);
-
-//     return (
-//       <div key={pawpost._id} className="pawpost">
-//         <img
-//           src={
-//             pawpost.profilePic === undefined
-//               ? "./assets/img/propic.jpg"
-//               : `retrieve?_id=${pawpost.profilePic}`
-//           }
-//           alt="profile pic"
-//           className="profilePic"
-//         />
-//         <div className="contentInfo">
-//           <p className="statusUpdated">
-//             <span className="username">{pawpost.username}</span> updated their
-//             status.
-//           </p>
-
-//           <p className="pawpostDate">
-//             {date.toLocaleDateString("en-US", options)} •
-//             {` ${time
-//               .toLocaleTimeString("en-US")
-//               .substring(0, time.toLocaleTimeString("en-US").length - 6)}
-//               ${time
-//                 .toLocaleTimeString("en-US")
-//                 .substring(8, time.toLocaleTimeString("en-US").length)}`}
-//           </p>
-//           <p className="pawpostContent">{pawpost.content}</p>
-//           <img
-//             className="pawpostContentImg"
-//             src={
-//               pawpost.contentImg === undefined
-//                 ? null
-//                 : `/retrieve?_id=${pawpost.contentImg}`
-//             }
-//           />
-//         </div>
-//       </div>
-//     );
-//   });
-
-//   return <div className="pawpostList">{pawpostNodes.reverse()}</div>;
-// };
-
 // Display all feed or profile pawposts to the screen and properly format
 // the information. Also, render the EditPawpost and DeletePawpost components
 //  to allow the user to edit/delete their previous pawposts.
-const TestComponent = function(props) {
+const DisplayPawposts = function(props) {
   if (props.pawposts.length === 0) {
     return (
       <div className="pawpostList">
@@ -296,7 +168,7 @@ const TestComponent = function(props) {
   return <div className="pawpostList">{pawpostNodes.reverse()}</div>;
 };
 
-// Base modal component for editing a pawpost
+// Base modal component for editing/deleting a pawpost
 class Modal extends React.Component {
   render() {
     // Render nothing if the "show" prop is false
@@ -490,7 +362,7 @@ const loadPawpostsAndProfilePic = csrf => {
         //   pawposts={pawpostData.pawposts}
         //   csrf={csrf}
         // />,
-        <TestComponent
+        <DisplayPawposts
           imgSrc={data.account.profilePic}
           pawposts={pawpostData.pawposts}
           csrf={csrf}
@@ -508,7 +380,7 @@ const loadFeedPawpostsFromServer = csrf => {
   sendAjax("GET", "/allPawposts", null, data => {
     ReactDOM.render(
       // <PawpostsInFeed pawposts={data.pawposts} csrf={csrf} />,
-      <TestComponent
+      <DisplayPawposts
         imgSrc={""}
         pawposts={data.pawposts}
         csrf={csrf}

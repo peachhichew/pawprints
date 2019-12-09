@@ -90,6 +90,7 @@ nav:nth-child(1) {
   border: 1px solid #777;
   width: 520px;
   margin: 0 auto;
+  margin-bottom: 15px;
   display: flex;
   padding: 15px;
   background-color: #fff;
@@ -237,7 +238,9 @@ button {
 .pawpost {
   border: 1px solid #777;
   width: 520px;
-  margin: 15 auto;
+  /* margin: 15 auto; */
+  margin: 0 auto;
+  margin-bottom: 15px;
   display: flex;
   padding: 15px;
   background-color: #fff;
@@ -352,7 +355,7 @@ button {
 #profilePic {
   width: 550px;
   margin: 0 auto;
-  padding-bottom: 30px;
+  padding-bottom: 10px;
 }
 
 #currentPassword,
@@ -400,8 +403,17 @@ button {
 
 .changeProfilePic {
   width: 150px;
+  padding-bottom: 15px;
 }
 
 .pawpostContentImg {
   max-width: 400px;
+}
+
+#uploadPawpostImageForm {
+  padding-left: 10px;
+}
+
+.settingsTitle {
+  margin-top: 0;
 }
