@@ -1,5 +1,5 @@
 // Grab mongoose and setup our empty model
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 let FileModel = {};
 
 // mongoose.Types.ObjectID is a function that converts
@@ -11,70 +11,70 @@ const convertId = mongoose.Types.ObjectId;
 const FileSchema = new mongoose.Schema({
   name: {
     // The file name
-    type: String
+    type: String,
   },
   data: {
     // The actual image data
-    type: Buffer
+    type: Buffer,
   },
   size: {
     // The size of the image in bytes
-    type: Number
+    type: Number,
   },
   encoding: {
     // The type of encoding used in the image
-    type: String
+    type: String,
   },
   tempFilePath: {
     // The temporary file path
-    type: String
+    type: String,
   },
   truncated: {
     // If the image was cutoff at all
-    type: Boolean
+    type: Boolean,
   },
   mimetype: {
     // The type of image it is
-    type: String
+    type: String,
   },
   md5: {
     // The hash for the image
-    type: String
+    type: String,
   },
   createdAt: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
 // Return information related to the pawpost content, content image,
 // profile picture, post date creation, and username.
 FileSchema.statics.toAPI = doc => ({
-  name: doc.name
+  name: doc.name,
 });
 
 // Return data associated with the account owner
 FileSchema.statics.findByOwner = (ownerId, callback) => {
   const search = {
-    owner: convertId(ownerId)
+    owner: convertId(ownerId),
   };
 
   return FileModel.find(search)
-    .select("name _id username")
+    .select('name _id username')
     .exec(callback);
 };
 
 // Find the image id
 FileSchema.statics.findById = (id, callback) => {
   const search = {
-    _id: convertId(id)
+    _id: convertId(id),
   };
 
   return FileModel.findOne(search, callback);
 };
 
 // Create our file model based on the schema above
-FileModel = mongoose.model("FileModel", FileSchema);
+FileModel = mongoose.model('FileModel', FileSchema);
 
 module.exports.FileModel = FileModel;
 module.exports.FileSchema = FileSchema;

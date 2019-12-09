@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
-const _ = require("underscore");
+const _ = require('underscore');
 
 let PawpostModel = {};
 
@@ -15,30 +15,30 @@ const PawpostSchema = new mongoose.Schema({
     type: String,
     required: true,
     trim: true,
-    set: setName
+    set: setName,
   },
   contentImg: {
-    type: mongoose.Schema.ObjectId
+    type: mongoose.Schema.ObjectId,
   },
   profilePic: {
     type: String,
     // required: true,
-    trim: true
+    trim: true,
   },
   username: {
     type: String,
     required: true,
-    trim: true
+    trim: true,
   },
   owner: {
     type: mongoose.Schema.ObjectId,
     required: true,
-    ref: "Account"
+    ref: 'Account',
   },
   createdDate: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
 // Return information related to the pawpost content, content image,
@@ -48,24 +48,24 @@ PawpostSchema.statics.toAPI = doc => ({
   contentImg: doc.contentImg,
   profilePic: doc.profilePic,
   createdDate: doc.createdDate,
-  username: doc.username
+  username: doc.username,
 });
 
 // Return data associated with the account owner
 PawpostSchema.statics.findByOwner = (ownerId, callback) => {
   const search = {
-    owner: convertId(ownerId)
+    owner: convertId(ownerId),
   };
 
   return PawpostModel.find(search)
-    .select("content contentImg profilePic createdDate _id username")
+    .select('content contentImg profilePic createdDate _id username')
     .exec(callback);
 };
 
 // Find the account session id
 PawpostSchema.statics.findById = (id, callback) => {
   const search = {
-    _id: convertId(id)
+    _id: convertId(id),
   };
 
   return PawpostModel.findOne(search, callback);
@@ -74,13 +74,13 @@ PawpostSchema.statics.findById = (id, callback) => {
 // Find the usernrame associated with the current account
 PawpostSchema.static.findByUsername = (username, callback) => {
   const search = {
-    username
+    username,
   };
 
   return PawpostModel.findOne(search, callback);
 };
 
-PawpostModel = mongoose.model("Pawpost", PawpostSchema);
+PawpostModel = mongoose.model('Pawpost', PawpostSchema);
 
 module.exports.PawpostModel = PawpostModel;
 module.exports.PawpostSchema = PawpostSchema;

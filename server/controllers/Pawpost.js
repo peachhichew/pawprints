@@ -1,4 +1,4 @@
-const models = require("../models");
+const models = require('../models');
 
 const Pawpost = models.Pawpost;
 const Account = models.Account;
@@ -8,63 +8,40 @@ const Account = models.Account;
 const makePawpost = (req, res) => {
   if (!req.body.postContent) {
     return res.status(400).json({
-      error: "Pawpost content required"
+      error: 'Pawpost content required',
     });
   }
 
-  Account.AccountModel.findOne(
+  return Account.AccountModel.findOne(
     { username: req.session.account.username },
-    "profilePic",
+    'profilePic',
     (error, data) => {
       if (error) {
         return res.json(error);
       }
-      console.log("data: ", data);
-      console.log("data.profilePic", data.profilePic);
 
       const pawpostData = {
         content: req.body.postContent,
         contentImg: req.body.contentImg,
         profilePic: data.profilePic,
         owner: req.session.account._id,
-        username: req.session.account.username
+        username: req.session.account.username,
       };
 
       const newPawpost = new Pawpost.PawpostModel(pawpostData);
       const pawpostPromise = newPawpost.save();
-      pawpostPromise.then(() => res.json({ redirect: "/profile" }));
+      pawpostPromise.then(() => res.json({ redirect: '/profile' }));
       pawpostPromise.catch(err => {
         if (err.code === 11000) {
-          return res.status(400).json({ error: "Pawpost already exists" });
+          return res.status(400).json({ error: 'Pawpost already exists' });
         }
 
-        return res.status(400).json({ error: "An error occurred" });
+        return res.status(400).json({ error: 'An error occurred' });
       });
 
       return pawpostPromise;
     }
   );
-
-  // const pawpostData = {
-  //   content: req.body.postContent,
-  //   contentImg: req.body.contentImg,
-  //   profilePic: req.body.profilePic,
-  //   owner: req.session.account._id,
-  //   username: req.session.account.username
-  // };
-
-  // const newPawpost = new Pawpost.PawpostModel(pawpostData);
-  // const pawpostPromise = newPawpost.save();
-  // pawpostPromise.then(() => res.json({ redirect: "/profile" }));
-  // pawpostPromise.catch(err => {
-  //   if (err.code === 11000) {
-  //     return res.status(400).json({ error: "Pawpost already exists" });
-  //   }
-
-  //   return res.status(400).json({ error: "An error occurred" });
-  // });
-
-  // return pawpostPromise;
 };
 
 // To let the user edit their pawposts, we need to find the
@@ -78,20 +55,17 @@ const editPawpost = (request, response) => {
   Pawpost.PawpostModel.findById(req.body._id, (err, doc) => {
     if (err) {
       console.log(err);
-      return res.status(400).json({ error: "An error occurred" });
+      return res.status(400).json({ error: 'An error occurred' });
     }
 
     if (!doc) {
-      return res.status(400).json({ error: "Invalid pawpost" });
+      return res.status(400).json({ error: 'Invalid pawpost' });
     }
-
-    // console.log("doc in editPawpost(): ", doc);
 
     let pawpostPromise;
     if (doc.owner.equals(req.session.account._id)) {
       const pawpost = doc;
       pawpost.content = req.body.contentEdit;
-      // pawpost.contentImg = req.body.contentImgEdit;
       pawpost.profilePic = req.body.profilePicEdit;
       pawpostPromise = pawpost.save();
 
@@ -100,7 +74,7 @@ const editPawpost = (request, response) => {
       });
 
       pawpostPromise.catch(() =>
-        res.status(400).json({ error: "An error occurred" })
+        res.status(400).json({ error: 'An error occurred' })
       );
 
       return pawpostPromise;
@@ -115,25 +89,22 @@ const deletePawpost = (request, response) => {
   const res = response;
 
   Pawpost.PawpostModel.findById(req.body._id, (err, doc) => {
-    console.log("doc: ", doc);
     if (err) {
       console.log(err);
-      return res.status(400).json({ error: "An error occurred" });
+      return res.status(400).json({ error: 'An error occurred' });
     }
 
     if (!doc) {
-      return res.status(400).json({ error: "Invalid pawpost" });
+      return res.status(400).json({ error: 'Invalid pawpost' });
     }
 
     return Pawpost.PawpostModel.remove({ _id: req.body._id }, error => {
       if (error) {
         console.log(err);
-        return res.status(400).json({ error: "An error occurred" });
+        return res.status(400).json({ error: 'An error occurred' });
       }
 
-      // res.redirect("/feed");
-      // return res.render("app", { csrfToken: req.csrfToken() });
-      return res.status(200).json({ message: "Pawpost successfully deleted" });
+      return res.status(200).json({ message: 'Pawpost successfully deleted' });
     });
   });
 };
@@ -143,41 +114,35 @@ const profilePage = (req, res) => {
   Pawpost.PawpostModel.findByOwner(req.session.account._id, (err, docs) => {
     if (err) {
       console.log(err);
-      return res.status(400).json({ error: "An error occurred" });
+      return res.status(400).json({ error: 'An error occurred' });
     }
 
-    return res.render("app", { csrfToken: req.csrfToken(), pawposts: docs });
+    return res.render('app', { csrfToken: req.csrfToken(), pawposts: docs });
   });
 };
 
-const feedPage = (req, res) => {
-  return Pawpost.PawpostModel.findByOwner(
-    req.session.account._id,
-    (err, docs) => {
-      if (err) {
-        console.log(err);
-        return res.status(400).json({ error: "An error occurred" });
-      } else {
-        res.render("app", {
-          csrfToken: req.csrfToken(),
-          pawposts: docs
-        });
-      }
-      return res.status(200).json({ message: "Success" });
-    }
-  );
-};
-
-const getAllUsersPawposts = (req, res) => {
-  return Pawpost.PawpostModel.find({}, (err, docs) => {
+const feedPage = (req, res) =>
+  Pawpost.PawpostModel.findByOwner(req.session.account._id, (err, docs) => {
     if (err) {
       console.log(err);
-      return res.status(400).json({ error: "An error occurred" });
-    } else {
-      res.json({ pawposts: docs });
+      return res.status(400).json({ error: 'An error occurred' });
     }
+    res.render('app', {
+      csrfToken: req.csrfToken(),
+      pawposts: docs,
+    });
+
+    return res.status(200).json({ message: 'Success' });
   });
-};
+
+const getAllUsersPawposts = (req, res) =>
+  Pawpost.PawpostModel.find({}, (err, docs) => {
+    if (err) {
+      console.log(err);
+      return res.status(400).json({ error: 'An error occurred' });
+    }
+    return res.json({ pawposts: docs });
+  });
 
 // Retrieves each pawpost by finding the associated account owner id
 const getPawposts = (request, response) => {
@@ -189,7 +154,7 @@ const getPawposts = (request, response) => {
     (err, docs) => {
       if (err) {
         console.log(err);
-        return res.status(400).json({ error: "An error occurred" });
+        return res.status(400).json({ error: 'An error occurred' });
       }
 
       return res.json({ pawposts: docs });

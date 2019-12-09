@@ -1,17 +1,17 @@
-const models = require("../models");
+const models = require('../models');
 
 const Account = models.Account;
 
 // Function to render the login page
 const loginPage = (req, res) => {
-  res.render("login", { csrfToken: req.csrfToken() });
+  res.render('login', { csrfToken: req.csrfToken() });
 };
 
 // When the user is logging out, destroy the current session
 // and redirect the user to the index page
 const logout = (req, res) => {
   req.session.destroy();
-  res.redirect("/");
+  res.redirect('/');
 };
 
 // When the user logs in, validate the credentials by using
@@ -26,7 +26,7 @@ const login = (request, response) => {
   const password = `${req.body.pass}`;
 
   if (!username || !password) {
-    return res.status(400).json({ error: "All fields are required" });
+    return res.status(400).json({ error: 'All fields are required' });
   }
 
   return Account.AccountModel.authenticate(
@@ -34,12 +34,12 @@ const login = (request, response) => {
     password,
     (err, account) => {
       if (err || !account) {
-        return res.status(401).json({ error: "Wrong username or password" });
+        return res.status(401).json({ error: 'Wrong username or password' });
       }
 
       req.session.account = Account.AccountModel.toAPI(account);
 
-      return res.json({ redirect: "/profile" });
+      return res.json({ redirect: '/profile' });
     }
   );
 };
@@ -58,19 +58,19 @@ const signup = (request, response) => {
 
   // return an error if there are any empty fields
   if (!req.body.username || !req.body.pass || !req.body.pass2) {
-    return res.status(400).json({ error: "All fields are required" });
+    return res.status(400).json({ error: 'All fields are required' });
   }
 
   // return an error if the passwords don't match
   if (req.body.pass !== req.body.pass2) {
-    return res.status(400).json({ error: "Passwords do not match" });
+    return res.status(400).json({ error: 'Passwords do not match' });
   }
 
   return Account.AccountModel.generateHash(req.body.pass, (salt, hash) => {
     const accountData = {
       username: req.body.username,
       salt,
-      password: hash
+      password: hash,
     };
 
     const newAccount = new Account.AccountModel(accountData);
@@ -79,17 +79,17 @@ const signup = (request, response) => {
 
     savePromise.then(() => {
       req.session.account = Account.AccountModel.toAPI(newAccount);
-      return res.json({ redirect: "/profile" });
+      return res.json({ redirect: '/profile' });
     });
 
     savePromise.catch(err => {
       console.log(err);
 
       if (err.code === 11000) {
-        return res.status(400).json({ error: "Username already in use." });
+        return res.status(400).json({ error: 'Username already in use.' });
       }
 
-      return res.status(400).json({ error: "An error occurred" });
+      return res.status(400).json({ error: 'An error occurred' });
     });
   });
 };
@@ -115,12 +115,12 @@ const changePass = (request, response) => {
     !req.body.newPassword1 ||
     !req.body.newPassword2
   ) {
-    return res.status(400).json({ error: "All fields are required" });
+    return res.status(400).json({ error: 'All fields are required' });
   }
 
   // make sure the new passwords are the same
   if (req.body.newPassword1 !== req.body.newPassword2) {
-    return res.status(400).json({ error: "New passwords do not match" });
+    return res.status(400).json({ error: 'New passwords do not match' });
   }
 
   // if the new passwords are the same as the existing password, send
@@ -131,28 +131,27 @@ const changePass = (request, response) => {
   ) {
     return res
       .status(400)
-      .json({ error: "Current and new passwords are the same" });
+      .json({ error: 'Current and new passwords are the same' });
   }
 
   return Account.AccountModel.authenticate(
     req.session.account.username,
     req.body.currentPassword,
     (err, doc) => {
-      console.log("doc", doc);
+      console.log('doc', doc);
       return Account.AccountModel.generateHash(
         req.body.newPassword1,
-        (salt, hash) => {
-          return Account.AccountModel.updateOne(
+        (salt, hash) =>
+          Account.AccountModel.updateOne(
             { username: req.session.account.username },
             { salt, password: hash },
             error => {
               if (error) {
                 return res.status(400).json({ error });
               }
-              return res.json({ message: "password successfully changed" });
+              return res.json({ message: 'password successfully changed' });
             }
-          );
-        }
+          )
       );
     }
   );
@@ -164,14 +163,12 @@ const profilePicId = (request, response) => {
 
   return Account.AccountModel.findOne(
     { username: req.session.account.username || req.query.username },
-    "username profilePic",
+    'username profilePic',
     (err, docs) => {
       if (err) {
         console.log(err);
-        return res.status(400).json({ error: "An error occurred" });
+        return res.status(400).json({ error: 'An error occurred' });
       }
-
-      // console.log("docs for profilePic:", docs);
 
       return res.json({ account: docs });
     }
@@ -183,7 +180,7 @@ const getToken = (request, response) => {
   const req = request;
   const res = response;
   const csrfJSON = {
-    csrfToken: req.csrfToken()
+    csrfToken: req.csrfToken(),
   };
 
   res.json(csrfJSON);
