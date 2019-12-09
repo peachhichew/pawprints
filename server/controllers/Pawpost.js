@@ -64,20 +64,66 @@ const editPawpost = (request, response) => {
 
     let pawpostPromise;
     if (doc.owner.equals(req.session.account._id)) {
-      const pawpost = doc;
-      pawpost.content = req.body.contentEdit;
-      pawpost.profilePic = req.body.profilePicEdit;
-      pawpostPromise = pawpost.save();
+      Account.AccountModel.findOne(
+        { username: req.session.account.username },
+        'profilePic',
+        (error, data) => {
+          if (error) {
+            return res.json(error);
+          }
 
-      pawpostPromise.then(() => {
-        res.json({ pawpost });
-      });
+          // const pawpostData = {
+          //   content: req.body.postContent,
+          //   contentImg: req.body.contentImg,
+          //   profilePic: data.profilePic,
+          //   owner: req.session.account._id,
+          //   username: req.session.account.username,
+          // };
 
-      pawpostPromise.catch(() =>
-        res.status(400).json({ error: 'An error occurred' })
+          // const newPawpost = new Pawpost.PawpostModel(pawpostData);
+          // const pawpostPromise = newPawpost.save();
+          // pawpostPromise.then(() => res.json({ redirect: '/profile' }));
+          // pawpostPromise.catch(err => {
+          //   if (err.code === 11000) {
+          //     return res.status(400).json({ error: 'Pawpost already exists' });
+          //   }
+
+          //   return res.status(400).json({ error: 'An error occurred' });
+          // });
+
+          // return pawpostPromise;
+
+          const pawpost = doc;
+          pawpost.content = req.body.contentEdit;
+          pawpost.profilePic = data.profilePic;
+          pawpostPromise = pawpost.save();
+
+          pawpostPromise.then(() => {
+            res.json({ pawpost });
+          });
+
+          pawpostPromise.catch(() =>
+            res.status(400).json({ error: 'An error occurred' })
+          );
+
+          return pawpostPromise;
+        }
       );
 
-      return pawpostPromise;
+      // const pawpost = doc;
+      // pawpost.content = req.body.contentEdit;
+      // pawpost.profilePic = req.body.profilePicEdit;
+      // pawpostPromise = pawpost.save();
+
+      // pawpostPromise.then(() => {
+      //   res.json({ pawpost });
+      // });
+
+      // pawpostPromise.catch(() =>
+      //   res.status(400).json({ error: 'An error occurred' })
+      // );
+
+      // return pawpostPromise;
     }
 
     return pawpostPromise;
