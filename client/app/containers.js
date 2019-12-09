@@ -8,7 +8,13 @@ const CreatePawpostContainer = props => {
         <PawpostForm imgSrc={props.imgSrc} csrf={props.csrf} />
       </section>
       <section id="pawposts">
-        <PawpostList imgSrc={props.imgSrc} pawposts={[]} csrf={props.csrf} />
+        {/* <PawpostList imgSrc={props.imgSrc} pawposts={[]} csrf={props.csrf} /> */}
+        <TestComponent
+          imgSrc={props.imgSrc}
+          pawposts={[]}
+          csrf={props.csrf}
+          isFeed={false}
+        />
       </section>
     </div>
   );
@@ -20,7 +26,13 @@ const CreateFeedContainer = props => {
     <div>
       <h2 className="pageTitle">Feed</h2>
       <section id="pawposts">
-        <PawpostsInFeed pawposts={[]} csrf={props.csrf} />
+        {/* <PawpostsInFeed pawposts={[]} csrf={props.csrf} /> */}
+        <TestComponent
+          imgSrc={""}
+          pawposts={[]}
+          csrf={props.csrf}
+          isFeed={true}
+        />
       </section>
     </div>
   );

@@ -1,6 +1,6 @@
 // Import the filestore model/schema
-const filedb = require('../models/filestore.js');
-const models = require('../models');
+const filedb = require("../models/filestore.js");
+const models = require("../models");
 const Account = models.Account;
 const Pawpost = models.Pawpost;
 
@@ -8,7 +8,7 @@ const Pawpost = models.Pawpost;
 const upload = (req, res) => {
   // If there are no files, return an error
   if (!req.files || Object.keys(req.files).length === 0) {
-    return res.status(400).json({ error: 'No files were uploaded' });
+    return res.status(400).json({ error: "No files were uploaded" });
   }
 
   // Otherwise, grab the file we are looking for
@@ -29,7 +29,7 @@ const upload = (req, res) => {
       err => {
         if (err) {
           res.status(400).json({
-            error: 'Something went wrong, unable to update Account model',
+            error: "Something went wrong, unable to update Account model"
           });
         }
 
@@ -39,11 +39,11 @@ const upload = (req, res) => {
           error => {
             if (error) {
               res.status(400).json({
-                error: 'Something went wrong, unable to update Pawpost Model',
+                error: "Something went wrong, unable to update Pawpost Model"
               });
             }
 
-            res.json({ message: 'upload successful' });
+            res.json({ message: "upload successful" });
           }
         );
       }
@@ -59,11 +59,13 @@ const upload = (req, res) => {
   return savePromise;
 };
 
+// Finds the most recent pawpost and updates the contentImg property
+// so that the user can see the image attached to their post
 const uploadContentImage = (req, res) => {
   if (!req.files || Object.keys(req.files).length === 0) {
     return res
       .status(400)
-      .json({ error: 'No files were uploaded for the pawpost' });
+      .json({ error: "No files were uploaded for the pawpost" });
   }
 
   // Otherwise, grab the file we are looking for
@@ -80,10 +82,10 @@ const uploadContentImage = (req, res) => {
   savePromise.then(() => {
     Pawpost.PawpostModel.findOne(
       { username: req.session.account.username },
-      'content createdDate contentImg username',
+      "content createdDate contentImg username",
       (error, data) => {
         if (error) res.send(error);
-        res.contentType('json');
+        res.contentType("json");
         Pawpost.PawpostModel.updateOne(
           { username: req.session.account.username, _id: data._id },
           { contentImg: imageModel._id },
@@ -91,14 +93,14 @@ const uploadContentImage = (req, res) => {
             if (err) {
               res
                 .status(400)
-                .json({ error: 'Something went wrong, unable to update' });
+                .json({ error: "Something went wrong, unable to update" });
             }
 
-            res.json({ message: 'upload successful' });
+            res.json({ message: "upload successful" });
           }
         );
       }
-    ).sort({ createdDate: 'desc' });
+    ).sort({ createdDate: "desc" });
   });
 
   // If there is an error while saving, let the user know
@@ -121,13 +123,13 @@ const retrieveImage = (req, res) => {
 
     // if there is no doc, return an error
     if (!doc) {
-      return res.status(400).json({ error: 'File not found' });
+      return res.status(400).json({ error: "File not found" });
     }
 
     // If there is a doc, setup the mimetype and file size
     res.writeHead(200, {
-      'Content-Type': doc.mimetype,
-      'Content-Length': doc.size,
+      "Content-Type": doc.mimetype,
+      "Content-Length": doc.size
     });
 
     // Finally send back the image data
@@ -135,14 +137,15 @@ const retrieveImage = (req, res) => {
   });
 };
 
+// Displays the most recent image that was uploaded to the server
 const retrieveLatestImage = response => {
   const res = response;
 
-  filedb.FileModel.findOne({}, 'img createdAt name', (err, img) => {
+  filedb.FileModel.findOne({}, "img createdAt name", (err, img) => {
     if (err) res.send(err);
-    res.contentType('json');
+    res.contentType("json");
     res.send(img);
-  }).sort({ createdAt: 'desc' });
+  }).sort({ createdAt: "desc" });
 };
 
 module.exports.upload = upload;
