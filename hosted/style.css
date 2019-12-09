@@ -126,6 +126,8 @@ nav:nth-child(1) {
   background-color: #55acee;
   border-radius: 3px;
   color: #fff;
+  border: 2px solid #55acee;
+  font-weight: bold;
 }
 
 .slogan {
@@ -296,6 +298,7 @@ button {
   padding-left: 10px;
   padding-top: 10px;
   margin-bottom: 15px;
+  margin-top: -5px;
   resize: none;
   border-color: #dedede;
   width: 500px;
@@ -375,6 +378,8 @@ button {
   border-radius: 3px;
   color: #fff;
   margin-top: 20px;
+  border: 2px solid #55acee;
+  font-weight: bold;
 }
 
 #deleteButton {
@@ -389,16 +394,23 @@ button {
   color: #212121;
 }
 
-.cancelDeletePawpost {
+.cancelAction {
   width: 70px;
   padding: 5px;
   text-align: center;
   color: #fff;
-  background-color: #d5300d;
+  /* background-color: #d5300d; */
   border-radius: 3px;
-  color: #fff;
+  color: #777;
   float: right;
   margin-left: 5px;
+  background-color: #fff;
+  border: 2px solid #777;
+  font-weight: bold;
+}
+
+.cancelAction:hover {
+  cursor: default;
 }
 
 .changeProfilePic {

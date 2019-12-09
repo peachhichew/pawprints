@@ -36,7 +36,7 @@ const UploadProfileImage = props => {
   return (
     <div>
       <h3 className="settingsTitle">Profile Picture</h3>
-      <p>Please upload square images only for the best user experience!</p>
+      <p>Please only upload square images for the best user experience!</p>
       <img
         src={
           props.imgSrc === undefined

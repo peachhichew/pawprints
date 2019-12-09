@@ -180,7 +180,7 @@ class Modal extends React.Component {
       <div className="backdrop">
         <div className="modal">
           <div className="footer">
-            <h3>Edit Pawpost</h3>
+            <h3>{this.props.modalTitle}</h3>
             <button onClick={this.props.onClose} className="closeButton">
               <i className="fa fa-times fa-lg" aria-hidden="true" />
             </button>
@@ -241,7 +241,11 @@ class EditPawpost extends React.Component {
           <i className="fa fa-pencil" aria-hidden="true" />
         </button>
 
-        <Modal show={this.state.isOpen} onClose={this.toggleModal}>
+        <Modal
+          show={this.state.isOpen}
+          onClose={this.toggleModal}
+          modalTitle={"Edit Pawpost"}
+        >
           <form
             id="pawpostFormEdit"
             onSubmit={handleEditPawpost}
@@ -254,6 +258,11 @@ class EditPawpost extends React.Component {
             </textarea>
             <input type="hidden" name="_csrf" value={this.state.csrf} />
             <input type="hidden" name="_id" value={this.state.pawposts._id} />
+            <input
+              className="cancelAction"
+              onClick={this.toggleModal}
+              value="Cancel"
+            />
             <input className="makePawpostSubmit" type="submit" value="Update" />
           </form>
         </Modal>
@@ -295,7 +304,11 @@ class DeletePawpost extends React.Component {
           <i className="fa fa-trash" aria-hidden="true"></i>
         </button>
 
-        <Modal show={this.state.isOpen} onClose={this.toggleModal}>
+        <Modal
+          show={this.state.isOpen}
+          onClose={this.toggleModal}
+          modalTitle={"Delete Pawpost"}
+        >
           <form
             id="pawpostFormDelete"
             onSubmit={handleDeletePawpost}
@@ -307,7 +320,7 @@ class DeletePawpost extends React.Component {
             <input type="hidden" name="_csrf" value={this.state.csrf} />
             <input type="hidden" name="_id" value={this.state.pawposts._id} />
             <input
-              className="cancelDeletePawpost"
+              className="cancelAction"
               onClick={this.toggleModal}
               value="No"
             />

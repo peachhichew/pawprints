@@ -298,7 +298,7 @@ var Modal = function (_React$Component) {
             React.createElement(
               "h3",
               null,
-              "Edit Pawpost"
+              this.props.modalTitle
             ),
             React.createElement(
               "button",
@@ -375,7 +375,11 @@ var EditPawpost = function (_React$Component2) {
         ),
         React.createElement(
           Modal,
-          { show: this.state.isOpen, onClose: this.toggleModal },
+          {
+            show: this.state.isOpen,
+            onClose: this.toggleModal,
+            modalTitle: "Edit Pawpost"
+          },
           React.createElement(
             "form",
             {
@@ -392,6 +396,11 @@ var EditPawpost = function (_React$Component2) {
             ),
             React.createElement("input", { type: "hidden", name: "_csrf", value: this.state.csrf }),
             React.createElement("input", { type: "hidden", name: "_id", value: this.state.pawposts._id }),
+            React.createElement("input", {
+              className: "cancelAction",
+              onClick: this.toggleModal,
+              value: "Cancel"
+            }),
             React.createElement("input", { className: "makePawpostSubmit", type: "submit", value: "Update" })
           )
         )
@@ -446,7 +455,11 @@ var DeletePawpost = function (_React$Component3) {
         ),
         React.createElement(
           Modal,
-          { show: this.state.isOpen, onClose: this.toggleModal },
+          {
+            show: this.state.isOpen,
+            onClose: this.toggleModal,
+            modalTitle: "Delete Pawpost"
+          },
           React.createElement(
             "form",
             {
@@ -464,7 +477,7 @@ var DeletePawpost = function (_React$Component3) {
             React.createElement("input", { type: "hidden", name: "_csrf", value: this.state.csrf }),
             React.createElement("input", { type: "hidden", name: "_id", value: this.state.pawposts._id }),
             React.createElement("input", {
-              className: "cancelDeletePawpost",
+              className: "cancelAction",
               onClick: this.toggleModal,
               value: "No"
             }),
@@ -610,7 +623,7 @@ var UploadProfileImage = function UploadProfileImage(props) {
     React.createElement(
       "p",
       null,
-      "Please upload square images only for the best user experience!"
+      "Please only upload square images for the best user experience!"
     ),
     React.createElement("img", {
       src: props.imgSrc === undefined ? "./assets/img/propic.jpg" : "retrieve?_id=" + props.imgSrc,
