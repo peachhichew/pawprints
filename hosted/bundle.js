@@ -214,6 +214,9 @@ var DisplayPawposts = function DisplayPawposts(props) {
       month: "long",
       day: "numeric"
     };
+
+    // NOTE: Time and date are listed correctly in the db but the Date
+    // object in JavaScript is suddenly one day behind for some reason
     var date = new Date(pawpost.createdDate.substring(0, 10));
     var time = new Date(pawpost.createdDate);
 

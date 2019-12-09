@@ -138,6 +138,7 @@ const retrieveImage = (req, res) => {
 };
 
 // Displays the most recent image that was uploaded to the server
+// Source: https://medium.com/@colinrlly/send-store-and-show-images-with-react-express-and-mongodb-592bc38a9ed
 const retrieveLatestImage = response => {
   const res = response;
 
