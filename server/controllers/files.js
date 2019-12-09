@@ -9,10 +9,8 @@ const upload = (req, res) => {
   // console.log("req.files.sampleFile.name:", req.files.sampleFile.name);
   // console.log("req.files.sampleFile: ", req.files.sampleFile);
   // console.log("req.files", req.files);
+
   // If there are no files, return an error
-
-  console.log("req.files", req.files);
-
   if (!req.files || Object.keys(req.files).length === 0) {
     return res.status(400).json({ error: "No files were uploaded" });
   }
@@ -36,14 +34,46 @@ const upload = (req, res) => {
       { profilePic: imageModel._id },
       err => {
         if (err) {
-          res
-            .status(400)
-            .json({ error: "Something went wrong, unable to update" });
+          res.status(400).json({
+            error: "Something went wrong, unable to update Account model"
+          });
         }
 
-        res.json({ message: "upload successful" });
+        console.log("errored out before updating pawpost");
+        Pawpost.PawpostModel.updateMany(
+          { username: req.session.account.username },
+          { profilePic: imageModel._id },
+          error => {
+            console.log("inside updateMany");
+            if (error) {
+              res.status(400).json({
+                error: "Something went wrong, unable to update Pawpost Model"
+              });
+            }
+
+            res.json({ message: "upload successful" });
+          }
+        );
+
+        // res.json({ message: "upload successful" });
       }
     );
+
+    // console.log("errored out before updating pawpost");
+    // Pawpost.PawpostModel.updateMany(
+    //   { username: req.session.account.username },
+    //   { profilePic: imageModel._id },
+    //   err => {
+    //     console.log("inside updateMany");
+    //     if (err) {
+    //       res
+    //         .status(400)
+    //         .json({ error: "Something went wrong, unable to update" });
+    //     }
+
+    //     res.json({ message: "upload successful" });
+    //   }
+    // );
   });
 
   // If there is an error while saving, let the user know
@@ -56,7 +86,7 @@ const upload = (req, res) => {
 };
 
 const uploadContentImage = (req, res) => {
-  console.log("req.files in uploadContentImage", req.files);
+  // console.log("req.files in uploadContentImage", req.files);
   if (!req.files || Object.keys(req.files).length === 0) {
     return res
       .status(400)
@@ -82,10 +112,10 @@ const uploadContentImage = (req, res) => {
       "content createdDate contentImg username",
       (err, data) => {
         if (err) res.send(err);
-        console.log("jajajaja", data);
+        // console.log("jajajaja", data);
         res.contentType("json");
         // res.send(data);
-        console.log("data._id", data._id);
+        // console.log("data._id", data._id);
         Pawpost.PawpostModel.updateOne(
           { username: req.session.account.username, _id: data._id },
           { contentImg: imageModel._id },
@@ -101,21 +131,6 @@ const uploadContentImage = (req, res) => {
         );
       }
     ).sort({ createdDate: "desc" });
-
-    // console.log("_id in uploadContentImage", req.body._id);
-    // Pawpost.PawpostModel.updateOne(
-    //   { username: req.session.account.username, _id: req.body._id },
-    //   { contentImg: imageModel._id },
-    //   err => {
-    //     if (err) {
-    //       res
-    //         .status(400)
-    //         .json({ error: "Something went wrong, unable to update" });
-    //     }
-
-    //     res.json({ message: "upload successful" });
-    //   }
-    // );
   });
 
   // If there is an error while saving, let the user know

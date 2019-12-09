@@ -45,7 +45,7 @@ var CreateFeedContainer = function CreateFeedContainer(props) {
     React.createElement(
       "section",
       { id: "pawposts" },
-      React.createElement(PawpostsInFeed, { imgSrc: props.imgSrc, pawposts: [], csrf: props.csrf })
+      React.createElement(PawpostsInFeed, { pawposts: [], csrf: props.csrf })
     )
   );
 };
@@ -94,11 +94,11 @@ var handlePawpost = function handlePawpost(e) {
 
   // console.log("contentImageFile", $("#contentImageFile").val());
   if ($("#contentImageFile").val() !== "") {
-    console.log("posting to upload content");
     fileUpload(e);
   }
 
   $("#postContent").val("");
+  $("#contentImageFile").val("");
 
   return false;
 };
@@ -110,7 +110,8 @@ var PawpostForm = function PawpostForm(props) {
     "div",
     { className: "formLayout" },
     React.createElement("img", {
-      className: "profilePic"
+      className: "profilePic",
+      id: "formProfilePic"
       // src="./assets/img/propic.jpg"
       , src: props.imgSrc === undefined ? "./assets/img/propic.jpg" : "retrieve?_id=" + props.imgSrc
     }),
@@ -156,6 +157,7 @@ var PawpostList = function PawpostList(props) {
   }
 
   var pawpostNodes = props.pawposts.map(function (pawpost) {
+    console.log("pawpost.contentImg in PawpostList", pawpost.contentImg);
     var options = {
       year: "numeric",
       month: "long",
@@ -217,7 +219,7 @@ var PawpostList = function PawpostList(props) {
 };
 
 var PawpostsInFeed = function PawpostsInFeed(props) {
-  console.log("props.imgSrc:", props.imgSrc);
+  console.log("props.pawposts:", props.pawposts);
   if (props.pawposts.length === 0) {
     return React.createElement(
       "div",
@@ -244,7 +246,7 @@ var PawpostsInFeed = function PawpostsInFeed(props) {
       { key: pawpost._id, className: "pawpost" },
       React.createElement("img", {
         // src="./assets/img/propic.jpg"
-        src: "retrieve?_id=" + props.imgSrc
+        src: pawpost.profilePic === undefined ? "./assets/img/propic.jpg" : "retrieve?_id=" + pawpost.profilePic
         // src={}
         , alt: "profile pic"
         // className="profilePic"
@@ -589,34 +591,29 @@ var loadPawpostsAndProfilePic = function loadPawpostsAndProfilePic(csrf) {
 var loadFeedAndProfilePic = function loadFeedAndProfilePic(csrf) {
   sendAjax("GET", "/allPawposts", null, function (pawpostData) {
     // console.log("pawpostData.pawposts: ", pawpostData.pawposts);
-    var users = pawpostData.pawposts.map(function (pawpost) {
-      return pawpost.username;
-    });
+    // const users = pawpostData.pawposts.map(function(pawpost) {
+    //   return pawpost.username;
+    // });
 
-    users.forEach(function (user) {
-      sendAjax("GET", "/profilePic?username=" + user, null, function (data) {
-        console.log("user: " + user + " data: " + data.account.profilePic);
-        ReactDOM.render(React.createElement(PawpostsInFeed, {
-          imgSrc: data.account.profilePic,
-          pawposts: pawpostData.pawposts,
-          csrf: csrf
-        }), document.querySelector("#pawposts"));
+    // users.forEach(user => {
+    //   sendAjax("GET", `/profilePic?username=${user}`, null, data => {
+    //     console.log(`user: ${user} data: ${data.account.profilePic}`);
+    //     ReactDOM.render(
+    //       <PawpostsInFeed
+    //         imgSrc={data.account.profilePic}
+    //         pawposts={pawpostData.pawposts}
+    //         csrf={csrf}
+    //       />,
+    //       document.querySelector("#pawposts")
+    //     );
+    //   });
+    // });
 
-        // $(".feedProfilePic")[3].src = `retrieve?_id=${data.account.profilePic}`;
-      });
-
-      // console.log("getUsername: ", getUsername);
-      // sendAjax("GET", `/profilePic?username=${getUsername}`, null, data => {
-      //   ReactDOM.render(
-      //     <PawpostsInFeed
-      //       imgSrc={data.account.profilePic}
-      //       pawposts={pawpostData.pawposts}
-      //       csrf={csrf}
-      //     />,
-      //     document.querySelector("#pawposts")
-      //   );
-      // });
-    });
+    ReactDOM.render(React.createElement(PawpostsInFeed, {
+      imgSrc: "",
+      pawposts: pawpostData.pawposts,
+      csrf: csrf
+    }), document.querySelector("#pawposts"));
   });
 };
 
@@ -631,8 +628,8 @@ var loadFeedPawpostsFromServer = function loadFeedPawpostsFromServer(csrf) {
 var createFeedWindow = function createFeedWindow(csrf) {
   ReactDOM.render(React.createElement(CreateFeedContainer, { imgSrc: "", pawposts: [], csrf: csrf }), document.querySelector("#content"));
 
-  // loadFeedPawpostsFromServer(csrf);
-  loadFeedAndProfilePic(csrf);
+  loadFeedPawpostsFromServer(csrf);
+  // loadFeedAndProfilePic(csrf);
 };
 
 // Renders the ChangePassword component on the screen

@@ -1,6 +1,7 @@
 const models = require("../models");
 
 const Pawpost = models.Pawpost;
+const Account = models.Account;
 
 // Create a new pawpost on the page by grabbing the data from the
 // form and saving it to the db.
@@ -11,26 +12,59 @@ const makePawpost = (req, res) => {
     });
   }
 
-  const pawpostData = {
-    content: req.body.postContent,
-    contentImg: req.body.contentImg,
-    profilePic: req.body.profilePic,
-    owner: req.session.account._id,
-    username: req.session.account.username
-  };
+  Account.AccountModel.findOne(
+    { username: req.session.account.username },
+    "profilePic",
+    (error, data) => {
+      if (error) {
+        return res.json(error);
+      }
+      console.log("data: ", data);
+      console.log("data.profilePic", data.profilePic);
 
-  const newPawpost = new Pawpost.PawpostModel(pawpostData);
-  const pawpostPromise = newPawpost.save();
-  pawpostPromise.then(() => res.json({ redirect: "/profile" }));
-  pawpostPromise.catch(err => {
-    if (err.code === 11000) {
-      return res.status(400).json({ error: "Pawpost already exists" });
+      const pawpostData = {
+        content: req.body.postContent,
+        contentImg: req.body.contentImg,
+        profilePic: data.profilePic,
+        owner: req.session.account._id,
+        username: req.session.account.username
+      };
+
+      const newPawpost = new Pawpost.PawpostModel(pawpostData);
+      const pawpostPromise = newPawpost.save();
+      pawpostPromise.then(() => res.json({ redirect: "/profile" }));
+      pawpostPromise.catch(err => {
+        if (err.code === 11000) {
+          return res.status(400).json({ error: "Pawpost already exists" });
+        }
+
+        return res.status(400).json({ error: "An error occurred" });
+      });
+
+      return pawpostPromise;
     }
+  );
 
-    return res.status(400).json({ error: "An error occurred" });
-  });
+  // const pawpostData = {
+  //   content: req.body.postContent,
+  //   contentImg: req.body.contentImg,
+  //   profilePic: req.body.profilePic,
+  //   owner: req.session.account._id,
+  //   username: req.session.account.username
+  // };
 
-  return pawpostPromise;
+  // const newPawpost = new Pawpost.PawpostModel(pawpostData);
+  // const pawpostPromise = newPawpost.save();
+  // pawpostPromise.then(() => res.json({ redirect: "/profile" }));
+  // pawpostPromise.catch(err => {
+  //   if (err.code === 11000) {
+  //     return res.status(400).json({ error: "Pawpost already exists" });
+  //   }
+
+  //   return res.status(400).json({ error: "An error occurred" });
+  // });
+
+  // return pawpostPromise;
 };
 
 // To let the user edit their pawposts, we need to find the

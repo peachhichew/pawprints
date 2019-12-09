@@ -20,7 +20,7 @@ const CreateFeedContainer = props => {
     <div>
       <h2 className="pageTitle">Feed</h2>
       <section id="pawposts">
-        <PawpostsInFeed imgSrc={props.imgSrc} pawposts={[]} csrf={props.csrf} />
+        <PawpostsInFeed pawposts={[]} csrf={props.csrf} />
       </section>
     </div>
   );
@@ -77,11 +77,11 @@ const handlePawpost = e => {
 
   // console.log("contentImageFile", $("#contentImageFile").val());
   if ($("#contentImageFile").val() !== "") {
-    console.log("posting to upload content");
     fileUpload(e);
   }
 
   $("#postContent").val("");
+  $("#contentImageFile").val("");
 
   return false;
 };
@@ -93,6 +93,7 @@ const PawpostForm = props => {
     <div className="formLayout">
       <img
         className="profilePic"
+        id="formProfilePic"
         // src="./assets/img/propic.jpg"
         src={
           props.imgSrc === undefined
@@ -137,6 +138,7 @@ const PawpostList = function(props) {
   }
 
   const pawpostNodes = props.pawposts.map(function(pawpost) {
+    console.log("pawpost.contentImg in PawpostList", pawpost.contentImg);
     let options = {
       year: "numeric",
       month: "long",
@@ -194,7 +196,7 @@ const PawpostList = function(props) {
 };
 
 const PawpostsInFeed = function(props) {
-  console.log("props.imgSrc:", props.imgSrc);
+  console.log("props.pawposts:", props.pawposts);
   if (props.pawposts.length === 0) {
     return (
       <div className="pawpostList">
@@ -216,7 +218,11 @@ const PawpostsInFeed = function(props) {
       <div key={pawpost._id} className="pawpost">
         <img
           // src="./assets/img/propic.jpg"
-          src={`retrieve?_id=${props.imgSrc}`}
+          src={
+            pawpost.profilePic === undefined
+              ? "./assets/img/propic.jpg"
+              : `retrieve?_id=${pawpost.profilePic}`
+          }
           // src={}
           alt="profile pic"
           // className="profilePic"
@@ -506,37 +512,32 @@ const loadPawpostsAndProfilePic = csrf => {
 const loadFeedAndProfilePic = csrf => {
   sendAjax("GET", "/allPawposts", null, pawpostData => {
     // console.log("pawpostData.pawposts: ", pawpostData.pawposts);
-    const users = pawpostData.pawposts.map(function(pawpost) {
-      return pawpost.username;
-    });
+    // const users = pawpostData.pawposts.map(function(pawpost) {
+    //   return pawpost.username;
+    // });
 
-    users.forEach(user => {
-      sendAjax("GET", `/profilePic?username=${user}`, null, data => {
-        console.log(`user: ${user} data: ${data.account.profilePic}`);
-        ReactDOM.render(
-          <PawpostsInFeed
-            imgSrc={data.account.profilePic}
-            pawposts={pawpostData.pawposts}
-            csrf={csrf}
-          />,
-          document.querySelector("#pawposts")
-        );
+    // users.forEach(user => {
+    //   sendAjax("GET", `/profilePic?username=${user}`, null, data => {
+    //     console.log(`user: ${user} data: ${data.account.profilePic}`);
+    //     ReactDOM.render(
+    //       <PawpostsInFeed
+    //         imgSrc={data.account.profilePic}
+    //         pawposts={pawpostData.pawposts}
+    //         csrf={csrf}
+    //       />,
+    //       document.querySelector("#pawposts")
+    //     );
+    //   });
+    // });
 
-        // $(".feedProfilePic")[3].src = `retrieve?_id=${data.account.profilePic}`;
-      });
-
-      // console.log("getUsername: ", getUsername);
-      // sendAjax("GET", `/profilePic?username=${getUsername}`, null, data => {
-      //   ReactDOM.render(
-      //     <PawpostsInFeed
-      //       imgSrc={data.account.profilePic}
-      //       pawposts={pawpostData.pawposts}
-      //       csrf={csrf}
-      //     />,
-      //     document.querySelector("#pawposts")
-      //   );
-      // });
-    });
+    ReactDOM.render(
+      <PawpostsInFeed
+        imgSrc={""}
+        pawposts={pawpostData.pawposts}
+        csrf={csrf}
+      />,
+      document.querySelector("#pawposts")
+    );
   });
 };
 
@@ -557,8 +558,8 @@ const createFeedWindow = csrf => {
     document.querySelector("#content")
   );
 
-  // loadFeedPawpostsFromServer(csrf);
-  loadFeedAndProfilePic(csrf);
+  loadFeedPawpostsFromServer(csrf);
+  // loadFeedAndProfilePic(csrf);
 };
 
 // Renders the ChangePassword component on the screen
