@@ -1,32 +1,5 @@
-// Add more structure to the app.handlebars page and render
-// the PawpostForm and PawpostList components
-const CreatePawpostContainer = props => {
-  // console.log("createPawpostContainer props.imgSrc:", props.imgSrc);
-  return (
-    <div>
-      <h2 className="pageTitle">Profile</h2>
-      <section id="makePawpost">
-        <PawpostForm imgSrc={props.imgSrc} csrf={props.csrf} />
-      </section>
-      <section id="pawposts">
-        <PawpostList imgSrc={props.imgSrc} pawposts={[]} csrf={props.csrf} />
-      </section>
-    </div>
-  );
-};
-
-const CreateFeedContainer = props => {
-  return (
-    <div>
-      <h2 className="pageTitle">Feed</h2>
-      <section id="pawposts">
-        <PawpostsInFeed pawposts={[]} csrf={props.csrf} />
-      </section>
-    </div>
-  );
-};
-
-//https://stackoverflow.com/questions/5587973/javascript-upload-file
+// Source: https://stackoverflow.com/questions/5587973/javascript-upload-file
+// Uses FETCH API to upload images from pawposts to the server
 const fileUpload = e => {
   e.preventDefault();
 
@@ -92,7 +65,6 @@ const PawpostForm = props => {
       <img
         className="profilePic"
         id="formProfilePic"
-        // src="./assets/img/propic.jpg"
         src={
           props.imgSrc === undefined
             ? "./assets/img/propic.jpg"
@@ -126,7 +98,6 @@ const PawpostForm = props => {
 // Also, render the EditPawpost component to allow the user to edit their
 // previous pawposts.
 const PawpostList = function(props) {
-  // console.log("props.imgSrc in PawpostList():", props.imgSrc);
   if (props.pawposts.length === 0) {
     return (
       <div className="pawpostList">
@@ -136,7 +107,6 @@ const PawpostList = function(props) {
   }
 
   const pawpostNodes = props.pawposts.map(function(pawpost) {
-    // console.log("pawpost.contentImg in PawpostList", pawpost.contentImg);
     let options = {
       year: "numeric",
       month: "long",
@@ -285,6 +255,8 @@ const handleEditPawpost = e => {
 
   if ($("#contentEdit").val() == "") {
     handleError("All fields are required");
+    $("#toastMessage").css("border-top", `5px solid #d5300d`);
+    $("#errorMessage").css("color", `#d5300d`);
     return false;
   }
 
@@ -293,8 +265,10 @@ const handleEditPawpost = e => {
     $("#pawpostFormEdit").attr("action"),
     $("#pawpostFormEdit").serialize(),
     function() {
-      // loadProfilePawpostsFromServer();
       loadPawpostsAndProfilePic();
+      handleError("Pawpost updated successfully");
+      $("#toastMessage").css("border-top", `5px solid #358c02`);
+      $("#errorMessage").css("color", `#358c02`);
     }
   );
 
@@ -329,13 +303,7 @@ class EditPawpost extends React.Component {
             action="/updatePawpost"
             method="POST"
           >
-            <textarea
-              rows="5"
-              cols="68"
-              id="contentEdit"
-              // placeholder={this.state.pawposts.content}
-              name="contentEdit"
-            >
+            <textarea rows="5" cols="68" id="contentEdit" name="contentEdit">
               {this.state.pawposts.content}
             </textarea>
             <input type="hidden" name="_csrf" value={this.state.csrf} />
@@ -348,9 +316,8 @@ class EditPawpost extends React.Component {
   }
 }
 
+// Uses AJAX to send a DELETE request to the server so that user pawposts can be deleted
 const handleDeletePawpost = e => {
-  // e.preventDefault();
-
   $("#toastMessage").animate({ bottom: "hide" }, 250);
 
   sendAjax(
@@ -358,15 +325,12 @@ const handleDeletePawpost = e => {
     $("#pawpostFormDelete").attr("action"),
     $("#pawpostFormDelete").serialize(),
     function() {
-      // loadProfilePawpostsFromServer();
-
       loadPawpostsAndProfilePic();
     }
   );
-
-  // return false;
 };
 
+// Modal displays and user must confirm that they want the post to be deleted
 class DeletePawpost extends React.Component {
   constructor(props) {
     super(props);
@@ -409,46 +373,17 @@ class DeletePawpost extends React.Component {
   }
 }
 
+// Retrieves the user's account profile picture by making an AJAX call
 const getProfilePic = csrf => {
   sendAjax("GET", `/profilePic`, null, data => {
-    // console.log("data from getProfilePic", data.account.profilePic);
     ReactDOM.render(
-      <UploadImage imgSrc={data.account.profilePic} csrf={csrf} />,
+      <UploadProfileImage imgSrc={data.account.profilePic} csrf={csrf} />,
       document.querySelector("#profilePic")
     );
   });
 };
 
-const UploadImage = props => {
-  // console.log("props.imgSrc UploadImage():", props.imgSrc);
-  return (
-    <div>
-      <h3>Profile Picture</h3>
-      <img
-        // src="./assets/img/propic.jpg"
-        // src={`retrieve?_id=${props.imgSrc}`}
-        src={
-          props.imgSrc === undefined
-            ? "./assets/img/propic.jpg"
-            : `retrieve?_id=${props.imgSrc}`
-        }
-        alt="profile pic"
-        className="changeProfilePic"
-      />
-      <form
-        id="uploadForm"
-        action="/upload"
-        method="POST"
-        encType="multipart/form-data"
-      >
-        <input type="file" name="sampleFile" />
-        <input type="submit" value="Upload" />
-        <input type="hidden" name="_csrf" value={props.csrf} />
-      </form>
-    </div>
-  );
-};
-
+// Allows user to upload an image when creating a pawpost
 const UploadPawpostImage = props => {
   return (
     <div>
@@ -457,32 +392,28 @@ const UploadPawpostImage = props => {
         action="/upload/contentImage"
         method="POST"
         encType="multipart/form-data"
-        // onSubmit={fileUpload}
       >
         <input type="file" name="sampleFile" id="contentImageFile" />
-
-        {/* <input type="submit" value="Upload" /> */}
         <input type="hidden" name="_csrf" value={props.csrf} />
       </form>
     </div>
   );
 };
 
-// Sends a GET request to the server to retrieve all pawposts
-const loadProfilePawpostsFromServer = (csrf, imgSrc) => {
-  sendAjax("GET", "/getPawposts", null, data => {
-    // console.log("data.pawposts: ", data.pawposts);
-    ReactDOM.render(
-      <PawpostList imgSrc={imgSrc} pawposts={data.pawposts} csrf={csrf} />,
-      document.querySelector("#pawposts")
-    );
-  });
-};
+// // Sends a GET request to the server to retrieve all pawposts
+// const loadProfilePawpostsFromServer = (csrf, imgSrc) => {
+//   sendAjax("GET", "/getPawposts", null, data => {
+//     ReactDOM.render(
+//       <PawpostList imgSrc={imgSrc} pawposts={data.pawposts} csrf={csrf} />,
+//       document.querySelector("#pawposts")
+//     );
+//   });
+// };
 
+// Sends a GET request to the server to retrieve all pawposts
+// and user profile picture
 const loadPawpostsAndProfilePic = csrf => {
   sendAjax("GET", "/getPawposts", null, pawpostData => {
-    // console.log("pawpostData.pawposts: ", pawpostData.pawposts);
-
     sendAjax("GET", `/profilePic`, null, data => {
       ReactDOM.render(
         <PawpostForm imgSrc={data.account.profilePic} csrf={csrf} />,
@@ -501,77 +432,28 @@ const loadPawpostsAndProfilePic = csrf => {
   });
 };
 
-const loadFeedAndProfilePic = csrf => {
-  sendAjax("GET", "/allPawposts", null, pawpostData => {
-    // console.log("pawpostData.pawposts: ", pawpostData.pawposts);
-    // const users = pawpostData.pawposts.map(function(pawpost) {
-    //   return pawpost.username;
-    // });
+// const loadFeedAndProfilePic = csrf => {
+//   sendAjax("GET", "/allPawposts", null, pawpostData => {
+//     ReactDOM.render(
+//       <PawpostsInFeed
+//         imgSrc={""}
+//         pawposts={pawpostData.pawposts}
+//         csrf={csrf}
+//       />,
+//       document.querySelector("#pawposts")
+//     );
+//   });
+// };
 
-    // users.forEach(user => {
-    //   sendAjax("GET", `/profilePic?username=${user}`, null, data => {
-    //     console.log(`user: ${user} data: ${data.account.profilePic}`);
-    //     ReactDOM.render(
-    //       <PawpostsInFeed
-    //         imgSrc={data.account.profilePic}
-    //         pawposts={pawpostData.pawposts}
-    //         csrf={csrf}
-    //       />,
-    //       document.querySelector("#pawposts")
-    //     );
-    //   });
-    // });
-
-    ReactDOM.render(
-      <PawpostsInFeed
-        imgSrc={""}
-        pawposts={pawpostData.pawposts}
-        csrf={csrf}
-      />,
-      document.querySelector("#pawposts")
-    );
-  });
-};
-
+// Uses AJAX to send a GET request to retrieve pawposts from
+// all users in the db
 const loadFeedPawpostsFromServer = csrf => {
   sendAjax("GET", "/allPawposts", null, data => {
-    // console.log("data.pawposts all", data.pawposts);
     ReactDOM.render(
       <PawpostsInFeed pawposts={data.pawposts} csrf={csrf} />,
       document.querySelector("#pawposts")
     );
   });
-};
-
-// Renders the CreatePawpostContainer component on the scrreen
-const createFeedWindow = csrf => {
-  ReactDOM.render(
-    <CreateFeedContainer imgSrc={""} pawposts={[]} csrf={csrf} />,
-    document.querySelector("#content")
-  );
-
-  loadFeedPawpostsFromServer(csrf);
-  // loadFeedAndProfilePic(csrf);
-};
-
-// Renders the ChangePassword component on the screen
-const createSettingsWindow = csrf => {
-  ReactDOM.render(
-    <ChangeSettingsContainer imgSrc={""} csrf={csrf} />,
-    document.querySelector("#content")
-  );
-
-  getProfilePic(csrf);
-};
-
-const createProfileWindow = csrf => {
-  ReactDOM.render(
-    <CreatePawpostContainer imgSrc={""} pawposts={[]} csrf={csrf} />,
-    document.querySelector("#content")
-  );
-
-  // loadProfilePawpostsFromServer(csrf);
-  loadPawpostsAndProfilePic(csrf);
 };
 
 // Renders the feed or settings components based on which button is

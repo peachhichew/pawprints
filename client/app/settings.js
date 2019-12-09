@@ -1,17 +1,3 @@
-const ChangeSettingsContainer = props => {
-  return (
-    <div>
-      <h2 className="pageTitle">Settings</h2>
-      <section id="profilePic">
-        <UploadImage imgSrc={props.imgSrc} csrf={props.csrf} />
-      </section>
-      <section id="changePwd">
-        <ChangePassword csrf={props.csrf} />
-      </section>
-    </div>
-  );
-};
-
 // Displays an error message if any fields are empty. Sends
 // a POST request to the server using AJAX to change the pwd.
 const handleChangePassword = e => {
@@ -43,6 +29,34 @@ const handleChangePassword = e => {
   );
 
   return false;
+};
+
+// Component for uploading a profile picture for the user account
+const UploadProfileImage = props => {
+  return (
+    <div>
+      <h3>Profile Picture</h3>
+      <img
+        src={
+          props.imgSrc === undefined
+            ? "./assets/img/propic.jpg"
+            : `retrieve?_id=${props.imgSrc}`
+        }
+        alt="profile pic"
+        className="changeProfilePic"
+      />
+      <form
+        id="uploadForm"
+        action="/upload"
+        method="POST"
+        encType="multipart/form-data"
+      >
+        <input type="file" name="sampleFile" />
+        <input type="submit" value="Upload" />
+        <input type="hidden" name="_csrf" value={props.csrf} />
+      </form>
+    </div>
+  );
 };
 
 // Contains the form to change the password on the settings page.

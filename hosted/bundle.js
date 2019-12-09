@@ -1,17 +1,8 @@
 "use strict";
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
 // Add more structure to the app.handlebars page and render
 // the PawpostForm and PawpostList components
 var CreatePawpostContainer = function CreatePawpostContainer(props) {
-  // console.log("createPawpostContainer props.imgSrc:", props.imgSrc);
   return React.createElement(
     "div",
     null,
@@ -33,6 +24,7 @@ var CreatePawpostContainer = function CreatePawpostContainer(props) {
   );
 };
 
+// Renders all the pawposts from all users to /feed page
 var CreateFeedContainer = function CreateFeedContainer(props) {
   return React.createElement(
     "div",
@@ -50,7 +42,61 @@ var CreateFeedContainer = function CreateFeedContainer(props) {
   );
 };
 
-//https://stackoverflow.com/questions/5587973/javascript-upload-file
+// Renders the component to upload profile image and change account password
+var ChangeSettingsContainer = function ChangeSettingsContainer(props) {
+  return React.createElement(
+    "div",
+    null,
+    React.createElement(
+      "h2",
+      { className: "pageTitle" },
+      "Settings"
+    ),
+    React.createElement(
+      "section",
+      { id: "profilePic" },
+      React.createElement(UploadProfileImage, { imgSrc: props.imgSrc, csrf: props.csrf })
+    ),
+    React.createElement(
+      "section",
+      { id: "changePwd" },
+      React.createElement(ChangePassword, { csrf: props.csrf })
+    )
+  );
+};
+
+// Renders the CreatePawpostContainer component on the scrreen
+var createFeedWindow = function createFeedWindow(csrf) {
+  ReactDOM.render(React.createElement(CreateFeedContainer, { imgSrc: "", pawposts: [], csrf: csrf }), document.querySelector("#content"));
+
+  loadFeedPawpostsFromServer(csrf);
+};
+
+// Renders the ChangeSettningsContainer component on the screen
+var createSettingsWindow = function createSettingsWindow(csrf) {
+  ReactDOM.render(React.createElement(ChangeSettingsContainer, { imgSrc: "", csrf: csrf }), document.querySelector("#content"));
+
+  getProfilePic(csrf);
+};
+
+// Renders the CreatePawpostContainer on the screen
+var createProfileWindow = function createProfileWindow(csrf) {
+  ReactDOM.render(React.createElement(CreatePawpostContainer, { imgSrc: "", pawposts: [], csrf: csrf }), document.querySelector("#content"));
+
+  loadPawpostsAndProfilePic(csrf);
+};
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+// Source: https://stackoverflow.com/questions/5587973/javascript-upload-file
+// Uses FETCH API to upload images from pawposts to the server
 var fileUpload = function fileUpload(e) {
   e.preventDefault();
 
@@ -109,9 +155,8 @@ var PawpostForm = function PawpostForm(props) {
     { className: "formLayout" },
     React.createElement("img", {
       className: "profilePic",
-      id: "formProfilePic"
-      // src="./assets/img/propic.jpg"
-      , src: props.imgSrc === undefined ? "./assets/img/propic.jpg" : "retrieve?_id=" + props.imgSrc
+      id: "formProfilePic",
+      src: props.imgSrc === undefined ? "./assets/img/propic.jpg" : "retrieve?_id=" + props.imgSrc
     }),
     React.createElement(
       "form",
@@ -141,7 +186,6 @@ var PawpostForm = function PawpostForm(props) {
 // Also, render the EditPawpost component to allow the user to edit their
 // previous pawposts.
 var PawpostList = function PawpostList(props) {
-  // console.log("props.imgSrc in PawpostList():", props.imgSrc);
   if (props.pawposts.length === 0) {
     return React.createElement(
       "div",
@@ -155,7 +199,6 @@ var PawpostList = function PawpostList(props) {
   }
 
   var pawpostNodes = props.pawposts.map(function (pawpost) {
-    // console.log("pawpost.contentImg in PawpostList", pawpost.contentImg);
     var options = {
       year: "numeric",
       month: "long",
@@ -344,12 +387,16 @@ var handleEditPawpost = function handleEditPawpost(e) {
 
   if ($("#contentEdit").val() == "") {
     handleError("All fields are required");
+    $("#toastMessage").css("border-top", "5px solid #d5300d");
+    $("#errorMessage").css("color", "#d5300d");
     return false;
   }
 
   sendAjax("POST", $("#pawpostFormEdit").attr("action"), $("#pawpostFormEdit").serialize(), function () {
-    // loadProfilePawpostsFromServer();
     loadPawpostsAndProfilePic();
+    handleError("Pawpost updated successfully");
+    $("#toastMessage").css("border-top", "5px solid #358c02");
+    $("#errorMessage").css("color", "#358c02");
   });
 
   return false;
@@ -401,13 +448,7 @@ var EditPawpost = function (_React$Component2) {
             },
             React.createElement(
               "textarea",
-              {
-                rows: "5",
-                cols: "68",
-                id: "contentEdit"
-                // placeholder={this.state.pawposts.content}
-                , name: "contentEdit"
-              },
+              { rows: "5", cols: "68", id: "contentEdit", name: "contentEdit" },
               this.state.pawposts.content
             ),
             React.createElement("input", { type: "hidden", name: "_csrf", value: this.state.csrf }),
@@ -422,19 +463,18 @@ var EditPawpost = function (_React$Component2) {
   return EditPawpost;
 }(React.Component);
 
-var handleDeletePawpost = function handleDeletePawpost(e) {
-  // e.preventDefault();
+// Uses AJAX to send a DELETE request to the server so that user pawposts can be deleted
 
+
+var handleDeletePawpost = function handleDeletePawpost(e) {
   $("#toastMessage").animate({ bottom: "hide" }, 250);
 
   sendAjax("DELETE", $("#pawpostFormDelete").attr("action"), $("#pawpostFormDelete").serialize(), function () {
-    // loadProfilePawpostsFromServer();
-
     loadPawpostsAndProfilePic();
   });
-
-  // return false;
 };
+
+// Modal displays and user must confirm that they want the post to be deleted
 
 var DeletePawpost = function (_React$Component3) {
   _inherits(DeletePawpost, _React$Component3);
@@ -499,45 +539,16 @@ var DeletePawpost = function (_React$Component3) {
   return DeletePawpost;
 }(React.Component);
 
+// Retrieves the user's account profile picture by making an AJAX call
+
+
 var getProfilePic = function getProfilePic(csrf) {
   sendAjax("GET", "/profilePic", null, function (data) {
-    // console.log("data from getProfilePic", data.account.profilePic);
-    ReactDOM.render(React.createElement(UploadImage, { imgSrc: data.account.profilePic, csrf: csrf }), document.querySelector("#profilePic"));
+    ReactDOM.render(React.createElement(UploadProfileImage, { imgSrc: data.account.profilePic, csrf: csrf }), document.querySelector("#profilePic"));
   });
 };
 
-var UploadImage = function UploadImage(props) {
-  // console.log("props.imgSrc UploadImage():", props.imgSrc);
-  return React.createElement(
-    "div",
-    null,
-    React.createElement(
-      "h3",
-      null,
-      "Profile Picture"
-    ),
-    React.createElement("img", {
-      // src="./assets/img/propic.jpg"
-      // src={`retrieve?_id=${props.imgSrc}`}
-      src: props.imgSrc === undefined ? "./assets/img/propic.jpg" : "retrieve?_id=" + props.imgSrc,
-      alt: "profile pic",
-      className: "changeProfilePic"
-    }),
-    React.createElement(
-      "form",
-      {
-        id: "uploadForm",
-        action: "/upload",
-        method: "POST",
-        encType: "multipart/form-data"
-      },
-      React.createElement("input", { type: "file", name: "sampleFile" }),
-      React.createElement("input", { type: "submit", value: "Upload" }),
-      React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf })
-    )
-  );
-};
-
+// Allows user to upload an image when creating a pawpost
 var UploadPawpostImage = function UploadPawpostImage(props) {
   return React.createElement(
     "div",
@@ -549,7 +560,6 @@ var UploadPawpostImage = function UploadPawpostImage(props) {
         action: "/upload/contentImage",
         method: "POST",
         encType: "multipart/form-data"
-        // onSubmit={fileUpload}
       },
       React.createElement("input", { type: "file", name: "sampleFile", id: "contentImageFile" }),
       React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf })
@@ -557,18 +567,20 @@ var UploadPawpostImage = function UploadPawpostImage(props) {
   );
 };
 
-// Sends a GET request to the server to retrieve all pawposts
-var loadProfilePawpostsFromServer = function loadProfilePawpostsFromServer(csrf, imgSrc) {
-  sendAjax("GET", "/getPawposts", null, function (data) {
-    // console.log("data.pawposts: ", data.pawposts);
-    ReactDOM.render(React.createElement(PawpostList, { imgSrc: imgSrc, pawposts: data.pawposts, csrf: csrf }), document.querySelector("#pawposts"));
-  });
-};
+// // Sends a GET request to the server to retrieve all pawposts
+// const loadProfilePawpostsFromServer = (csrf, imgSrc) => {
+//   sendAjax("GET", "/getPawposts", null, data => {
+//     ReactDOM.render(
+//       <PawpostList imgSrc={imgSrc} pawposts={data.pawposts} csrf={csrf} />,
+//       document.querySelector("#pawposts")
+//     );
+//   });
+// };
 
+// Sends a GET request to the server to retrieve all pawposts
+// and user profile picture
 var loadPawpostsAndProfilePic = function loadPawpostsAndProfilePic(csrf) {
   sendAjax("GET", "/getPawposts", null, function (pawpostData) {
-    // console.log("pawpostData.pawposts: ", pawpostData.pawposts);
-
     sendAjax("GET", "/profilePic", null, function (data) {
       ReactDOM.render(React.createElement(PawpostForm, { imgSrc: data.account.profilePic, csrf: csrf }), document.querySelector("#makePawpost"));
 
@@ -581,62 +593,25 @@ var loadPawpostsAndProfilePic = function loadPawpostsAndProfilePic(csrf) {
   });
 };
 
-var loadFeedAndProfilePic = function loadFeedAndProfilePic(csrf) {
-  sendAjax("GET", "/allPawposts", null, function (pawpostData) {
-    // console.log("pawpostData.pawposts: ", pawpostData.pawposts);
-    // const users = pawpostData.pawposts.map(function(pawpost) {
-    //   return pawpost.username;
-    // });
+// const loadFeedAndProfilePic = csrf => {
+//   sendAjax("GET", "/allPawposts", null, pawpostData => {
+//     ReactDOM.render(
+//       <PawpostsInFeed
+//         imgSrc={""}
+//         pawposts={pawpostData.pawposts}
+//         csrf={csrf}
+//       />,
+//       document.querySelector("#pawposts")
+//     );
+//   });
+// };
 
-    // users.forEach(user => {
-    //   sendAjax("GET", `/profilePic?username=${user}`, null, data => {
-    //     console.log(`user: ${user} data: ${data.account.profilePic}`);
-    //     ReactDOM.render(
-    //       <PawpostsInFeed
-    //         imgSrc={data.account.profilePic}
-    //         pawposts={pawpostData.pawposts}
-    //         csrf={csrf}
-    //       />,
-    //       document.querySelector("#pawposts")
-    //     );
-    //   });
-    // });
-
-    ReactDOM.render(React.createElement(PawpostsInFeed, {
-      imgSrc: "",
-      pawposts: pawpostData.pawposts,
-      csrf: csrf
-    }), document.querySelector("#pawposts"));
-  });
-};
-
+// Uses AJAX to send a GET request to retrieve pawposts from
+// all users in the db
 var loadFeedPawpostsFromServer = function loadFeedPawpostsFromServer(csrf) {
   sendAjax("GET", "/allPawposts", null, function (data) {
-    // console.log("data.pawposts all", data.pawposts);
     ReactDOM.render(React.createElement(PawpostsInFeed, { pawposts: data.pawposts, csrf: csrf }), document.querySelector("#pawposts"));
   });
-};
-
-// Renders the CreatePawpostContainer component on the scrreen
-var createFeedWindow = function createFeedWindow(csrf) {
-  ReactDOM.render(React.createElement(CreateFeedContainer, { imgSrc: "", pawposts: [], csrf: csrf }), document.querySelector("#content"));
-
-  loadFeedPawpostsFromServer(csrf);
-  // loadFeedAndProfilePic(csrf);
-};
-
-// Renders the ChangePassword component on the screen
-var createSettingsWindow = function createSettingsWindow(csrf) {
-  ReactDOM.render(React.createElement(ChangeSettingsContainer, { imgSrc: "", csrf: csrf }), document.querySelector("#content"));
-
-  getProfilePic(csrf);
-};
-
-var createProfileWindow = function createProfileWindow(csrf) {
-  ReactDOM.render(React.createElement(CreatePawpostContainer, { imgSrc: "", pawposts: [], csrf: csrf }), document.querySelector("#content"));
-
-  // loadProfilePawpostsFromServer(csrf);
-  loadPawpostsAndProfilePic(csrf);
 };
 
 // Renders the feed or settings components based on which button is
@@ -676,28 +651,6 @@ $(document).ready(function () {
 });
 "use strict";
 
-var ChangeSettingsContainer = function ChangeSettingsContainer(props) {
-  return React.createElement(
-    "div",
-    null,
-    React.createElement(
-      "h2",
-      { className: "pageTitle" },
-      "Settings"
-    ),
-    React.createElement(
-      "section",
-      { id: "profilePic" },
-      React.createElement(UploadImage, { imgSrc: props.imgSrc, csrf: props.csrf })
-    ),
-    React.createElement(
-      "section",
-      { id: "changePwd" },
-      React.createElement(ChangePassword, { csrf: props.csrf })
-    )
-  );
-};
-
 // Displays an error message if any fields are empty. Sends
 // a POST request to the server using AJAX to change the pwd.
 var handleChangePassword = function handleChangePassword(e) {
@@ -720,6 +673,36 @@ var handleChangePassword = function handleChangePassword(e) {
   });
 
   return false;
+};
+
+// Component for uploading a profile picture for the user account
+var UploadProfileImage = function UploadProfileImage(props) {
+  return React.createElement(
+    "div",
+    null,
+    React.createElement(
+      "h3",
+      null,
+      "Profile Picture"
+    ),
+    React.createElement("img", {
+      src: props.imgSrc === undefined ? "./assets/img/propic.jpg" : "retrieve?_id=" + props.imgSrc,
+      alt: "profile pic",
+      className: "changeProfilePic"
+    }),
+    React.createElement(
+      "form",
+      {
+        id: "uploadForm",
+        action: "/upload",
+        method: "POST",
+        encType: "multipart/form-data"
+      },
+      React.createElement("input", { type: "file", name: "sampleFile" }),
+      React.createElement("input", { type: "submit", value: "Upload" }),
+      React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf })
+    )
+  );
 };
 
 // Contains the form to change the password on the settings page.
