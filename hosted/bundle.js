@@ -463,12 +463,12 @@ var DeletePawpost = function (_React$Component3) {
             ),
             React.createElement("input", { type: "hidden", name: "_csrf", value: this.state.csrf }),
             React.createElement("input", { type: "hidden", name: "_id", value: this.state.pawposts._id }),
-            React.createElement("input", { className: "makePawpostSubmit", type: "submit", value: "Yes" }),
             React.createElement("input", {
               className: "cancelDeletePawpost",
               onClick: this.toggleModal,
               value: "No"
-            })
+            }),
+            React.createElement("input", { className: "makePawpostSubmit", type: "submit", value: "Yes" })
           )
         )
       );

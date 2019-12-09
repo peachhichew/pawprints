@@ -278,12 +278,11 @@ button {
 }
 
 .closeButton {
-  position: absolute;
-  /* left: 520px; */
-  /* top: 20px; */
-  left: 62.5%;
-  /* left:1000px; */
-  top: 65px;
+  position: relative;
+  /* left: 62.5%;
+  top: 65px; */
+  top: -70px;
+  left: 10px;
   background-color: #fff;
 }
 
@@ -399,6 +398,7 @@ button {
   border-radius: 3px;
   color: #fff;
   float: right;
+  margin-left: 5px;
 }
 
 .changeProfilePic {
@@ -416,4 +416,8 @@ button {
 
 .settingsTitle {
   margin-top: 0;
+}
+
+#pawpostFormDelete {
+  padding-bottom: 10px;
 }

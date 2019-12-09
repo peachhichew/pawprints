@@ -306,12 +306,12 @@ class DeletePawpost extends React.Component {
             <p>Are you sure you want to delete this pawpost?</p>
             <input type="hidden" name="_csrf" value={this.state.csrf} />
             <input type="hidden" name="_id" value={this.state.pawposts._id} />
-            <input className="makePawpostSubmit" type="submit" value="Yes" />
             <input
               className="cancelDeletePawpost"
               onClick={this.toggleModal}
               value="No"
             />
+            <input className="makePawpostSubmit" type="submit" value="Yes" />
           </form>
         </Modal>
       </div>
