@@ -59,6 +59,7 @@ const router = app => {
   app.get("/retrieveLatest", file.retrieveLatestImage);
 
   app.get("/profilePic", controllers.Account.profilePicId);
+  // app.get("/feed/profilePic", controllers.Account.feedProfilePicId);
   app.get(
     "/",
     mid.requiresSecure,

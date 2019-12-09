@@ -57,7 +57,7 @@ const editPawpost = (request, response) => {
     if (doc.owner.equals(req.session.account._id)) {
       const pawpost = doc;
       pawpost.content = req.body.contentEdit;
-      pawpost.contentImg = req.body.contentImgEdit;
+      // pawpost.contentImg = req.body.contentImgEdit;
       pawpost.profilePic = req.body.profilePicEdit;
       pawpostPromise = pawpost.save();
 

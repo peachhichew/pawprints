@@ -26,6 +26,32 @@ const CreateFeedContainer = props => {
   );
 };
 
+//https://stackoverflow.com/questions/5587973/javascript-upload-file
+const fileUpload = e => {
+  e.preventDefault();
+
+  let formData = new FormData();
+  let picture = document.querySelector("#contentImageFile").files[0];
+  let csrfToken = document
+    .querySelector("#pawpostForm")
+    .querySelector('input[name="_csrf"]').value;
+
+  formData.append("sampleFile", picture);
+  formData.append("_csrf", csrfToken);
+
+  fetch(`/upload/contentImage?_csrf=${csrfToken}`, {
+    method: "POST",
+    body: formData
+  }).then(function(response) {
+    if (response.status === 200) {
+      response.json().then(function(data) {
+        // window.location = data.redirect;
+      });
+    }
+  });
+  return false;
+};
+
 // Use AJAX to send a POST request to the server to add a new
 // pawpost. Then, clear out the form when finished.
 const handlePawpost = e => {
@@ -45,23 +71,14 @@ const handlePawpost = e => {
     $("#pawpostForm").attr("action"),
     $("#pawpostForm").serialize(),
     function() {
-      // loadProfilePawpostsFromServer();
       loadPawpostsAndProfilePic();
     }
   );
 
-  if ($("#fileInput").val() !== "") {
+  // console.log("contentImageFile", $("#contentImageFile").val());
+  if ($("#contentImageFile").val() !== "") {
     console.log("posting to upload content");
-    sendAjax(
-      "POST",
-      $("#uploadContentImageForm").attr("action"),
-      $("#uploadContentImageForm").serialize(),
-      function() {
-        console.log("uploading pic");
-        // loadProfilePawpostsFromServer();
-        // loadPawpostsAndProfilePic();
-      }
-    );
+    fileUpload(e);
   }
 
   $("#postContent").val("");
@@ -72,18 +89,16 @@ const handlePawpost = e => {
 // Renders the form for adding a new pawpost
 const PawpostForm = props => {
   console.log("props.imgSrc in PawpostForm:", props.imgSrc);
-  if (props.imgSrc === undefined || props.imgSrc === "") {
-    console.log("image src is undefined or blank");
-    $(".profilePic").attr("src", "./assets/img/propic.jpg");
-  } else {
-    $(".profilePic").attr("src", `retrieve?_id=${props.imgSrc}`);
-  }
   return (
     <div className="formLayout">
       <img
         className="profilePic"
         // src="./assets/img/propic.jpg"
-        src={`retrieve?_id=${props.imgSrc}`}
+        src={
+          props.imgSrc === undefined
+            ? "./assets/img/propic.jpg"
+            : `retrieve?_id=${props.imgSrc}`
+        }
       />
       <form
         id="pawpostForm"
@@ -100,7 +115,7 @@ const PawpostForm = props => {
           placeholder="What's on your mind?"
           name="postContent"
         />
-        <UploadContentImage csrf={props.csrf} />
+        <UploadPawpostImage csrf={props.csrf} />
         <input type="hidden" name="_csrf" value={props.csrf} />
         <input className="makePawpostSubmit" type="submit" value="Post" />
       </form>
@@ -132,10 +147,15 @@ const PawpostList = function(props) {
 
     return (
       <div key={pawpost._id} className="pawpost">
-        <div id="renderModal" />
+        {/* <div id="renderModal" /> */}
         <img
           // src="./assets/img/propic.jpg"
-          src={`retrieve?_id=${props.imgSrc}`}
+          // src={`retrieve?_id=${props.imgSrc}`}
+          src={
+            props.imgSrc === undefined
+              ? "./assets/img/propic.jpg"
+              : `retrieve?_id=${props.imgSrc}`
+          }
           alt="profile pic"
           className="profilePic"
         />
@@ -155,7 +175,14 @@ const PawpostList = function(props) {
                 .substring(8, time.toLocaleTimeString("en-US").length)}`}
           </p>
           <p className="pawpostContent">{pawpost.content}</p>
-          <h3 className="pawpostContentImg">{pawpost.contentImg}</h3>
+          <img
+            className="pawpostContentImg"
+            src={
+              pawpost.contentImg === undefined
+                ? null
+                : `/retrieve?_id=${pawpost.contentImg}`
+            }
+          />
         </div>
         <EditPawpost pawposts={pawpost} csrf={props.csrf} />
         <DeletePawpost pawposts={pawpost} csrf={props.csrf} />
@@ -188,8 +215,8 @@ const PawpostsInFeed = function(props) {
     return (
       <div key={pawpost._id} className="pawpost">
         <img
-          src="./assets/img/propic.jpg"
-          // src={`retrieve?_id=${props.imgSrc}`}
+          // src="./assets/img/propic.jpg"
+          src={`retrieve?_id=${props.imgSrc}`}
           // src={}
           alt="profile pic"
           // className="profilePic"
@@ -211,7 +238,14 @@ const PawpostsInFeed = function(props) {
                 .substring(8, time.toLocaleTimeString("en-US").length)}`}
           </p>
           <p className="pawpostContent">{pawpost.content}</p>
-          <h3 className="pawpostContentImg">{pawpost.contentImg}</h3>
+          <img
+            className="pawpostContentImg"
+            src={
+              pawpost.contentImg === undefined
+                ? null
+                : `/retrieve?_id=${pawpost.contentImg}`
+            }
+          />
         </div>
       </div>
     );
@@ -378,7 +412,7 @@ class DeletePawpost extends React.Component {
 }
 
 const getProfilePic = csrf => {
-  sendAjax("GET", "/profilePic", null, data => {
+  sendAjax("GET", `/profilePic`, null, data => {
     console.log("data from getProfilePic", data.account.profilePic);
     ReactDOM.render(
       <UploadImage imgSrc={data.account.profilePic} csrf={csrf} />,
@@ -388,13 +422,18 @@ const getProfilePic = csrf => {
 };
 
 const UploadImage = props => {
-  // console.log("props.imgSrc UploadImage()", props.imgSrc);
+  console.log("props.imgSrc UploadImage():", props.imgSrc);
   return (
     <div>
       <h3>Profile Picture</h3>
       <img
         // src="./assets/img/propic.jpg"
-        src={`retrieve?_id=${props.imgSrc}`}
+        // src={`retrieve?_id=${props.imgSrc}`}
+        src={
+          props.imgSrc === undefined
+            ? "./assets/img/propic.jpg"
+            : `retrieve?_id=${props.imgSrc}`
+        }
         alt="profile pic"
         className="changeProfilePic"
       />
@@ -412,26 +451,17 @@ const UploadImage = props => {
   );
 };
 
-const UploadContentImage = props => {
+const UploadPawpostImage = props => {
   return (
     <div>
       <form
-        id="uploadContentImageForm"
+        id="uploadPawpostImageForm"
         action="/upload/contentImage"
         method="POST"
         encType="multipart/form-data"
+        // onSubmit={fileUpload}
       >
-        {/* <div style="height:0px;overflow:hidden"> */}
-        <input type="file" id="fileInput" name="sampleFile" />
-        {/* </div> */}
-        {/* <button
-          type="button"
-          onClick={() => {
-            $("#fileInput").click();
-          }}
-        >
-          <i className="fa fa-file-image-o" aria-hidden="true"></i>
-        </button> */}
+        <input type="file" name="sampleFile" id="contentImageFile" />
 
         {/* <input type="submit" value="Upload" /> */}
         <input type="hidden" name="_csrf" value={props.csrf} />
@@ -455,26 +485,21 @@ const loadPawpostsAndProfilePic = csrf => {
   sendAjax("GET", "/getPawposts", null, pawpostData => {
     // console.log("pawpostData.pawposts: ", pawpostData.pawposts);
 
-    sendAjax(
-      "GET",
-      `/profilePic?username=${pawpostData.pawposts[0].username}`,
-      null,
-      data => {
-        ReactDOM.render(
-          <PawpostForm imgSrc={data.account.profilePic} csrf={csrf} />,
-          document.querySelector("#makePawpost")
-        );
+    sendAjax("GET", `/profilePic`, null, data => {
+      ReactDOM.render(
+        <PawpostForm imgSrc={data.account.profilePic} csrf={csrf} />,
+        document.querySelector("#makePawpost")
+      );
 
-        ReactDOM.render(
-          <PawpostList
-            imgSrc={data.account.profilePic}
-            pawposts={pawpostData.pawposts}
-            csrf={csrf}
-          />,
-          document.querySelector("#pawposts")
-        );
-      }
-    );
+      ReactDOM.render(
+        <PawpostList
+          imgSrc={data.account.profilePic}
+          pawposts={pawpostData.pawposts}
+          csrf={csrf}
+        />,
+        document.querySelector("#pawposts")
+      );
+    });
   });
 };
 
@@ -532,8 +557,8 @@ const createFeedWindow = csrf => {
     document.querySelector("#content")
   );
 
-  loadFeedPawpostsFromServer(csrf);
-  // loadFeedAndProfilePic(csrf);
+  // loadFeedPawpostsFromServer(csrf);
+  loadFeedAndProfilePic(csrf);
 };
 
 // Renders the ChangePassword component on the screen

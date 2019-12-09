@@ -402,3 +402,7 @@ button {
 .changeProfilePic {
   width: 150px;
 }
+
+.pawpostContentImg {
+  max-width: 400px;
+}

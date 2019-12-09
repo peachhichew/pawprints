@@ -50,6 +50,30 @@ var CreateFeedContainer = function CreateFeedContainer(props) {
   );
 };
 
+//https://stackoverflow.com/questions/5587973/javascript-upload-file
+var fileUpload = function fileUpload(e) {
+  e.preventDefault();
+
+  var formData = new FormData();
+  var picture = document.querySelector("#contentImageFile").files[0];
+  var csrfToken = document.querySelector("#pawpostForm").querySelector('input[name="_csrf"]').value;
+
+  formData.append("sampleFile", picture);
+  formData.append("_csrf", csrfToken);
+
+  fetch("/upload/contentImage?_csrf=" + csrfToken, {
+    method: "POST",
+    body: formData
+  }).then(function (response) {
+    if (response.status === 200) {
+      response.json().then(function (data) {
+        // window.location = data.redirect;
+      });
+    }
+  });
+  return false;
+};
+
 // Use AJAX to send a POST request to the server to add a new
 // pawpost. Then, clear out the form when finished.
 var handlePawpost = function handlePawpost(e) {
@@ -65,17 +89,13 @@ var handlePawpost = function handlePawpost(e) {
   }
 
   sendAjax("POST", $("#pawpostForm").attr("action"), $("#pawpostForm").serialize(), function () {
-    // loadProfilePawpostsFromServer();
     loadPawpostsAndProfilePic();
   });
 
-  if ($("#fileInput").val() !== "") {
+  // console.log("contentImageFile", $("#contentImageFile").val());
+  if ($("#contentImageFile").val() !== "") {
     console.log("posting to upload content");
-    sendAjax("POST", $("#uploadContentImageForm").attr("action"), $("#uploadContentImageForm").serialize(), function () {
-      console.log("uploading pic");
-      // loadProfilePawpostsFromServer();
-      // loadPawpostsAndProfilePic();
-    });
+    fileUpload(e);
   }
 
   $("#postContent").val("");
@@ -86,19 +106,13 @@ var handlePawpost = function handlePawpost(e) {
 // Renders the form for adding a new pawpost
 var PawpostForm = function PawpostForm(props) {
   console.log("props.imgSrc in PawpostForm:", props.imgSrc);
-  if (props.imgSrc === undefined || props.imgSrc === "") {
-    console.log("image src is undefined or blank");
-    $(".profilePic").attr("src", "./assets/img/propic.jpg");
-  } else {
-    $(".profilePic").attr("src", "retrieve?_id=" + props.imgSrc);
-  }
   return React.createElement(
     "div",
     { className: "formLayout" },
     React.createElement("img", {
       className: "profilePic"
       // src="./assets/img/propic.jpg"
-      , src: "retrieve?_id=" + props.imgSrc
+      , src: props.imgSrc === undefined ? "./assets/img/propic.jpg" : "retrieve?_id=" + props.imgSrc
     }),
     React.createElement(
       "form",
@@ -117,7 +131,7 @@ var PawpostForm = function PawpostForm(props) {
         placeholder: "What's on your mind?",
         name: "postContent"
       }),
-      React.createElement(UploadContentImage, { csrf: props.csrf }),
+      React.createElement(UploadPawpostImage, { csrf: props.csrf }),
       React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
       React.createElement("input", { className: "makePawpostSubmit", type: "submit", value: "Post" })
     )
@@ -153,10 +167,10 @@ var PawpostList = function PawpostList(props) {
     return React.createElement(
       "div",
       { key: pawpost._id, className: "pawpost" },
-      React.createElement("div", { id: "renderModal" }),
       React.createElement("img", {
         // src="./assets/img/propic.jpg"
-        src: "retrieve?_id=" + props.imgSrc,
+        // src={`retrieve?_id=${props.imgSrc}`}
+        src: props.imgSrc === undefined ? "./assets/img/propic.jpg" : "retrieve?_id=" + props.imgSrc,
         alt: "profile pic",
         className: "profilePic"
       }),
@@ -185,11 +199,10 @@ var PawpostList = function PawpostList(props) {
           { className: "pawpostContent" },
           pawpost.content
         ),
-        React.createElement(
-          "h3",
-          { className: "pawpostContentImg" },
-          pawpost.contentImg
-        )
+        React.createElement("img", {
+          className: "pawpostContentImg",
+          src: pawpost.contentImg === undefined ? null : "/retrieve?_id=" + pawpost.contentImg
+        })
       ),
       React.createElement(EditPawpost, { pawposts: pawpost, csrf: props.csrf }),
       React.createElement(DeletePawpost, { pawposts: pawpost, csrf: props.csrf })
@@ -230,8 +243,8 @@ var PawpostsInFeed = function PawpostsInFeed(props) {
       "div",
       { key: pawpost._id, className: "pawpost" },
       React.createElement("img", {
-        src: "./assets/img/propic.jpg"
-        // src={`retrieve?_id=${props.imgSrc}`}
+        // src="./assets/img/propic.jpg"
+        src: "retrieve?_id=" + props.imgSrc
         // src={}
         , alt: "profile pic"
         // className="profilePic"
@@ -262,11 +275,10 @@ var PawpostsInFeed = function PawpostsInFeed(props) {
           { className: "pawpostContent" },
           pawpost.content
         ),
-        React.createElement(
-          "h3",
-          { className: "pawpostContentImg" },
-          pawpost.contentImg
-        )
+        React.createElement("img", {
+          className: "pawpostContentImg",
+          src: pawpost.contentImg === undefined ? null : "/retrieve?_id=" + pawpost.contentImg
+        })
       )
     );
   });
@@ -500,7 +512,7 @@ var getProfilePic = function getProfilePic(csrf) {
 };
 
 var UploadImage = function UploadImage(props) {
-  // console.log("props.imgSrc UploadImage()", props.imgSrc);
+  console.log("props.imgSrc UploadImage():", props.imgSrc);
   return React.createElement(
     "div",
     null,
@@ -511,7 +523,8 @@ var UploadImage = function UploadImage(props) {
     ),
     React.createElement("img", {
       // src="./assets/img/propic.jpg"
-      src: "retrieve?_id=" + props.imgSrc,
+      // src={`retrieve?_id=${props.imgSrc}`}
+      src: props.imgSrc === undefined ? "./assets/img/propic.jpg" : "retrieve?_id=" + props.imgSrc,
       alt: "profile pic",
       className: "changeProfilePic"
     }),
@@ -530,19 +543,20 @@ var UploadImage = function UploadImage(props) {
   );
 };
 
-var UploadContentImage = function UploadContentImage(props) {
+var UploadPawpostImage = function UploadPawpostImage(props) {
   return React.createElement(
     "div",
     null,
     React.createElement(
       "form",
       {
-        id: "uploadContentImageForm",
+        id: "uploadPawpostImageForm",
         action: "/upload/contentImage",
         method: "POST",
         encType: "multipart/form-data"
+        // onSubmit={fileUpload}
       },
-      React.createElement("input", { type: "file", id: "fileInput", name: "sampleFile" }),
+      React.createElement("input", { type: "file", name: "sampleFile", id: "contentImageFile" }),
       React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf })
     )
   );
@@ -560,7 +574,7 @@ var loadPawpostsAndProfilePic = function loadPawpostsAndProfilePic(csrf) {
   sendAjax("GET", "/getPawposts", null, function (pawpostData) {
     // console.log("pawpostData.pawposts: ", pawpostData.pawposts);
 
-    sendAjax("GET", "/profilePic?username=" + pawpostData.pawposts[0].username, null, function (data) {
+    sendAjax("GET", "/profilePic", null, function (data) {
       ReactDOM.render(React.createElement(PawpostForm, { imgSrc: data.account.profilePic, csrf: csrf }), document.querySelector("#makePawpost"));
 
       ReactDOM.render(React.createElement(PawpostList, {
@@ -617,8 +631,8 @@ var loadFeedPawpostsFromServer = function loadFeedPawpostsFromServer(csrf) {
 var createFeedWindow = function createFeedWindow(csrf) {
   ReactDOM.render(React.createElement(CreateFeedContainer, { imgSrc: "", pawposts: [], csrf: csrf }), document.querySelector("#content"));
 
-  loadFeedPawpostsFromServer(csrf);
-  // loadFeedAndProfilePic(csrf);
+  // loadFeedPawpostsFromServer(csrf);
+  loadFeedAndProfilePic(csrf);
 };
 
 // Renders the ChangePassword component on the screen
