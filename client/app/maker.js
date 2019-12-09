@@ -357,11 +357,6 @@ const loadPawpostsAndProfilePic = csrf => {
       );
 
       ReactDOM.render(
-        // <PawpostList
-        //   imgSrc={data.account.profilePic}
-        //   pawposts={pawpostData.pawposts}
-        //   csrf={csrf}
-        // />,
         <DisplayPawposts
           imgSrc={data.account.profilePic}
           pawposts={pawpostData.pawposts}
@@ -379,7 +374,6 @@ const loadPawpostsAndProfilePic = csrf => {
 const loadFeedPawpostsFromServer = csrf => {
   sendAjax("GET", "/allPawposts", null, data => {
     ReactDOM.render(
-      // <PawpostsInFeed pawposts={data.pawposts} csrf={csrf} />,
       <DisplayPawposts
         imgSrc={""}
         pawposts={data.pawposts}

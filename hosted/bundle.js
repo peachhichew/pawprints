@@ -513,13 +513,7 @@ var loadPawpostsAndProfilePic = function loadPawpostsAndProfilePic(csrf) {
     sendAjax("GET", "/profilePic", null, function (data) {
       ReactDOM.render(React.createElement(PawpostForm, { imgSrc: data.account.profilePic, csrf: csrf }), document.querySelector("#makePawpost"));
 
-      ReactDOM.render(
-      // <PawpostList
-      //   imgSrc={data.account.profilePic}
-      //   pawposts={pawpostData.pawposts}
-      //   csrf={csrf}
-      // />,
-      React.createElement(DisplayPawposts, {
+      ReactDOM.render(React.createElement(DisplayPawposts, {
         imgSrc: data.account.profilePic,
         pawposts: pawpostData.pawposts,
         csrf: csrf,
@@ -533,9 +527,7 @@ var loadPawpostsAndProfilePic = function loadPawpostsAndProfilePic(csrf) {
 // all users in the db
 var loadFeedPawpostsFromServer = function loadFeedPawpostsFromServer(csrf) {
   sendAjax("GET", "/allPawposts", null, function (data) {
-    ReactDOM.render(
-    // <PawpostsInFeed pawposts={data.pawposts} csrf={csrf} />,
-    React.createElement(DisplayPawposts, {
+    ReactDOM.render(React.createElement(DisplayPawposts, {
       imgSrc: "",
       pawposts: data.pawposts,
       csrf: csrf,
